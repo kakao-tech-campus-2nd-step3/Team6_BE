@@ -1,4 +1,4 @@
-package supernova.whokie.point_record;
+package supernova.whokie.point;
 
 public enum PointRecordOption {
     ALL, USED, CHARGED

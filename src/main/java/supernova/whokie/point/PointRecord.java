@@ -1,4 +1,4 @@
-package supernova.whokie.point_record;
+package supernova.whokie.point;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

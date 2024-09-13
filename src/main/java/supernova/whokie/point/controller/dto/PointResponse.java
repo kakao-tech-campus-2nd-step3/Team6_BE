@@ -1,11 +1,11 @@
-package supernova.whokie.point_record.controller.dto;
+package supernova.whokie.point.controller.dto;
 
 import lombok.Builder;
-import supernova.whokie.point_record.PointRecordOption;
+import supernova.whokie.point.PointRecordOption;
 
 import java.time.LocalDate;
 
-public class PointRecordResponse {
+public class PointResponse {
 
     @Builder
     public record Record(
