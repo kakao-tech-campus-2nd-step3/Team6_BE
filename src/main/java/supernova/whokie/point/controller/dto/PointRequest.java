@@ -11,4 +11,10 @@ public class PointRequest {
 
     }
 
+    @Builder
+    public record Earn(
+            int point
+    ) {
+
+    }
 }

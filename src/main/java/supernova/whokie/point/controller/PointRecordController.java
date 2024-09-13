@@ -66,6 +66,11 @@ public class PointRecordController {
         }
     }
 
-
+    @PatchMapping("/earn")
+    public GlobalResponse earnPoint(
+            @RequestBody PointRequest.Earn request
+    ) {
+        return GlobalResponse.builder().message("message").build();
+    }
 
 }
