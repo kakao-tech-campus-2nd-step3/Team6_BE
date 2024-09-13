@@ -1,13 +1,13 @@
-package supernova.whokie.point.controller;
+package supernova.whokie.point_record.controller;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
-import supernova.whokie.point.PointRecordOption;
-import supernova.whokie.point.controller.dto.PointRequest;
-import supernova.whokie.point.controller.dto.PointResponse;
+import supernova.whokie.point_record.PointRecordOption;
+import supernova.whokie.point_record.controller.dto.PointRecordRequest;
+import supernova.whokie.point_record.controller.dto.PointRecordResponse;
 
 import java.awt.print.Pageable;
 import java.time.LocalDate;
@@ -19,13 +19,13 @@ public class PointRecordController {
 
     @PostMapping("/purchase")
     public GlobalResponse purchasePoint(
-            @RequestBody PointRequest.Purchase request
+            @RequestBody PointRecordRequest.Purchase request
     ) {
         return GlobalResponse.builder().message("message").build();
     }
 
     @GetMapping("/record")
-    public PagingResponse<PointResponse.Record> getChargedList(
+    public PagingResponse<PointRecordResponse.Record> getChargedList(
             @RequestParam("year") int year,
             @RequestParam("month") int month,
             @RequestParam("day") int day,
@@ -37,24 +37,24 @@ public class PointRecordController {
             // 전체 기록
             return new PagingResponse<>(
                     List.of(
-                            new PointResponse.Record(1L, 100, PointRecordOption.CHARGED, LocalDate.now()),
-                            new PointResponse.Record(2L, 100, PointRecordOption.USED, LocalDate.now())),
+                            new PointRecordResponse.Record(1L, 100, PointRecordOption.CHARGED, LocalDate.now()),
+                            new PointRecordResponse.Record(2L, 100, PointRecordOption.USED, LocalDate.now())),
                     2, 1, 1, 0
             );
         } else if (option == PointRecordOption.USED) {
             // 사용 기록
             return new PagingResponse<>(
                     List.of(
-                            new PointResponse.Record(1L, 100, PointRecordOption.USED, LocalDate.now()),
-                            new PointResponse.Record(2L, 100, PointRecordOption.USED, LocalDate.now())),
+                            new PointRecordResponse.Record(1L, 100, PointRecordOption.USED, LocalDate.now()),
+                            new PointRecordResponse.Record(2L, 100, PointRecordOption.USED, LocalDate.now())),
                     2, 1, 1, 0
             );
         } else if (option == PointRecordOption.CHARGED) {
             // 충전 기록
             return new PagingResponse<>(
                     List.of(
-                            new PointResponse.Record(1L, 100, PointRecordOption.CHARGED, LocalDate.now()),
-                            new PointResponse.Record(2L, 100, PointRecordOption.CHARGED, LocalDate.now())),
+                            new PointRecordResponse.Record(1L, 100, PointRecordOption.CHARGED, LocalDate.now()),
+                            new PointRecordResponse.Record(2L, 100, PointRecordOption.CHARGED, LocalDate.now())),
                     2, 1, 1, 0
             );
         } else {
@@ -68,7 +68,7 @@ public class PointRecordController {
 
     @PatchMapping("/earn")
     public GlobalResponse earnPoint(
-            @RequestBody PointRequest.Earn request
+            @RequestBody PointRecordRequest.Earn request
     ) {
         return GlobalResponse.builder().message("message").build();
     }

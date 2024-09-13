@@ -1,8 +1,8 @@
-package supernova.whokie.point.controller.dto;
+package supernova.whokie.point_record.controller.dto;
 
 import lombok.Builder;
 
-public class PointRequest {
+public class PointRecordRequest {
 
     @Builder
     public record Purchase(
