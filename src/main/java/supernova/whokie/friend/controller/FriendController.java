@@ -1,4 +1,4 @@
-package supernova.whokie.friend;
+package supernova.whokie.friend.controller;
 
 import org.springframework.web.bind.annotation.*;
 import supernova.whokie.friend.controller.dto.FriendRequest;
