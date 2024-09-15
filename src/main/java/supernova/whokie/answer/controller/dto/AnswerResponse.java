@@ -1,6 +1,7 @@
 package supernova.whokie.answer.controller.dto;
 
 import lombok.Builder;
+import supernova.whokie.answer.Answer;
 import supernova.whokie.user.controller.dto.UserResponse;
 
 import java.time.LocalDate;
@@ -23,7 +24,15 @@ public class AnswerResponse {
             int hintCount,
             LocalDate createdAt
     ) {
-
+        public static Record fromEntity(Answer answer){
+            return new Record(
+                    answer.getId(),
+                    answer.getQuestion().getId(),
+                    answer.getQuestion().getContent(),
+                    answer.getHintCount(),
+                    answer.getCreatedAt().toLocalDate()
+                    );
+        }
     }
 
     @Builder
