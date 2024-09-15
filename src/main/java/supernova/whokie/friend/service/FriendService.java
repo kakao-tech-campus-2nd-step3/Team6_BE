@@ -58,13 +58,9 @@ public class FriendService {
         List<Users> friendUsers = userRepository.findByIdIn(friendIds);
         Users host = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        List<Friend> existingFriends = findFriendsByHostUser(host);
+        List<Friend> existingFriends = friendRepository.findByHostUser(host);
         List<Friend> newFriends = filterNewFriends(friendUsers, existingFriends, host);
         friendRepository.saveAll(newFriends);
-    }
-
-    public List<Friend> findFriendsByHostUser(Users host) {
-        return friendRepository.findByHostUser(host);
     }
 
     public List<Friend> filterNewFriends(List<Users> friendUsers, List<Friend> friends, Users host) {
