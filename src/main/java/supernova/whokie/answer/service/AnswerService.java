@@ -9,6 +9,7 @@ import supernova.whokie.answer.Answer;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.global.dto.PagingResponse;
+import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
@@ -36,9 +37,9 @@ public class AnswerService {
 
     public void answerToCommonQuestion(Users user, Long questionId, Long pickedId){
         Question question = questionRepository.findById(questionId)
-                .orElse(null); //TODO 예외처리
+                .orElseThrow(() -> new EntityNotFoundException("해당 질문을 찾을 수 없습니다."));
         Users picked = usersRepository.findById(pickedId)
-                .orElse(null); //TODO 예외처리
+                .orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
 
         Answer answer = Answer.builder()
                 .question(question)
