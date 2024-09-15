@@ -25,8 +25,8 @@ public class AnswerService {
     private final QuestionRepository questionRepository;
     private final UsersRepository usersRepository;
 
-    public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable){
-        Page<Answer> answers = answerRepository.findAll(pageable);
+    public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Users user){
+        Page<Answer> answers = answerRepository.findAllByPicker(pageable, user);
 
         List<AnswerResponse.Record> answerResponse = answers.stream()
                 .map(AnswerResponse.Record::fromEntity)
