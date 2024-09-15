@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<Users, Long> {
     List<Users> findByKakaoCodeIn(List<String> kakaoCode);
-
+    List<Users> findByIdIn(List<Long> ids);
 }

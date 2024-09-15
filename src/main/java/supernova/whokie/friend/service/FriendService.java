@@ -53,4 +53,26 @@ public class FriendService {
                 .toList();
     }
 
+    public void makeFriends(FriendRequest.Add request, Long userId) {
+        List<Long> friendIds = request.friends().stream().map(FriendRequest.Id::id).toList();
+        List<Users> friendUsers = userRepository.findByIdIn(friendIds);
+        Users host = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        List<Friend> existingFriends = findFriendsByHostUser(host);
+        List<Friend> newFriends = filterNewFriends(friendUsers, existingFriends, host);
+        friendRepository.saveAll(newFriends);
+    }
+
+    public List<Friend> findFriendsByHostUser(Users host) {
+        return friendRepository.findByHostUser(host);
+    }
+
+    public List<Friend> filterNewFriends(List<Users> friendUsers, List<Friend> friends, Users host) {
+        List<Long> existingFriendIds = friends.stream().map(friend -> friend.getFriendUser().getId()).toList();
+
+        return friendUsers.stream()
+                .filter(friend -> !existingFriendIds.contains(friend.getId()))
+                .map(friend -> Friend.builder().hostUser(host).friendUser(friend).build())
+                .toList();
+    }
 }
