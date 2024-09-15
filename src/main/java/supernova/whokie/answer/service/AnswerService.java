@@ -9,6 +9,7 @@ import supernova.whokie.answer.Answer;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.global.dto.PagingResponse;
+import supernova.whokie.user.Users;
 
 import java.util.List;
 
@@ -18,8 +19,8 @@ public class AnswerService {
 
     private AnswerRepository answerRepository;
 
-    public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable){
-        Page<Answer> answers = answerRepository.findAll(pageable);
+    public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Users user){
+        Page<Answer> answers = answerRepository.findAllByPicker(pageable, user);
 
         List<AnswerResponse.Record> answerResponse = answers.stream()
                 .map(AnswerResponse.Record::fromEntity)
@@ -27,6 +28,4 @@ public class AnswerService {
 
         return PagingResponse.from(new PageImpl<>(answerResponse, pageable, answers.getTotalElements()));
     }
-
-
 }

@@ -36,6 +36,7 @@ class AnswerServiceTest {
     @Test
     @DisplayName("전체 질문 기록을 가져오는 메서드 테스트")
     void getAnswerRecordTest() {
+        Users dummyUser = mock(Users.class);
         // given
         Answer dummyAnswer = Answer.builder()
                 .id(1L)
@@ -50,11 +51,11 @@ class AnswerServiceTest {
         Page<Answer> answerPage = new PageImpl<>(List.of(dummyAnswer), PageRequest.of(0, 10), 1);
 
         // when
-        when(answerRepository.findAll(any(Pageable.class))).thenReturn(answerPage);
+        when(answerRepository.findAllByPicker(any(Pageable.class), eq(dummyUser))).thenReturn(answerPage);
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").ascending());
 
-        PagingResponse<AnswerResponse.Record> response = answerService.getAnswerRecord(pageable);
+        PagingResponse<AnswerResponse.Record> response = answerService.getAnswerRecord(pageable, dummyUser);
 
         // then
         assertEquals(1, response.content().size());
