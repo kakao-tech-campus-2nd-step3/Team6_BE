@@ -55,11 +55,21 @@ public class FriendService {
 
     public void makeFriends(FriendRequest.Add request, Long userId) {
         List<Long> friendIds = request.friends().stream().map(FriendRequest.Id::id).toList();
+
+        // friendIds로 모든 친구 Users 조회
         List<Users> friendUsers = userRepository.findByIdIn(friendIds);
+
+        // 사용자 Users 조회
         Users host = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 사용자 Users의 모든 Friend 조회
         List<Friend> existingFriends = friendRepository.findByHostUser(host);
+
+        // 새로운 Friend 필터링
         List<Friend> newFriends = filterNewFriends(friendUsers, existingFriends, host);
+
+        // 새로운 Friend 저장
         friendRepository.saveAll(newFriends);
     }
 
