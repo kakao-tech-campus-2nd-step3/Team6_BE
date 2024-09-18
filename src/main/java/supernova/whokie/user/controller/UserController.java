@@ -31,8 +31,12 @@ public class UserController {
     }
 
     @GetMapping("/callback")
-    public void registerUser(@RequestParam("code") String code) {
-        userService.register(code);
+    public ResponseEntity<Void> registerUser(@RequestParam("code") String code) {
+        String token = userService.register(code);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .header("Authorization", token)
+            .build();
     }
 
     @GetMapping("/mypage")

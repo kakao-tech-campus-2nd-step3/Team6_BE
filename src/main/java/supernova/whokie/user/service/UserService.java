@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
@@ -17,6 +18,7 @@ import supernova.whokie.user.util.KakaoApiCaller;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtProvider jwtProvider;
     private final KakaoApiCaller kakaoApiCaller;
 
     public String getCodeUrl() {
@@ -24,7 +26,7 @@ public class UserService {
     }
 
     @Transactional
-    public void register(String code) {
+    public String register(String code) {
         KakaoAccount kakaoAccount = kakaoApiCaller.extractUserInfo(code);
 
         Users user = userRepository.findByEmail(kakaoAccount.email())
@@ -39,5 +41,9 @@ public class UserService {
                     .role(Role.USER)
                     .build()
             ));
+
+        String token = jwtProvider.createToken(user.getId(), user.getRole());
+        System.out.println(token);
+        return token;
     }
 }
