@@ -1,9 +1,6 @@
 package supernova.whokie.friend;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 import supernova.whokie.user.Users;
 
@@ -17,11 +14,11 @@ public class Friend {
     @Id
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_user_id")
     private Users hostUser;   // 나
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "friend_user_id")
     private Users friendUser; // 친구
 }

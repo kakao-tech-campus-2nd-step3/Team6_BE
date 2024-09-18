@@ -1,5 +1,6 @@
 package supernova.whokie.friend.service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import supernova.whokie.friend.Friend;
@@ -18,13 +19,12 @@ public class FriendService {
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
 
+    @Transactional
     public List<Users> getKakaoFriends(String accessToken) {
         List<KakaoDto.Profile> profiles = apiCaller.getKakaoFriends(accessToken).elements();
-        // profile에서 kakaoCode 추출
-        List<String> kakaoCodes = profiles.stream().map(KakaoDto.Profile::uuid).toList();
 
         // Users 테이블에서 이미 존재하는 사용자 조회
-        List<Users> existingUsers = findExistUsersByKakaoCodes(kakaoCodes);
+        List<Users> existingUsers = findExistUsersByKakaoProfiles(profiles);
 
         // 새로 저장할 Profile 리스트 생성(필터링)
         List<Users> newUsers = filterNewProfiles(profiles, existingUsers);
@@ -36,7 +36,8 @@ public class FriendService {
         return existingUsers;
     }
 
-    public List<Users> findExistUsersByKakaoCodes(List<String> kakaoCodes) {
+    public List<Users> findExistUsersByKakaoProfiles(List<KakaoDto.Profile> profiles) {
+        List<String> kakaoCodes = profiles.stream().map(KakaoDto.Profile::uuid).toList();
         return userRepository.findByKakaoCodeIn(kakaoCodes);
     }
 
@@ -53,6 +54,7 @@ public class FriendService {
                 .toList();
     }
 
+    @Transactional
     public void makeFriends(FriendRequest.Add request, Long userId) {
         List<Long> friendIds = request.friends().stream().map(FriendRequest.Id::id).toList();
 
