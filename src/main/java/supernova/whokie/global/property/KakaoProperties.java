@@ -2,7 +2,7 @@ package supernova.whokie.global.property;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties
+@ConfigurationProperties("kakao")
 public record KakaoProperties(
     String redirectUri,
     String clientId,
