@@ -8,17 +8,24 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import supernova.whokie.global.auth.JwtInterceptor;
+import supernova.whokie.global.resolver.LoginUserArgumentResolver;
 
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
     private final JwtInterceptor jwtInterceptor;
+    private final LoginUserArgumentResolver loginUserArgumentResolver;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // Todo 경로 수정 해야함
         registry.addInterceptor(jwtInterceptor)
             .addPathPatterns("/api/user/mypage");
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(loginUserArgumentResolver);
     }
 
     @Override
