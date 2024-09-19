@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.controller.dto.UserResponse;
@@ -40,8 +41,9 @@ public class UserController {
     }
 
     @GetMapping("/mypage")
-    public UserResponse.Info getUserInfo() {
-        return new UserResponse.Info("test@email.com", Gender.M, 20, "name", Role.USER, LocalDate.now());
+    public ResponseEntity<UserResponse.Info> getUserInfo(@Authenticate Long userId) {
+        UserResponse.Info response = userService.getUserInfo(userId);
+        return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/point")

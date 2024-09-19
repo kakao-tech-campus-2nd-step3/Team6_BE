@@ -46,4 +46,11 @@ public class UserService {
         System.out.println(token);
         return token;
     }
+
+    public UserResponse.Info getUserInfo(Long userId) {
+        Users user = userRepository.findById(userId)
+            .orElseThrow();
+
+        return UserResponse.Info.from(user);
+    }
 }
