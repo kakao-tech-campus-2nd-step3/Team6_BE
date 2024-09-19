@@ -23,4 +23,5 @@ public class BaseTimeEntity {
     @LastModifiedDate
     @Column(name = "modified_at", columnDefinition = "DATETIME(0)")
     private LocalDateTime modifiedAt;
+
 }
