@@ -15,7 +15,7 @@ import supernova.whokie.user.controller.dto.UserInfoResponse;
 
 @Component
 @RequiredArgsConstructor
-public class KakaoApiCaller {
+public class UserApiCaller {
 
     private final KakaoProperties kakaoProperties;
     private final RestClient restClient;
