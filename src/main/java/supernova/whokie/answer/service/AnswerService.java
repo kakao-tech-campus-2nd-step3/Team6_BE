@@ -20,7 +20,7 @@ public class AnswerService {
 
     private AnswerRepository answerRepository;
 
-    public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Users user){
+    public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Users user) {
         Page<Answer> answers = answerRepository.findAllByPicker(pageable, user);
 
         List<AnswerResponse.Record> answerResponse = answers.stream()

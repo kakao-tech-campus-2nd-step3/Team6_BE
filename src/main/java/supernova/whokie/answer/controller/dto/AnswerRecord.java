@@ -1,6 +1,5 @@
 package supernova.whokie.answer.controller.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import supernova.whokie.answer.Answer;
@@ -16,7 +15,7 @@ public class AnswerRecord {
     private int hintCount;
     private LocalDate createdAt;
 
-    public static AnswerRecord from(Answer answer){
+    public static AnswerRecord from(Answer answer) {
         return AnswerRecord.builder()
                 .answerId(answer.getId())
                 .questionId(answer.getQuestion().getId())

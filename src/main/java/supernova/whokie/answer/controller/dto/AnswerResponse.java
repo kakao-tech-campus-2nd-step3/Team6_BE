@@ -10,7 +10,7 @@ public class AnswerResponse {
 
     @Builder
     public record Refresh(
-        List<UserResponse.PickedInfo> users
+            List<UserResponse.PickedInfo> users
     ) {
 
     }
@@ -23,14 +23,14 @@ public class AnswerResponse {
             int hintCount,
             LocalDate createdAt
     ) {
-        public static Record from(AnswerRecord answerRecord){
+        public static Record from(AnswerRecord answerRecord) {
             return new Record(
                     answerRecord.getAnswerId(),
                     answerRecord.getQuestionId(),
                     answerRecord.getQuestionContent(),
                     answerRecord.getHintCount(),
                     answerRecord.getCreatedAt()
-                    );
+            );
         }
     }
 
