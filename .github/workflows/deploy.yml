@@ -3,7 +3,7 @@ name: deploy
 # 특정 브랜치에 코드가 push 될때 실행
 on:
   push:
-    branches: [ "Develop", "Master", "issue/**" ]
+    branches: [ "Develop", "Master" ]
 
 
 # 코드의 내용을 이 파일을 실행하여 action을 수행하는 주체(Github Actions에서 사용하는 VM)가 읽을 수 있도록 허용.
