@@ -7,6 +7,7 @@ import supernova.whokie.global.BaseTimeEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Builder
+@Getter
 @AllArgsConstructor
 @Getter
 public class Users extends BaseTimeEntity {

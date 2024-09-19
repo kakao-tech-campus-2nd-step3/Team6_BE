@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import supernova.whokie.global.BaseTimeEntity;
 import supernova.whokie.user.Users;
@@ -12,6 +13,7 @@ import supernova.whokie.user.Users;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Builder
+@Getter
 public class Question extends BaseTimeEntity {
 
     @Id
