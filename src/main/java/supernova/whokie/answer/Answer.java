@@ -7,21 +7,22 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import supernova.whokie.global.BaseTimeEntity;
 import supernova.whokie.question.Question;
 import supernova.whokie.user.Users;
 
+
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Builder
+@Getter
 public class Answer extends BaseTimeEntity {
 
     @Id
     private Long id;
-
-    private String content;
 
     @ManyToOne
     @JoinColumn(name = "question_id")
@@ -36,4 +37,5 @@ public class Answer extends BaseTimeEntity {
     private Users picked; // picked id
 
     private Integer hintCount;
+
 }
