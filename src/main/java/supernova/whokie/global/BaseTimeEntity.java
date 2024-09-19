@@ -22,7 +22,4 @@ public class BaseTimeEntity {
     @Column(name = "modified_at", columnDefinition = "DATETIME(0)")
     private LocalDateTime modifiedAt;
 
-    public void configCreatedAt(LocalDateTime localDateTime){ //테스트용
-        this.createdAt = localDateTime;
-    }
 }

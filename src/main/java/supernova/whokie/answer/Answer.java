@@ -14,7 +14,6 @@ import supernova.whokie.global.BaseTimeEntity;
 import supernova.whokie.question.Question;
 import supernova.whokie.user.Users;
 
-import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,7 +39,4 @@ public class Answer extends BaseTimeEntity {
 
     private Integer hintCount;
 
-    public void configCreatedAt(LocalDateTime localDateTime){
-        super.configCreatedAt(localDateTime);
-    }
 }

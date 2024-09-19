@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.*;
+import org.springframework.test.util.ReflectionTestUtils;
 import supernova.whokie.answer.Answer;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
@@ -45,8 +46,7 @@ class AnswerServiceTest {
                 .picked(mock(Users.class))
                 .hintCount(3)
                 .build();
-
-        dummyAnswer.configCreatedAt(LocalDateTime.now());
+        ReflectionTestUtils.setField(dummyAnswer, "createdAt", LocalDateTime.of(2024, 9, 19, 0,0));
 
         Page<Answer> answerPage = new PageImpl<>(List.of(dummyAnswer), PageRequest.of(0, 10), 1);
 
