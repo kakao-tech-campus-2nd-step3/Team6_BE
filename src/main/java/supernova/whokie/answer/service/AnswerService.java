@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import supernova.whokie.answer.Answer;
+import supernova.whokie.answer.controller.dto.AnswerRecord;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.global.dto.PagingResponse;
@@ -23,7 +24,10 @@ public class AnswerService {
         Page<Answer> answers = answerRepository.findAllByPicker(pageable, user);
 
         List<AnswerResponse.Record> answerResponse = answers.stream()
-                .map(AnswerResponse.Record::fromEntity)
+                .map(answer -> {
+                    AnswerRecord answerRecord = AnswerRecord.from(answer);
+                    return AnswerResponse.Record.from(answerRecord);
+                })
                 .toList();
 
         return PagingResponse.from(new PageImpl<>(answerResponse, pageable, answers.getTotalElements()));
