@@ -35,7 +35,7 @@ class UserServiceTest {
 
         Point point = userService.getPoint(1L);
 
-        assertEquals(999, point.amount());
+        assertEquals(1000, point.amount());
         then(userRepository).should().findById(1L);
     }
 }
