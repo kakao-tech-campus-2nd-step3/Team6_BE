@@ -9,7 +9,6 @@ import supernova.whokie.global.BaseTimeEntity;
 @Builder
 @Getter
 @AllArgsConstructor
-@Getter
 public class Users extends BaseTimeEntity {
 
     @Id

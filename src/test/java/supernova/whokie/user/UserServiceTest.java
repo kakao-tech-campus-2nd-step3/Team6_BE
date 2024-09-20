@@ -28,13 +28,14 @@ class UserServiceTest {
     @Test
     @DisplayName("내 포인트 조회")
     void getPoint() {
-        Users user = new Users(1L, "test", "test@gmail.com", 1000, 20, Gender.M, "test", Role.USER);
+        Users user = new Users(1L, "test", "test@gmail.com", 1000, 20, "code", Gender.M, "test",
+            Role.USER);
 
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
 
         Point point = userService.getPoint(1L);
 
-        assertEquals(1000, point.amount());
+        assertEquals(999, point.amount());
         then(userRepository).should().findById(1L);
     }
 }
