@@ -46,5 +46,10 @@ public class UserResponse {
             int amount
     ) {
 
+        public static Point from(Users user) {
+            return Point.builder()
+                .amount(user.getPoint())
+                .build();
+        }
     }
 }

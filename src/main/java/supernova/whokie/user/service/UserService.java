@@ -11,7 +11,7 @@ import supernova.whokie.user.Users;
 import supernova.whokie.user.controller.dto.KakaoAccount;
 import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.repository.UserRepository;
-import supernova.whokie.user.util.KakaoApiCaller;
+import supernova.whokie.user.util.UserApiCaller;
 
 @Service
 @RequiredArgsConstructor
@@ -19,15 +19,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
-    private final KakaoApiCaller kakaoApiCaller;
+    private final UserApiCaller userApiCaller;
 
     public String getCodeUrl() {
-        return kakaoApiCaller.createCodeUrl();
+        return userApiCaller.createCodeUrl();
     }
 
     @Transactional
     public String register(String code) {
-        KakaoAccount kakaoAccount = kakaoApiCaller.extractUserInfo(code);
+        KakaoAccount kakaoAccount = userApiCaller.extractUserInfo(code);
 
         Users user = userRepository.findByEmail(kakaoAccount.email())
             .orElseGet(() -> userRepository.save(
@@ -52,5 +52,12 @@ public class UserService {
             .orElseThrow();
 
         return UserResponse.Info.from(user);
+    }
+
+    public UserResponse.Point getPoint(Long userId) {
+        Users user = userRepository.findById(userId)
+            .orElseThrow();
+
+        return UserResponse.Point.from(user);
     }
 }
