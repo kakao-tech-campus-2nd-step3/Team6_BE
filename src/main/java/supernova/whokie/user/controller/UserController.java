@@ -13,6 +13,7 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.controller.dto.UserResponse;
 
 import java.time.LocalDate;
+import supernova.whokie.user.controller.dto.UserResponse.Point;
 import supernova.whokie.user.service.UserService;
 
 @RestController
@@ -47,7 +48,8 @@ public class UserController {
     }
 
     @GetMapping("/point")
-    public UserResponse.Point getUserPoint() {
-        return UserResponse.Point.builder().amount(1000).build();
+    public ResponseEntity<UserResponse.Point> getUserPoint(@Authenticate Long userId) {
+        Point response = userService.getPoint(userId);
+        return ResponseEntity.ok().body(response);
     }
 }
