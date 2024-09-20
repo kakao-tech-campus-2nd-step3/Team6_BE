@@ -53,4 +53,11 @@ public class UserService {
 
         return UserResponse.Info.from(user);
     }
+
+    public UserResponse.Point getPoint(Long userId) {
+        Users user = userRepository.findById(userId)
+            .orElseThrow();
+
+        return UserResponse.Point.from(user);
+    }
 }
