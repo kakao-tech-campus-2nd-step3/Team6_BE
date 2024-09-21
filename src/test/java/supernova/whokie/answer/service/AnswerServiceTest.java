@@ -6,11 +6,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 import supernova.whokie.answer.Answer;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
+import supernova.whokie.friend.Friend;
+import supernova.whokie.friend.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.question.Question;
 import supernova.whokie.user.Users;
@@ -22,17 +27,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 class AnswerServiceTest {
-    @Mock
+    @MockBean
     private AnswerRepository answerRepository;
+    @MockBean
+    private FriendRepository friendRepository;
 
-    @InjectMocks
+    @Autowired
     private AnswerService answerService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     @DisplayName("전체 질문 기록을 가져오는 메서드 테스트")
@@ -61,5 +65,44 @@ class AnswerServiceTest {
         assertEquals(1, response.content().size());
         assertEquals(dummyAnswer.getId(), response.content().get(0).answerId());
         assertEquals(3, response.content().get(0).hintCount());
+    }
+
+    @Test
+    void refreshAnswerListTest() {
+        //given
+        Users dummyUser = Users.builder().id(1L).build();
+
+        List<Friend> dummyFriends = List.of(
+                Friend.builder()
+                        .hostUser(dummyUser)
+                        .friendUser(Users.builder().id(2L).name("Friend 1").imageUrl("url1").build())
+                        .build(),
+                Friend.builder()
+                        .hostUser(dummyUser)
+                        .friendUser(Users.builder().id(3L).name("Friend 2").imageUrl("url2").build())
+                        .build(),
+                Friend.builder()
+                        .hostUser(dummyUser)
+                        .friendUser(Users.builder().id(4L).name("Friend 3").imageUrl("url3").build())
+                        .build(),
+                Friend.builder()
+                        .hostUser(dummyUser)
+                        .friendUser(Users.builder().id(5L).name("Friend 4").imageUrl("url4").build())
+                        .build(),
+                Friend.builder()
+                        .hostUser(dummyUser)
+                        .friendUser(Users.builder().id(6L).name("Friend 5").imageUrl("url5").build())
+                        .build()
+        );
+
+        //when
+        when(friendRepository.findRandomFriendsByHostUser(dummyUser.getId(), AnswerService.FRIEND_LIMIT)).thenReturn(dummyFriends);
+
+        AnswerResponse.Refresh refreshResponse = answerService.refreshAnswerList(dummyUser);
+
+        //then
+        assertEquals(5, refreshResponse.users().size());
+
+        verify(friendRepository, times(1)).findRandomFriendsByHostUser(dummyUser.getId(), AnswerService.FRIEND_LIMIT);
     }
 }
