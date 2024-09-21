@@ -37,7 +37,6 @@ class AnswerServiceTest {
     @Autowired
     private AnswerService answerService;
 
-
     @Test
     @DisplayName("전체 질문 기록을 가져오는 메서드 테스트")
     void getAnswerRecordTest() {
@@ -68,6 +67,7 @@ class AnswerServiceTest {
     }
 
     @Test
+    @DisplayName("답변 새로고침 기능이 잘 동작하는지 확인하는 테스트")
     void refreshAnswerListTest() {
         //given
         Users dummyUser = Users.builder().id(1L).build();
