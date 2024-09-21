@@ -9,16 +9,22 @@ import supernova.whokie.answer.Answer;
 import supernova.whokie.answer.controller.dto.AnswerRecord;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
+import supernova.whokie.friend.Friend;
+import supernova.whokie.friend.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.user.Users;
+import supernova.whokie.user.controller.dto.UserResponse;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AnswerService {
+    public static final int FRIEND_LIMIT = 5;
 
-    private AnswerRepository answerRepository;
+    private final AnswerRepository answerRepository;
+    private final FriendRepository friendRepository;
+
 
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Users user) {
         Page<Answer> answers = answerRepository.findAllByPicker(pageable, user);
@@ -31,5 +37,21 @@ public class AnswerService {
                 .toList();
 
         return PagingResponse.from(new PageImpl<>(answerResponse, pageable, answers.getTotalElements()));
+    }
+
+    public AnswerResponse.Refresh refreshAnswerList(Users user){
+        List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), FRIEND_LIMIT);
+
+        List<UserResponse.PickedInfo> friendsInfoList = randomFriends.stream().map(
+                friend -> UserResponse.PickedInfo.builder()
+                        .userId(friend.getFriendUser().getId())
+                        .name(friend.getFriendUser().getName())
+                        .imageUrl(friend.getFriendUser().getImageUrl())
+                        .build()
+        ).toList();
+
+        return AnswerResponse.Refresh.builder()
+                .users(friendsInfoList)
+                .build();
     }
 }
