@@ -10,12 +10,11 @@ import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.controller.dto.UserResponse;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class QuestionService{
+public class QuestionService {
 
     public static final int FRIEND_LIMIT = 5;
     public static final int QUESTION_LIMIT = 10;

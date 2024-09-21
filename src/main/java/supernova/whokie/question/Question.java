@@ -1,11 +1,7 @@
 package supernova.whokie.question;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import supernova.whokie.global.BaseTimeEntity;
 import supernova.whokie.user.Users;
 
