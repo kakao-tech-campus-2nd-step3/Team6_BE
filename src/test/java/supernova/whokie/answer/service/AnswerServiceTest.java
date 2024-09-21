@@ -46,7 +46,6 @@ class AnswerServiceTest {
     @Test
     @DisplayName("전체 질문 기록을 가져오는 메서드 테스트")
     void getAnswerRecordTest() {
-        Users dummyUser = mock(Users.class);
         // given
         Users dummyUser = mock(Users.class);
         Answer dummyAnswer = Answer.builder()
