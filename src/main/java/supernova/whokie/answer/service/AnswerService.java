@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnswerService {
 
-    private AnswerRepository answerRepository;
+    private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final UsersRepository usersRepository;
 

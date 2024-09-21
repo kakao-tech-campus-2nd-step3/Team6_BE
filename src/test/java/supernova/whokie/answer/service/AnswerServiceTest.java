@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 import supernova.whokie.answer.Answer;
@@ -25,23 +28,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
 class AnswerServiceTest {
-    @Mock
+    @MockBean
     private AnswerRepository answerRepository;
 
-    @Mock
+    @MockBean
     private QuestionRepository questionRepository;
 
-    @Mock
+    @MockBean
     private UsersRepository usersRepository;
 
-    @InjectMocks
+    @Autowired
     private AnswerService answerService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     @DisplayName("전체 질문 기록을 가져오는 메서드 테스트")
