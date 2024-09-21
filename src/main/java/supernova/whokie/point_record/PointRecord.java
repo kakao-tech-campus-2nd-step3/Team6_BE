@@ -27,4 +27,6 @@ public class PointRecord extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private PointRecordOption option;
+
+    private String description;
 }

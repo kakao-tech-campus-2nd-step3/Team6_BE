@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.point_record.PointRecordOption;
-import supernova.whokie.point_record.controller.dto.PointPurchaseRequest;
+import supernova.whokie.point_record.controller.dto.PointRecordRequest;
 import supernova.whokie.point_record.controller.dto.PointRecordResponse;
 
 import java.awt.print.Pageable;
@@ -19,7 +19,7 @@ public class PointRecordController {
 
     @PostMapping("/purchase")
     public GlobalResponse purchasePoint(
-            @RequestBody PointPurchaseRequest.Purchase request
+            @RequestBody PointRecordRequest.Purchase request
     ) {
         return GlobalResponse.builder().message("message").build();
     }
@@ -65,4 +65,12 @@ public class PointRecordController {
             );
         }
     }
+
+    @PatchMapping("/earn")
+    public GlobalResponse earnPoint(
+            @RequestBody PointRecordRequest.Earn request
+    ) {
+        return GlobalResponse.builder().message("message").build();
+    }
+
 }
