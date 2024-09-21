@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnswerService {
 
-    private AnswerRepository answerRepository;
+    private final AnswerRepository answerRepository;
 
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Users user) {
         Page<Answer> answers = answerRepository.findAllByPicker(pageable, user);
