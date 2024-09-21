@@ -23,10 +23,10 @@ public class QuestionService{
     private final QuestionRepository questionRepository;
     private final FriendRepository friendRepository;
 
-    public QuestionResponse.CommonQuestions getCommonQuestionList(Users user) {
-        List<Question> allQuestionList = questionRepository.findAll();
+    public QuestionResponse.CommonQuestions getCommonQuestion(Users user) {
 
-        List<QuestionResponse.CommonQuestion> commonQuestions = getCommonQuestionList(user, allQuestionList, FRIEND_LIMIT, QUESTION_LIMIT);
+
+        List<QuestionResponse.CommonQuestion> commonQuestions = getCommonQuestionList(user);
 
         return QuestionResponse.CommonQuestions.builder()
                 .questions(commonQuestions)
@@ -34,18 +34,13 @@ public class QuestionService{
     }
 
 
-    private List<QuestionResponse.CommonQuestion> getCommonQuestionList(Users user, List<Question> allQuestionList, int friendLimit, int questionLimit) {
+    private List<QuestionResponse.CommonQuestion> getCommonQuestionList(Users user) {
 
-        List<Question> randomQuestions = allQuestionList.stream()
-                .limit(questionLimit)
-                .toList();
-
-        List<Friend> allFriends = friendRepository.findAllFriendsByHostUser(user);
-        Collections.shuffle(allFriends);
+        List<Question> randomQuestions = questionRepository.findRandomQuestions(QUESTION_LIMIT);
 
         List<QuestionResponse.CommonQuestion> commonQuestions = randomQuestions.stream()
                 .map(question -> {
-                    List<UserResponse.PickedInfo> friendList = getFriendList(allFriends, friendLimit);
+                    List<UserResponse.PickedInfo> friendList = getFriendList(user);
 
                     return QuestionResponse.CommonQuestion.builder()
                             .questionId(question.getId())
@@ -57,10 +52,8 @@ public class QuestionService{
         return commonQuestions;
     }
 
-    private List<UserResponse.PickedInfo> getFriendList(List<Friend> allFriends, int friendLimit) {
-        List<Friend> randomFriends = allFriends.stream()
-                .limit(friendLimit)
-                .toList();
+    private List<UserResponse.PickedInfo> getFriendList(Users user) {
+        List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), FRIEND_LIMIT);
 
         List<UserResponse.PickedInfo> friendList = randomFriends.stream()
                 .map(friend -> UserResponse.PickedInfo.builder()

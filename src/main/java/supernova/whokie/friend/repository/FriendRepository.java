@@ -9,5 +9,6 @@ import supernova.whokie.user.Users;
 import java.util.List;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
-    List<Friend> findAllFriendsByHostUser(Users user);
+    @Query(value = "SELECT * FROM friend f WHERE f.host_user_id = :userId ORDER BY RAND() LIMIT :limit", nativeQuery = true)
+    List<Friend> findRandomFriendsByHostUser(@Param("userId") Long userId, @Param("limit") int limit);
 }
