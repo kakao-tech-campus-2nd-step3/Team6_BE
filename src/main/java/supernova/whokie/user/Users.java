@@ -2,7 +2,7 @@ package supernova.whokie.user;
 
 import jakarta.persistence.*;
 import lombok.*;
-import supernova.whokie.global.BaseTimeEntity;
+import supernova.whokie.global.entity.BaseTimeEntity;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
