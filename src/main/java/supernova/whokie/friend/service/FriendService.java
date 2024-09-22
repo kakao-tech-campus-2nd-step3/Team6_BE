@@ -7,6 +7,7 @@ import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.controller.dto.FriendRequest;
 import supernova.whokie.friend.repository.FriendRepository;
 import supernova.whokie.friend.service.dto.KakaoDto;
+import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
@@ -63,7 +64,7 @@ public class FriendService {
 
         // 사용자 Users 조회
         Users host = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         // 사용자 Users의 모든 Friend 조회
         List<Friend> existingFriends = friendRepository.findByHostUser(host);
