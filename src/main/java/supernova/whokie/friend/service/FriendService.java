@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class FriendService {
-    private final KakaoApiCaller apiCaller;
+    private final FriendKakaoApiCaller apiCaller;
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
 

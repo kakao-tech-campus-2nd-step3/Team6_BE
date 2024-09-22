@@ -8,8 +8,8 @@ import supernova.whokie.friend.service.dto.KakaoDto;
 
 @Component
 @AllArgsConstructor
-public class KakaoApiCaller {
-    private final RestClient restClient = RestClient.create();
+public class FriendKakaoApiCaller {
+    private final RestClient restClient;
     private final ObjectMapper objectMapper;
 
     // 카카오 팀 설정 후 구현할 예정

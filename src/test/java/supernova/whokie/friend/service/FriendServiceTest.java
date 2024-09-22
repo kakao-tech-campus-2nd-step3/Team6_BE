@@ -24,7 +24,7 @@ class FriendServiceTest {
     @MockBean
     private FriendRepository friendRepository;
     @MockBean
-    private KakaoApiCaller apiCaller;
+    private FriendKakaoApiCaller apiCaller;
 
     @Test
     @DisplayName("새로 저장할 Users만 추출")
