@@ -28,7 +28,7 @@ public class UserApiCaller {
             .queryParam("client_id", kakaoProperties.clientId())
             .queryParam("redirect_uri", redirectUrl)
             .queryParam("response_type", "code")
-            .queryParam("scope", "profile_image,account_email,name,gender,birthyear")
+            .queryParam("scope", "profile_image,account_email,name,gender,birthyear, friends, talk_message")
             .toUriString();
 
         return url;
@@ -68,7 +68,7 @@ public class UserApiCaller {
         String userInfoUrl = kakaoProperties.userInfoUrl();
 
         TokenInfoResponse tokenResponse = getAccessToken(code);
-        String accessToken = tokenResponse.access_token();
+        String accessToken = tokenResponse.accessToken();
 
         UserInfoResponse response = restClient.get()
             .uri(URI.create(userInfoUrl))
@@ -77,6 +77,6 @@ public class UserApiCaller {
             .toEntity(UserInfoResponse.class)
             .getBody();
 
-        return response.kakao_account();
+        return response.kakaoAccount();
     }
 }

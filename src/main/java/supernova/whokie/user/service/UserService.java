@@ -35,9 +35,9 @@ public class UserService {
                     .name(kakaoAccount.name())
                     .email(kakaoAccount.email())
                     .point(0)
-                    .age(LocalDate.now().getYear() - Integer.parseInt(kakaoAccount.birthyear()))
+                    .age(LocalDate.now().getYear() - Integer.parseInt(kakaoAccount.birthYear()))
                     .gender(Gender.fromString(kakaoAccount.gender()))
-                    .imageUrl(kakaoAccount.profile().profile_image_url())
+                    .imageUrl(kakaoAccount.profile().profileImageUrl())
                     .role(Role.USER)
                     .build()
             ));
