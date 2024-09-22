@@ -1,4 +1,4 @@
-package supernova.whokie.user.util;
+package supernova.whokie.user.infrastructure.apiCaller;
 
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +9,9 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import supernova.whokie.global.property.KakaoProperties;
-import supernova.whokie.user.controller.dto.KakaoAccount;
-import supernova.whokie.user.controller.dto.TokenInfoResponse;
-import supernova.whokie.user.controller.dto.UserInfoResponse;
+import supernova.whokie.user.infrastructure.apiCaller.dto.KakaoAccount;
+import supernova.whokie.user.infrastructure.apiCaller.dto.TokenInfoResponse;
+import supernova.whokie.user.infrastructure.apiCaller.dto.UserInfoResponse;
 
 @Component
 @RequiredArgsConstructor

@@ -8,10 +8,10 @@ import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.controller.dto.KakaoAccount;
+import supernova.whokie.user.infrastructure.apiCaller.dto.KakaoAccount;
 import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.repository.UserRepository;
-import supernova.whokie.user.util.UserApiCaller;
+import supernova.whokie.user.infrastructure.apiCaller.UserApiCaller;
 
 @Service
 @RequiredArgsConstructor

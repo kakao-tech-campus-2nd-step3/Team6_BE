@@ -1,4 +1,4 @@
-package supernova.whokie.user.controller.dto;
+package supernova.whokie.user.infrastructure.apiCaller.dto;
 
 public record TokenInfoResponse(
     String access_token,
