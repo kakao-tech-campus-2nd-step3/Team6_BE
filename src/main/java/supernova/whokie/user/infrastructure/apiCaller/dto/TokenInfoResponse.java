@@ -1,11 +1,15 @@
 package supernova.whokie.user.infrastructure.apiCaller.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record TokenInfoResponse(
-    String access_token,
-    String token_type,
-    String refresh_token,
-    Long expires_in,
-    Long refresh_token_expires_in
+    String accessToken,
+    String tokenType,
+    String refreshToken,
+    Long expiresIn,
+    Long refreshTokenExpiresIn
 ) {
 
 }

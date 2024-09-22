@@ -1,5 +1,9 @@
 package supernova.whokie.user.infrastructure.apiCaller.dto;
 
-public record Profile(String profile_image_url) {
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public record Profile(String profileImageUrl) {
 
 }
