@@ -8,13 +8,15 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import supernova.whokie.user.Role;
 
 @Component
 public class JwtProvider {
 
-    private final static String secretKey = "asdsadaaaaaaaaaaaaaaaaaaaaaadfsfdwefafaefweafwsg";
+    @Value("${jwt.secretKey}")
+    private String secretKey;
     private final long validityInMilliseconds = 60 * 60 * 1000;
 
     public String createToken(Long id, Role role) {

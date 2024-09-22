@@ -28,7 +28,7 @@ public class UserApiCaller {
             .queryParam("client_id", kakaoProperties.clientId())
             .queryParam("redirect_uri", redirectUrl)
             .queryParam("response_type", "code")
-            .queryParam("scope", "profile_image,account_email,name,gender,birthyear, friends, talk_message")
+            .queryParam("scope", "profile_image,account_email,name,gender,birthyear,friends,talk_message")
             .toUriString();
 
         return url;
