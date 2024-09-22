@@ -8,6 +8,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import supernova.whokie.global.exception.AuthenticationException;
 import supernova.whokie.global.property.KakaoProperties;
 import supernova.whokie.user.infrastructure.apiCaller.dto.KakaoAccount;
 import supernova.whokie.user.infrastructure.apiCaller.dto.TokenInfoResponse;
@@ -49,7 +50,7 @@ public class UserApiCaller {
 
             return response;
         } catch (ResourceAccessException e) {
-            return null; //Todo 수정 예정
+            throw new AuthenticationException("네트워크 환경이 불안정합니다.");
         }
     }
 

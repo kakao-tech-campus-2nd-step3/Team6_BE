@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
+import supernova.whokie.global.exception.AuthenticationException;
 
 public class JwtInterceptor implements HandlerInterceptor {
     private static final String HEADER_AUTHORIZATION = "Authorization";
@@ -18,8 +19,7 @@ public class JwtInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String authHeader = request.getHeader(HEADER_AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith(TOKEN_PREFIX)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  //Todo 수정필요
-            return false;
+            throw new AuthenticationException("Invalid Token");
         }
 
         Claims claim = jwtProvider.getClaim(authHeader.substring(7));

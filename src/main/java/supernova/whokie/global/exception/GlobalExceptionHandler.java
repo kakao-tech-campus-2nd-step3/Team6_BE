@@ -34,6 +34,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
 
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ProblemDetail> authenticationException(AuthenticationException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(e.getStatus());
+        problemDetail.setTitle(e.getTitle());
+        problemDetail.setDetail(e.getMessage());
+        return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> unexpectedException(Exception e) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.auth.JwtProvider;
+import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
@@ -47,20 +48,19 @@ public class UserService {
         }
 
         String token = jwtProvider.createToken(user.getId(), user.getRole());
-        System.out.println(token);
         return token;
     }
 
     public UserResponse.Info getUserInfo(Long userId) {
         Users user = userRepository.findById(userId)
-            .orElseThrow();
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         return UserResponse.Info.from(user);
     }
 
     public UserResponse.Point getPoint(Long userId) {
         Users user = userRepository.findById(userId)
-            .orElseThrow();
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         return UserResponse.Point.from(user);
     }
