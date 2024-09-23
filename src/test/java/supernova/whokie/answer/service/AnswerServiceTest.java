@@ -2,6 +2,9 @@ package supernova.whokie.answer.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -12,10 +15,13 @@ import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.question.Question;
+import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
+import supernova.whokie.user.repository.UsersRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,9 +29,14 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class AnswerServiceTest {
-
     @MockBean
     private AnswerRepository answerRepository;
+
+    @MockBean
+    private QuestionRepository questionRepository;
+
+    @MockBean
+    private UsersRepository usersRepository;
 
     @Autowired
     private AnswerService answerService;
@@ -60,4 +71,21 @@ class AnswerServiceTest {
         assertEquals(3, response.content().get(0).hintCount());
     }
 
+    @Test
+    @DisplayName("공통 질문 답하기 메서드의 save가 잘 작동하는지 테스트")
+    void answerToCommonQuestionSaveTest() {
+        // given
+        Users user = mock(Users.class);
+        Question question = mock(Question.class);
+        Users picked = mock(Users.class);
+
+        when(questionRepository.findById(anyLong())).thenReturn(Optional.of(question));
+        when(usersRepository.findById(anyLong())).thenReturn(Optional.of(picked));
+
+        // when
+        answerService.answerToCommonQuestion(user, 1L, 2L);
+
+        // then
+        verify(answerRepository, times(1)).save(any(Answer.class));
+    }
 }
