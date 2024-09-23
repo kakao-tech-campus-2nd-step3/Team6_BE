@@ -43,10 +43,6 @@ public class UserService {
                     .build()
             ));
 
-        if (user.isBeta()) {
-            user.changeRole();
-        }
-
         String token = jwtProvider.createToken(user.getId(), user.getRole());
         return token;
     }

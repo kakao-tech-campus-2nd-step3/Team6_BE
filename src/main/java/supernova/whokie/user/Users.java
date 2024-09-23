@@ -28,10 +28,6 @@ public class Users extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public boolean isBeta() {
-        return this.role == Role.BETA;
-    }
-
     public void changeRole() {
         this.role = Role.USER;
     }

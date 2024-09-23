@@ -31,23 +31,47 @@ class FriendServiceTest {
     @DisplayName("새로운 친구만 추출")
     void filterNewFriendsTest() {
         // given
-        Users host = Users.builder().id(1L).name("host").build();
         Users user1 = Users.builder().id(2L).name("user1").build();
         Users user2 = Users.builder().id(3L).name("user2").build();
         Users user3 = Users.builder().id(4L).name("user3").build();
         Users user4 = Users.builder().id(5L).name("user4").build();
         List<Users> users = List.of(user1, user2, user3);
+        List<Long> userIds = users.stream().map(Users::getId).toList();
 
         Friend friend1 = Friend.builder().friendUser(user3).build();
         Friend friend2 = Friend.builder().friendUser(user4).build();
         List<Friend> friends = List.of(friend1, friend2);
 
         // when
-        List<Friend> actual = friendService.filterNewFriends(users, friends, host);
+        List<Long> actual = friendService.filteringNewFriendUserIds(userIds, friends);
 
         // then
         assertThat(actual).hasSize(2);
-        assertThat(actual.get(0).getFriendUser()).isEqualTo(user1);
-        assertThat(actual.get(1).getFriendUser()).isEqualTo(user2);
+        assertThat(actual.get(0)).isEqualTo(user1.getId());
+        assertThat(actual.get(1)).isEqualTo(user2.getId());
+    }
+
+    @Test
+    @DisplayName("삭제할 친구만 추출")
+    void filterDeleteFriendsTest() {
+        // given
+        Users user1 = Users.builder().id(2L).name("user1").build();
+        Users user2 = Users.builder().id(3L).name("user2").build();
+        Users user3 = Users.builder().id(4L).name("user3").build();
+        Users user4 = Users.builder().id(5L).name("user4").build();
+        List<Users> users = List.of(user1, user2, user3);
+        List<Long> friendUserIds = users.stream().map(Users::getId).toList();
+
+        Friend friend1 = Friend.builder().friendUser(user3).build();
+        Friend friend2 = Friend.builder().friendUser(user4).build();
+        List<Friend> existingFriends = List.of(friend1, friend2);
+
+        // when
+        List<Friend> actual = friendService.filteringDeleteFriendUserIds(friendUserIds, existingFriends);
+
+        // then
+        assertThat(actual).hasSize(1);
+        assertThat(actual.getFirst()).isEqualTo(friend2);
+
     }
 }
