@@ -1,4 +1,4 @@
-package supernova.whokie.user.util;
+package supernova.whokie.user.infrastructure.apiCaller;
 
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -8,10 +8,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import supernova.whokie.global.exception.AuthenticationException;
 import supernova.whokie.global.property.KakaoProperties;
-import supernova.whokie.user.controller.dto.KakaoAccount;
-import supernova.whokie.user.controller.dto.TokenInfoResponse;
-import supernova.whokie.user.controller.dto.UserInfoResponse;
+import supernova.whokie.user.infrastructure.apiCaller.dto.KakaoAccount;
+import supernova.whokie.user.infrastructure.apiCaller.dto.TokenInfoResponse;
+import supernova.whokie.user.infrastructure.apiCaller.dto.UserInfoResponse;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class UserApiCaller {
             .queryParam("client_id", kakaoProperties.clientId())
             .queryParam("redirect_uri", redirectUrl)
             .queryParam("response_type", "code")
-            .queryParam("scope", "profile_image,account_email,name,gender,birthyear")
+            .queryParam("scope", "profile_image,account_email,name,gender,birthyear,friends,talk_message")
             .toUriString();
 
         return url;
@@ -49,7 +50,7 @@ public class UserApiCaller {
 
             return response;
         } catch (ResourceAccessException e) {
-            return null; //Todo 수정 예정
+            throw new AuthenticationException("네트워크 환경이 불안정합니다.");
         }
     }
 
@@ -68,7 +69,7 @@ public class UserApiCaller {
         String userInfoUrl = kakaoProperties.userInfoUrl();
 
         TokenInfoResponse tokenResponse = getAccessToken(code);
-        String accessToken = tokenResponse.access_token();
+        String accessToken = tokenResponse.accessToken();
 
         UserInfoResponse response = restClient.get()
             .uri(URI.create(userInfoUrl))
@@ -77,6 +78,6 @@ public class UserApiCaller {
             .toEntity(UserInfoResponse.class)
             .getBody();
 
-        return response.kakao_account();
+        return response.kakaoAccount();
     }
 }
