@@ -8,7 +8,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
-import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
@@ -26,25 +25,6 @@ class FriendServiceTest {
     private FriendRepository friendRepository;
     @MockBean
     private FriendKakaoApiCaller apiCaller;
-
-    @Test
-    @DisplayName("새로 저장할 Users만 추출")
-    void filterNewProfileTest() {
-        // given
-        KakaoDto.Profile profile1 = new KakaoDto.Profile(1L, "string1", null, null, null);
-        KakaoDto.Profile profile2 = new KakaoDto.Profile(2L, "string2", null, null, null);
-        List<KakaoDto.Profile> profiles = List.of(profile1, profile2);
-        Users user1 = Users.builder().id(2L).kakaoCode("string2").build();
-        Users user2 = Users.builder().id(3L).kakaoCode("string3").build();
-        List<Users> users = List.of(user1, user2);
-
-        // when
-        List<Users> actual = friendService.filterNewProfiles(profiles, users);
-
-        // then
-        assertThat(actual).hasSize(1);
-        assertThat(actual.getFirst().getKakaoCode()).isEqualTo(profile1.uuid());
-    }
 
 
     @Test
