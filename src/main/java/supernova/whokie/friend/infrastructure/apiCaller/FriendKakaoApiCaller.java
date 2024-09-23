@@ -1,10 +1,10 @@
-package supernova.whokie.friend.service;
+package supernova.whokie.friend.infrastructure.apiCaller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import supernova.whokie.friend.service.dto.KakaoDto;
+import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
 
 @Component
 @AllArgsConstructor
@@ -12,7 +12,6 @@ public class FriendKakaoApiCaller {
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
 
-    // 카카오 팀 설정 후 구현할 예정
     public KakaoDto.Friends getKakaoFriends(String accessToken) {
         try {
             return restClient.get()

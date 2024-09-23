@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import supernova.whokie.friend.Friend;
+import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
