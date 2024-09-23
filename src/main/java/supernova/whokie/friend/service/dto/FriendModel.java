@@ -9,14 +9,16 @@ public class FriendModel {
     public record Info(
             Long friendId,
             String name,
-            String imageUrl
+            String imageUrl,
+            boolean isFriend
     ) {
 
-        public static Info from(Users users) {
+        public static Info from(Users user, boolean isFriend) {
             return Info.builder()
-                    .friendId(users.getId())
-                    .name(users.getName())
-                    .imageUrl(users.getImageUrl())
+                    .friendId(user.getId())
+                    .name(user.getName())
+                    .imageUrl(user.getImageUrl())
+                    .isFriend(isFriend)
                     .build();
         }
     }

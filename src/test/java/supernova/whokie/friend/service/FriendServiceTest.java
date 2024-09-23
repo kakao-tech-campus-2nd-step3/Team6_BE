@@ -2,29 +2,70 @@ package supernova.whokie.friend.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
+import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.friend.service.dto.FriendModel;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class FriendServiceTest {
     @Autowired
     private FriendService friendService;
-    @MockBean
+    @Autowired
     private UserRepository userRepository;
-    @MockBean
+    @Autowired
     private FriendRepository friendRepository;
     @MockBean
     private FriendKakaoApiCaller apiCaller;
+
+    @Test
+    @DisplayName("getKakaoFriends 테스트")
+    void getKakaoFriendsTest() {
+        // given
+        Long userId = 1L;
+        KakaoDto.Profile profile1 = new KakaoDto.Profile(1L, "uuid1", false, "nickname1", "image1");
+        KakaoDto.Profile profile2 = new KakaoDto.Profile(2L, "uuid2", false, "nickname2", "image2");
+        KakaoDto.Profile profile3 = new KakaoDto.Profile(3L, "uuid3", false, "nickname3", "image3");
+        List<KakaoDto.Profile> profiles = List.of(profile1, profile2, profile3);
+        KakaoDto.Friends kakaodto = new KakaoDto.Friends(null, profiles);
+        given(apiCaller.getKakaoFriends(any()))
+                .willReturn(kakaodto);
+
+        Users host = Users.builder().id(userId).build();
+        Users user1 = Users.builder().id(2L).kakaoCode(profile1.uuid()).build();
+        Users user2 = Users.builder().id(3L).kakaoCode(profile2.uuid()).build();
+        Users user3 = Users.builder().id(4L).kakaoCode(profile3.uuid()).build();
+        userRepository.saveAll(List.of(host, user1, user2, user3));
+
+        Friend friend = new Friend(1L, host, user3);
+        friendRepository.save(friend);
+
+        // when
+        List<FriendModel.Info> actual = friendService.getKakaoFriends(userId);
+
+        assertThat(actual).hasSize(3);
+        assertThat(actual.get(0).isFriend()).isFalse();
+        assertThat(actual.get(1).isFriend()).isFalse();
+        assertThat(actual.get(2).isFriend()).isTrue();
+    }
 
 
     @Test
@@ -72,6 +113,27 @@ class FriendServiceTest {
         // then
         assertThat(actual).hasSize(1);
         assertThat(actual.getFirst()).isEqualTo(friend2);
+    }
 
+    @Test
+    @DisplayName("FriendUserId들을 Set으로 추출")
+    void extractFriendUserIdAsSetTest() {
+        // given
+        Users user1 = Users.builder().id(1L).name("user1").build();
+        Users user2 = Users.builder().id(2L).name("user2").build();
+        Users user3 = Users.builder().id(3L).name("user3").build();
+
+        Friend friend1 = Friend.builder().friendUser(user1).build();
+        Friend friend2 = Friend.builder().friendUser(user2).build();
+        List<Friend> existingFriends = List.of(friend1, friend2);
+
+        // when
+        Set<Long> actual = friendService.extractFriendUserIdAsSet(existingFriends);
+
+        // then
+        assertThat(actual).hasSize(2);
+        assertThat(actual.contains(user1.getId())).isTrue();
+        assertThat(actual.contains(user2.getId())).isTrue();
+        assertThat(actual.contains(user3.getId())).isFalse();
     }
 }

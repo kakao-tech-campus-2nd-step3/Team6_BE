@@ -43,4 +43,26 @@ class FriendRepositoryTest {
         assertThat(actual.getFirst().getId()).isEqualTo(friend1.getId());
         assertThat(actual.getFirst().getFriendUser().getId()).isEqualTo(user1.getId());
     }
+
+    @Test
+    @DisplayName("hostId로 모든 Friend 조회")
+    void findByHostUserIdTest() {
+        // given
+        Users host = Users.builder().id(1L).name("host").build();
+        Users user1 = Users.builder().id(2L).name("user1").build();
+        Users user2 = Users.builder().id(3L).name("user2").build();
+        userRepository.saveAll(List.of(host, user1, user2));
+        Friend friend1 = Friend.builder().id(1L).hostUser(host).friendUser(user1).build();
+        Friend friend2 = Friend.builder().id(2L).hostUser(user1).friendUser(user2).build();
+        friendRepository.saveAll(List.of(friend1, friend2));
+
+        // when
+        List<Friend> actual = friendRepository.findByHostUserId(host.getId());
+
+        // then
+
+        assertThat(actual).hasSize(1);
+        assertThat(actual.getFirst().getId()).isEqualTo(friend1.getId());
+        assertThat(actual.getFirst().getFriendUser().getId()).isEqualTo(user1.getId());
+    }
 }

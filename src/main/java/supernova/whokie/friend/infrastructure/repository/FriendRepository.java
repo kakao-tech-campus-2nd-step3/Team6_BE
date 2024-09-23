@@ -11,4 +11,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     @Query("SELECT f FROM Friend f JOIN FETCH f.friendUser WHERE f.hostUser = :hostUser")
     List<Friend> findByHostUser(Users hostUser);
+
+    @Query("SELECT f FROM Friend f JOIN FETCH f.friendUser WHERE f.hostUser.id = :hostUserId")
+    List<Friend> findByHostUserId(Long hostUserId);
 }

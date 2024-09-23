@@ -18,6 +18,7 @@ public class FriendResponse {
                                     .friendId(info.friendId())
                                     .name(info.name())
                                     .imageUrl(info.imageUrl())
+                                    .isFriend(info.isFriend())
                                     .build()
                     ).toList()).build();
         }
@@ -27,7 +28,8 @@ public class FriendResponse {
     public record Info(
             Long friendId,
             String name,
-            String imageUrl
+            String imageUrl,
+            boolean isFriend
     ) {
 
     }

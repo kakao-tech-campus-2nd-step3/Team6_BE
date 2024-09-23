@@ -14,6 +14,8 @@ import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -29,7 +31,14 @@ public class FriendService {
         List<KakaoDto.Profile> profiles = apiCaller.getKakaoFriends(accessToken).elements();
         List<String> kakaoCodes = profiles.stream().map(KakaoDto.Profile::uuid).toList();
         List<Users> friendUsers = userRepository.findByKakaoCodeIn(kakaoCodes);
-        return friendUsers.stream().map(FriendModel.Info::from).toList();
+
+        // 사용자의 모든 Friend 조회
+        List<Friend> existingList = friendRepository.findByHostUserId(userId);
+        Set<Long> existingSet = extractFriendUserIdAsSet(existingList);
+
+        return friendUsers.stream()
+                .map(user -> FriendModel.Info.from(user, user.isFriend(existingSet)))
+                .toList();
     }
 
     @Transactional
@@ -78,5 +87,9 @@ public class FriendService {
         return existingFriends.stream()
                 .filter(friend -> !friendUserIds.contains(friend.getFriendUserId()))
                 .toList();
+    }
+
+    public Set<Long> extractFriendUserIdAsSet(List<Friend> friends) {
+        return friends.stream().map(Friend::getFriendUserId).collect(Collectors.toSet());
     }
 }

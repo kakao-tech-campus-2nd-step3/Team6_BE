@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import supernova.whokie.global.entity.BaseTimeEntity;
 
+import java.util.Set;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Builder
@@ -30,5 +32,10 @@ public class Users extends BaseTimeEntity {
 
     public void changeRole() {
         this.role = Role.USER;
+    }
+
+
+    public boolean isFriend(Set<Long> set) {
+        return set.contains(id);
     }
 }
