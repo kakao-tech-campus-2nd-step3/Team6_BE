@@ -14,6 +14,7 @@ import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.question.Question;
+import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
@@ -33,6 +34,8 @@ class AnswerServiceTest {
     private FriendRepository friendRepository;
     @MockBean
     private UserRepository userRepository;
+    @MockBean
+    private QuestionRepository questionRepository;
 
     @Autowired
     private AnswerService answerService;
@@ -64,6 +67,29 @@ class AnswerServiceTest {
         assertEquals(1, response.content().size());
         assertEquals(dummyAnswer.getId(), response.content().get(0).answerId());
         assertEquals(3, response.content().get(0).hintCount());
+    }
+
+    @Test
+    @DisplayName("공통 질문 답하기 메서드의 save가 잘 작동하는지 테스트")
+    void answerToCommonQuestionSaveTest() {
+        // given
+        Long userId = 1L;
+        Long questionId = 1L;
+        Long pickedId = 2L;
+
+        Users user = mock(Users.class);
+        Question question = mock(Question.class);
+        Users picked = mock(Users.class);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));  // 첫 번째 userId에 대한 리턴 값
+        when(questionRepository.findById(questionId)).thenReturn(Optional.of(question)); // questionId에 대한 리턴 값
+        when(userRepository.findById(pickedId)).thenReturn(Optional.of(picked)); // pickedId에 대한 리턴 값
+
+        // when
+        answerService.answerToCommonQuestion(userId, questionId, pickedId); // ID 값을 전달
+
+        // then
+        verify(answerRepository, times(1)).save(any(Answer.class));  // save가 한 번 호출되었는지 확인
     }
 
     @Test

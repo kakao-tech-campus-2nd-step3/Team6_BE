@@ -32,9 +32,11 @@ public class AnswerController {
 
     @PostMapping("/common")
     public GlobalResponse common(
-            @RequestBody AnswerRequest.Common request
+            @RequestBody AnswerRequest.Common request,
+            @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("dummy").build();
+        answerService.answerToCommonQuestion(userId, request.questionId(), request.pickedId());
+        return GlobalResponse.builder().message("답변 완료").build();
     }
 
     @PostMapping("/group")

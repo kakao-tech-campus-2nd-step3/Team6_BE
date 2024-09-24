@@ -38,4 +38,13 @@ public class Answer extends BaseTimeEntity {
 
     private Integer hintCount;
 
+    public static Answer create(Question question, Users picker, Users picked, Integer hintCount){
+        return Answer.builder()
+                .question(question)
+                .picker(picker)
+                .picked(picked)
+                .hintCount(hintCount)
+                .build();
+    }
+
 }

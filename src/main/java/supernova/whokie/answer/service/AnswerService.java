@@ -14,6 +14,8 @@ import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.global.exception.EntityNotFoundException;
+import supernova.whokie.question.Question;
+import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.repository.UserRepository;
@@ -24,10 +26,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnswerService {
     public static final int FRIEND_LIMIT = 5;
+    public static final int DEFAULT_HINT_COUNT = 0;
 
     private final AnswerRepository answerRepository;
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
+    private final QuestionRepository questionRepository;
 
 
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Users user) {
@@ -41,6 +45,18 @@ public class AnswerService {
                 .toList();
 
         return PagingResponse.from(new PageImpl<>(answerResponse, pageable, answers.getTotalElements()));
+    }
+
+    public void answerToCommonQuestion(Long userId, Long questionId, Long pickedId){
+        Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
+
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 질문을 찾을 수 없습니다."));
+        Users picked = userRepository.findById(pickedId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
+
+        Answer answer = Answer.create(question, user, picked, DEFAULT_HINT_COUNT);
+        answerRepository.save(answer);
     }
 
     public AnswerResponse.Refresh refreshAnswerList(Long userId){
