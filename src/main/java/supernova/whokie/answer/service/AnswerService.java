@@ -3,6 +3,7 @@ package supernova.whokie.answer.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import supernova.whokie.answer.Answer;
@@ -40,7 +41,8 @@ public class AnswerService {
     }
 
     public AnswerResponse.Refresh refreshAnswerList(Users user){
-        List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), FRIEND_LIMIT);
+        Pageable pageable = PageRequest.of(0, FRIEND_LIMIT);
+        List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), pageable);
 
         List<UserResponse.PickedInfo> friendsInfoList = randomFriends.stream().map(
                 friend -> UserResponse.PickedInfo.builder()

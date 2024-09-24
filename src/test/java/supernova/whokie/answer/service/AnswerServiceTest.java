@@ -96,13 +96,13 @@ class AnswerServiceTest {
         );
 
         //when
-        when(friendRepository.findRandomFriendsByHostUser(dummyUser.getId(), AnswerService.FRIEND_LIMIT)).thenReturn(dummyFriends);
+        when(friendRepository.findRandomFriendsByHostUser(dummyUser.getId(), any(Pageable.class))).thenReturn(dummyFriends);
 
         AnswerResponse.Refresh refreshResponse = answerService.refreshAnswerList(dummyUser);
 
         //then
         assertEquals(5, refreshResponse.users().size());
 
-        verify(friendRepository, times(1)).findRandomFriendsByHostUser(dummyUser.getId(), AnswerService.FRIEND_LIMIT);
+        verify(friendRepository, times(1)).findRandomFriendsByHostUser(dummyUser.getId(), any(Pageable.class));
     }
 }
