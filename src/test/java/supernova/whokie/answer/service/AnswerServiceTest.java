@@ -96,7 +96,7 @@ class AnswerServiceTest {
         );
 
         //when
-        when(friendRepository.findRandomFriendsByHostUser(dummyUser.getId(), any(Pageable.class))).thenReturn(dummyFriends);
+        when(friendRepository.findRandomFriendsByHostUser(anyLong(), any(Pageable.class))).thenReturn(dummyFriends);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(dummyUser));
 
         AnswerResponse.Refresh refreshResponse = answerService.refreshAnswerList(dummyUser.getId());
@@ -104,6 +104,6 @@ class AnswerServiceTest {
         //then
         assertEquals(5, refreshResponse.users().size());
 
-        verify(friendRepository, times(1)).findRandomFriendsByHostUser(dummyUser.getId(), any(Pageable.class));
+        verify(friendRepository, times(1)).findRandomFriendsByHostUser(anyLong(), any(Pageable.class));
     }
 }
