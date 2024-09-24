@@ -16,6 +16,13 @@ public class UserResponse {
         String name,
         String imageUrl
     ) {
+        public static PickedInfo from(Users user){
+            return PickedInfo.builder()
+                    .userId(user.getId())
+                    .name(user.getName())
+                    .imageUrl(user.getImageUrl())
+                    .build();
+        }
 
     }
 

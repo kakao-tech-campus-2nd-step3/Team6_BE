@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.repository.FriendRepository;
 import supernova.whokie.question.Question;
@@ -15,8 +16,7 @@ import supernova.whokie.user.Users;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 
@@ -75,8 +75,8 @@ class QuestionServiceTest {
         );
 
         // when
-        when(questionRepository.findRandomQuestions(anyInt())).thenReturn(dummyQuestions);
-        when(friendRepository.findRandomFriendsByHostUser(eq(dummyUser.getId()), anyInt())).thenReturn(dummyFriends);
+        when(questionRepository.findRandomQuestions(any(Pageable.class))).thenReturn(dummyQuestions);
+        when(friendRepository.findRandomFriendsByHostUser(eq(dummyUser.getId()), any(Pageable.class))).thenReturn(dummyFriends);
 
         QuestionResponse.CommonQuestions commonQuestions = questionService.getCommonQuestion(dummyUser);
 

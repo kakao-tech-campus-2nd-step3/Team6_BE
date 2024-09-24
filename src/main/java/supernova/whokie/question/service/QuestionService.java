@@ -1,6 +1,8 @@
 package supernova.whokie.question.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.repository.FriendRepository;
@@ -34,32 +36,26 @@ public class QuestionService {
 
 
     private List<QuestionResponse.CommonQuestion> getCommonQuestionList(Users user) {
+        Pageable pageable = PageRequest.of(0, QUESTION_LIMIT);
 
-        List<Question> randomQuestions = questionRepository.findRandomQuestions(QUESTION_LIMIT);
+        List<Question> randomQuestions = questionRepository.findRandomQuestions(pageable);
 
         List<QuestionResponse.CommonQuestion> commonQuestions = randomQuestions.stream()
                 .map(question -> {
                     List<UserResponse.PickedInfo> friendList = getFriendList(user);
 
-                    return QuestionResponse.CommonQuestion.builder()
-                            .questionId(question.getId())
-                            .content(question.getContent())
-                            .users(friendList)
-                            .build();
+                    return QuestionResponse.CommonQuestion.from(question, friendList);
                 })
                 .toList();
         return commonQuestions;
     }
 
     private List<UserResponse.PickedInfo> getFriendList(Users user) {
-        List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), FRIEND_LIMIT);
+        Pageable pageable = PageRequest.of(0, FRIEND_LIMIT);
+        List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), pageable);
 
         List<UserResponse.PickedInfo> friendList = randomFriends.stream()
-                .map(friend -> UserResponse.PickedInfo.builder()
-                        .userId(friend.getFriendUser().getId())
-                        .name(friend.getFriendUser().getName())
-                        .imageUrl(friend.getFriendUser().getImageUrl())
-                        .build())
+                .map(friend -> UserResponse.PickedInfo.from(friend.getFriendUser()))
                 .toList();
         return friendList;
     }

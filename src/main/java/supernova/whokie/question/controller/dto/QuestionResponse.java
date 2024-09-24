@@ -2,6 +2,7 @@ package supernova.whokie.question.controller.dto;
 
 import lombok.Builder;
 import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
+import supernova.whokie.question.Question;
 import supernova.whokie.user.controller.dto.UserResponse;
 
 import java.time.LocalDate;
@@ -38,6 +39,13 @@ public class QuestionResponse {
             String content,
             List<UserResponse.PickedInfo> users
     ) {
+        public static CommonQuestion from(Question question, List<UserResponse.PickedInfo> friendList){
+            return CommonQuestion.builder()
+                    .questionId(question.getId())
+                    .content(question.getContent())
+                    .users(friendList)
+                    .build();
+        }
 
     }
 
