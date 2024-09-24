@@ -1,5 +1,6 @@
 package supernova.whokie.question.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -9,7 +10,7 @@ import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
 import supernova.whokie.question.controller.dto.QuestionRequest;
 import supernova.whokie.question.controller.dto.QuestionResponse;
-import supernova.whokie.user.controller.dto.UserResponse;
+import supernova.whokie.question.service.QuestionService;
 
 import java.awt.print.Pageable;
 import java.time.LocalDate;
@@ -17,7 +18,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class QuestionController {
+    private final QuestionService questionService;
 
     @GetMapping("/group/{group-id}/question/random")
     public QuestionResponse.GroupQuestions getGroupQuestionList
@@ -59,11 +62,7 @@ public class QuestionController {
     public QuestionResponse.CommonQuestions getCommonQuestions(
             @Authenticate Long userId
     ) {
-        return QuestionResponse.CommonQuestions.builder()
-                .questions(
-                        List.of(new QuestionResponse.CommonQuestion(1L, "질문1", List.of(new UserResponse.PickedInfo(1L, "user1", "imageUrl"), new UserResponse.PickedInfo(2L, "user2", "imageUrl"))),
-                                new QuestionResponse.CommonQuestion(2L, "질문2", List.of(new UserResponse.PickedInfo(1L, "user1", "imageUrl"), new UserResponse.PickedInfo(2L, "user2", "imageUrl")))))
-                .build();
+        return questionService.getCommonQuestion(userId);
     }
 
 }
