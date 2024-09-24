@@ -35,7 +35,9 @@ public class AnswerService {
     private final QuestionRepository questionRepository;
 
 
-    public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Users user) {
+    public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId) {
+        Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
+
         Page<Answer> answers = answerRepository.findAllByPicker(pageable, user);
 
         List<AnswerResponse.Record> answerResponse = answers.stream()

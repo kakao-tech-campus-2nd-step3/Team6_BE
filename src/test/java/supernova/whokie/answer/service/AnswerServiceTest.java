@@ -59,10 +59,11 @@ class AnswerServiceTest {
 
         // when
         when(answerRepository.findAllByPicker(any(Pageable.class), eq(dummyUser))).thenReturn(answerPage);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(dummyUser));
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").ascending());
 
-        PagingResponse<AnswerResponse.Record> response = answerService.getAnswerRecord(pageable, dummyUser);
+        PagingResponse<AnswerResponse.Record> response = answerService.getAnswerRecord(pageable, dummyUser.getId());
 
         // then
         assertEquals(1, response.content().size());
