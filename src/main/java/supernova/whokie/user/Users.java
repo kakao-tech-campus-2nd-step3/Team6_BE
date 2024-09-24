@@ -2,7 +2,7 @@ package supernova.whokie.user;
 
 import jakarta.persistence.*;
 import lombok.*;
-import supernova.whokie.global.BaseTimeEntity;
+import supernova.whokie.global.entity.BaseTimeEntity;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -27,4 +27,12 @@ public class Users extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public boolean isBeta() {
+        return this.role == Role.BETA;
+    }
+
+    public void changeRole() {
+        this.role = Role.USER;
+    }
 }
