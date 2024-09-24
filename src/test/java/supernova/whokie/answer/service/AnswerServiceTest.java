@@ -82,7 +82,7 @@ class AnswerServiceTest {
         Question question = mock(Question.class);
         Users picked = mock(Users.class);
 
-        AnswerCommand.CommonAnswer command = mock(AnswerCommand.CommonAnswer.class); // CommonAnswer command 객체를 목으로 생성
+        AnswerCommand.CommonAnswer command = mock(AnswerCommand.CommonAnswer.class);
         Answer answer = mock(Answer.class);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
