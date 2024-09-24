@@ -9,12 +9,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
+import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.question.Question;
+import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -27,6 +34,8 @@ class AnswerIntegrationTest {
     private UserRepository userRepository;
     @Autowired
     private FriendRepository friendRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @BeforeEach
     void setUp(){
@@ -52,6 +61,11 @@ class AnswerIntegrationTest {
                     .build();
             friendRepository.save(friend);
         }
+
+        Question question = Question.builder()
+                .content("Test Question")
+                .build();
+        questionRepository.save(question);
     }
 
     @Test
@@ -70,6 +84,26 @@ class AnswerIntegrationTest {
                     String responseContent = result.getResponse().getContentAsString();
                     System.out.println("users 내용: " + responseContent);
                 });
+
+    }
+
+    @Test
+    @DisplayName("공통 질문에 답변하기 테스트")
+    void answerToCommonQuestionTest() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("userId","1");
+
+        Long questionId = 1L;
+        Long pickedId = 2L;
+
+        String requestBody = String.format("{\"questionId\": %d, \"pickedId\": %d}", questionId, pickedId);
+
+        mockMvc.perform(post("/api/answer/common")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .requestAttr("userId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("답변 완료"));
 
     }
 
