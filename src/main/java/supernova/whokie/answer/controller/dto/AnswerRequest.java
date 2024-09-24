@@ -6,6 +6,12 @@ public class AnswerRequest {
             Long questionId,
             Long pickedId
     ) {
+        public AnswerCommand.CommonAnswer toCommand() {
+            return AnswerCommand.CommonAnswer.builder()
+                    .questionId(this.questionId)
+                    .pickedId(this.pickedId)
+                    .build();
+        }
 
     }
 

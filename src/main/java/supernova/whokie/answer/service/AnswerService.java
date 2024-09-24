@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import supernova.whokie.answer.Answer;
+import supernova.whokie.answer.controller.dto.AnswerCommand;
 import supernova.whokie.answer.controller.dto.AnswerRecord;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
@@ -47,15 +48,14 @@ public class AnswerService {
         return PagingResponse.from(new PageImpl<>(answerResponse, pageable, answers.getTotalElements()));
     }
 
-    public void answerToCommonQuestion(Long userId, Long questionId, Long pickedId){
+    public void answerToCommonQuestion(Long userId, AnswerCommand.CommonAnswer command) {
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
-
-        Question question = questionRepository.findById(questionId)
+        Question question = questionRepository.findById(command.questionId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 질문을 찾을 수 없습니다."));
-        Users picked = userRepository.findById(pickedId)
+        Users picked = userRepository.findById(command.pickedId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
 
-        Answer answer = Answer.create(question, user, picked, DEFAULT_HINT_COUNT);
+        Answer answer = command.toEntity(question, user, picked);
         answerRepository.save(answer);
     }
 

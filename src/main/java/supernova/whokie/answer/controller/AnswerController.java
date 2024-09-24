@@ -35,7 +35,7 @@ public class AnswerController {
             @RequestBody AnswerRequest.Common request,
             @Authenticate Long userId
     ) {
-        answerService.answerToCommonQuestion(userId, request.questionId(), request.pickedId());
+        answerService.answerToCommonQuestion(userId, request.toCommand());
         return GlobalResponse.builder().message("답변 완료").build();
     }
 

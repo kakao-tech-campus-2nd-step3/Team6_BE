@@ -8,6 +8,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 import supernova.whokie.answer.Answer;
+import supernova.whokie.answer.controller.dto.AnswerCommand;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.friend.Friend;
@@ -81,15 +82,23 @@ class AnswerServiceTest {
         Question question = mock(Question.class);
         Users picked = mock(Users.class);
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));  // 첫 번째 userId에 대한 리턴 값
-        when(questionRepository.findById(questionId)).thenReturn(Optional.of(question)); // questionId에 대한 리턴 값
-        when(userRepository.findById(pickedId)).thenReturn(Optional.of(picked)); // pickedId에 대한 리턴 값
+        AnswerCommand.CommonAnswer command = mock(AnswerCommand.CommonAnswer.class); // CommonAnswer command 객체를 목으로 생성
+        Answer answer = mock(Answer.class);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(questionRepository.findById(questionId)).thenReturn(Optional.of(question));
+        when(userRepository.findById(pickedId)).thenReturn(Optional.of(picked));
+
+        when(command.questionId()).thenReturn(questionId);
+        when(command.pickedId()).thenReturn(pickedId);
+
+        when(command.toEntity(eq(question), eq(user), eq(picked))).thenReturn(answer);
 
         // when
-        answerService.answerToCommonQuestion(userId, questionId, pickedId); // ID 값을 전달
+        answerService.answerToCommonQuestion(userId, command);
 
         // then
-        verify(answerRepository, times(1)).save(any(Answer.class));  // save가 한 번 호출되었는지 확인
+        verify(answerRepository, times(1)).save(answer);
     }
 
     @Test
