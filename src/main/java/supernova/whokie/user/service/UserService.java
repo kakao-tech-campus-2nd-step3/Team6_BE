@@ -15,6 +15,7 @@ import supernova.whokie.user.infrastructure.apiCaller.dto.Partner;
 import supernova.whokie.user.infrastructure.apiCaller.dto.UserInfoResponse;
 import supernova.whokie.user.repository.UserRepository;
 import supernova.whokie.user.infrastructure.apiCaller.UserApiCaller;
+import supernova.whokie.user.service.dto.UserModel;
 
 @Service
 @RequiredArgsConstructor
@@ -53,17 +54,17 @@ public class UserService {
         return token;
     }
 
-    public UserResponse.Info getUserInfo(Long userId) {
+    public UserModel.Info getUserInfo(Long userId) {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return UserResponse.Info.from(user);
+        return UserModel.Info.from(user);
     }
 
-    public UserResponse.Point getPoint(Long userId) {
+    public UserModel.Point getPoint(Long userId) {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return UserResponse.Point.from(user);
+        return UserModel.Point.from(user);
     }
 }

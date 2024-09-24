@@ -15,9 +15,10 @@ import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.controller.dto.UserResponse;
-import supernova.whokie.user.controller.dto.UserResponse.Point;
 import supernova.whokie.user.repository.UserRepository;
 import supernova.whokie.user.service.UserService;
+import supernova.whokie.user.service.dto.UserModel;
+import supernova.whokie.user.service.dto.UserModel.Point;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,7 +54,7 @@ class UserServiceTest {
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
 
         // when
-        Point point = userService.getPoint(1L);
+        UserModel.Point point = userService.getPoint(1L);
 
         // then
         assertEquals(1000, point.amount());
@@ -64,8 +65,17 @@ class UserServiceTest {
     @DisplayName("내 정보 조회")
     void getUserInfo() throws Exception{
         // given
-        Users user = new Users(1L, "test", "test@gmail.com", 1000, 20, "code", Gender.M, "test",
-            Role.USER);
+        Users user = Users.builder()
+            .id(1L)
+            .name("test")
+            .email("test@gmail.com")
+            .point(1000)
+            .age(30)
+            .kakaoCode("code")
+            .gender(Gender.M)
+            .imageUrl("test")
+            .role(Role.USER)
+            .build();
 
         // 리플렉션을 사용해 createdAt 수동 설정
         Field createdAtField = BaseTimeEntity.class.getDeclaredField("createdAt");
@@ -75,7 +85,7 @@ class UserServiceTest {
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
 
         // when
-        UserResponse.Info userInfo = userService.getUserInfo(1L);
+        UserModel.Info userInfo = userService.getUserInfo(1L);
 
         // then
         assertThat(userInfo.name()).isEqualTo(user.getName());
