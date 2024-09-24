@@ -3,22 +3,23 @@ package supernova.whokie.global.auth;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import supernova.whokie.global.exception.AuthenticationException;
 
-@Component
-@RequiredArgsConstructor
 public class JwtInterceptor implements HandlerInterceptor {
-
+    private static final String HEADER_AUTHORIZATION = "Authorization";
+    private static final String TOKEN_PREFIX = "Bearer ";
     private final JwtProvider jwtProvider;
+
+    public JwtInterceptor(JwtProvider jwtProvider) {
+        this.jwtProvider = jwtProvider;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);  //Todo 수정필요
-            return false;
+        String authHeader = request.getHeader(HEADER_AUTHORIZATION);
+        if (authHeader == null || !authHeader.startsWith(TOKEN_PREFIX)) {
+            throw new AuthenticationException("Invalid Token");
         }
 
         Claims claim = jwtProvider.getClaim(authHeader.substring(7));

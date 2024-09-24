@@ -6,8 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import supernova.whokie.friend.Friend;
-import supernova.whokie.friend.repository.FriendRepository;
-import supernova.whokie.friend.service.dto.KakaoDto;
+import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
+import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
@@ -24,7 +25,7 @@ class FriendServiceTest {
     @MockBean
     private FriendRepository friendRepository;
     @MockBean
-    private KakaoApiCaller apiCaller;
+    private FriendKakaoApiCaller apiCaller;
 
     @Test
     @DisplayName("새로 저장할 Users만 추출")
@@ -42,7 +43,7 @@ class FriendServiceTest {
 
         // then
         assertThat(actual).hasSize(1);
-        assertThat(actual.get(0).getKakaoCode()).isEqualTo(profile1.uuid());
+        assertThat(actual.getFirst().getKakaoCode()).isEqualTo(profile1.uuid());
     }
 
 

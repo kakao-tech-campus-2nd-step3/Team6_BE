@@ -1,5 +1,6 @@
 package supernova.whokie.friend.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import supernova.whokie.friend.controller.dto.FriendRequest;
 import supernova.whokie.friend.controller.dto.FriendResponse;
@@ -13,7 +14,7 @@ public class FriendController {
 
     @PostMapping("")
     public GlobalResponse postFriend(
-            @RequestBody FriendRequest.Add request
+            @Valid @RequestBody FriendRequest.Add request
     ) {
         return GlobalResponse.builder().message("message").build();
     }

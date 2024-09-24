@@ -1,4 +1,4 @@
-package supernova.whokie.global;
+package supernova.whokie.global.entity;
 
 
 import jakarta.persistence.Column;

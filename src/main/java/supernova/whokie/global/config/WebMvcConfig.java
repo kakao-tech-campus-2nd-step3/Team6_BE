@@ -2,30 +2,43 @@ package supernova.whokie.global.config;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import supernova.whokie.global.auth.JwtInterceptor;
+import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.resolver.LoginUserArgumentResolver;
 
 @Configuration
 @RequiredArgsConstructor
-public class WebConfig implements WebMvcConfigurer {
-    private final JwtInterceptor jwtInterceptor;
-    private final LoginUserArgumentResolver loginUserArgumentResolver;
+public class WebMvcConfig implements WebMvcConfigurer {
+    private final JwtProvider jwtProvider;
+
+    @Bean
+    @Order(1)
+    public JwtInterceptor jwtInterceptor() {
+        return new JwtInterceptor(jwtProvider);
+    }
+
+    @Bean
+    public LoginUserArgumentResolver loginUserArgumentResolver() {
+        return new LoginUserArgumentResolver();
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // Todo 경로 수정 해야함
-        registry.addInterceptor(jwtInterceptor)
+        registry.addInterceptor(jwtInterceptor())
             .addPathPatterns("/api/user/mypage");
     }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(loginUserArgumentResolver);
+        resolvers.add(loginUserArgumentResolver());
     }
 
     @Override

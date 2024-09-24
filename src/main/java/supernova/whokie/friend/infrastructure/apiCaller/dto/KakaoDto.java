@@ -1,4 +1,4 @@
-package supernova.whokie.friend.service.dto;
+package supernova.whokie.friend.infrastructure.apiCaller.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

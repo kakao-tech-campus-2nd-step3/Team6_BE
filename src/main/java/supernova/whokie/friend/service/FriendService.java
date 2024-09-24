@@ -5,8 +5,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.controller.dto.FriendRequest;
-import supernova.whokie.friend.repository.FriendRepository;
-import supernova.whokie.friend.service.dto.KakaoDto;
+import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
+import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
+import supernova.whokie.global.exception.EntityNotFoundException;
+import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
@@ -15,7 +18,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class FriendService {
-    private final KakaoApiCaller apiCaller;
+    private final FriendKakaoApiCaller apiCaller;
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
 
@@ -50,6 +53,7 @@ public class FriendService {
                         .name(profile.profileNickname())
                         .kakaoCode(profile.uuid())
                         .imageUrl(profile.profileThumbnailImage())
+                        .role(Role.BETA)
                         .build())
                 .toList();
     }
@@ -63,7 +67,7 @@ public class FriendService {
 
         // 사용자 Users 조회
         Users host = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         // 사용자 Users의 모든 Friend 조회
         List<Friend> existingFriends = friendRepository.findByHostUser(host);
@@ -80,7 +84,10 @@ public class FriendService {
 
         return friendUsers.stream()
                 .filter(friend -> !existingFriendIds.contains(friend.getId()))
-                .map(friend -> Friend.builder().hostUser(host).friendUser(friend).build())
+                .map(friend -> Friend.builder()
+                        .hostUser(host)
+                        .friendUser(friend)
+                        .build())
                 .toList();
     }
 }
