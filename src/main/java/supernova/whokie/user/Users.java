@@ -20,6 +20,7 @@ public class Users extends BaseTimeEntity {
     private Integer point;
     private Integer age;
     private String kakaoCode;
+    private String uuid;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -27,12 +28,4 @@ public class Users extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    public boolean isBeta() {
-        return this.role == Role.BETA;
-    }
-
-    public void changeRole() {
-        this.role = Role.USER;
-    }
 }
