@@ -32,9 +32,10 @@ public class ProfileQuestionController {
 
     @DeleteMapping("/{profile-question-id}")
     public GlobalResponse deleteProfileQuestion(
-        @PathVariable("profile-question-id") String profileQuestionId
+        @PathVariable("profile-question-id") Long profileQuestionId
     ) {
-        return GlobalResponse.builder().message("message").build();
+        profileQuestionService.deleteProfileQuestion(profileQuestionId);
+        return GlobalResponse.builder().message("삭제가 완료되었습니다.").build();
     }
 
 }
