@@ -6,11 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.controller.dto.UserResponse;
+import supernova.whokie.user.repository.UserRepository;
 
 import java.util.List;
 
@@ -23,9 +25,11 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
     private final FriendRepository friendRepository;
+    private final UserRepository userRepository;
 
-    public QuestionResponse.CommonQuestions getCommonQuestion(Users user) {
+    public QuestionResponse.CommonQuestions getCommonQuestion(Long userId) {
 
+        Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
 
         List<QuestionResponse.CommonQuestion> commonQuestions = getCommonQuestionList(user);
 

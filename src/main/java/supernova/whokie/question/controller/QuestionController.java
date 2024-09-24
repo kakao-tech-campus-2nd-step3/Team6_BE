@@ -3,6 +3,7 @@ package supernova.whokie.question.controller;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
@@ -55,7 +56,9 @@ public class QuestionController {
     }
 
     @GetMapping("/common/question/random")
-    public QuestionResponse.CommonQuestions getCommonQuestions() {
+    public QuestionResponse.CommonQuestions getCommonQuestions(
+            @Authenticate Long userId
+    ) {
         return QuestionResponse.CommonQuestions.builder()
                 .questions(
                         List.of(new QuestionResponse.CommonQuestion(1L, "질문1", List.of(new UserResponse.PickedInfo(1L, "user1", "imageUrl"), new UserResponse.PickedInfo(2L, "user2", "imageUrl"))),
