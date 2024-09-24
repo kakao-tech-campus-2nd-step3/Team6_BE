@@ -5,7 +5,6 @@ import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 
 import java.time.LocalDate;
-import supernova.whokie.user.Users;
 import supernova.whokie.user.service.dto.UserModel;
 
 public class UserResponse {

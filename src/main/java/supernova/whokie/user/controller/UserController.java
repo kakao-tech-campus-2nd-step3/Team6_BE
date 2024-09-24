@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import supernova.whokie.global.annotation.Authenticate;
+import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.controller.dto.UserResponse;
@@ -34,12 +35,12 @@ public class UserController {
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<Void> registerUser(@RequestParam("code") String code) {
+    public ResponseEntity<GlobalResponse> registerUser(@RequestParam("code") String code) {
         String token = userService.register(code);
 
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.CREATED)
             .header("Authorization", token)
-            .build();
+            .body(GlobalResponse.builder().message("로그인이 완료되었습니다.").build());
     }
 
     @GetMapping("/mypage")

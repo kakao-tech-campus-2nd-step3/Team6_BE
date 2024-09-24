@@ -5,9 +5,6 @@ import lombok.Builder;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.controller.dto.UserResponse;
-import supernova.whokie.user.controller.dto.UserResponse.Info;
-import supernova.whokie.user.controller.dto.UserResponse.Point;
 
 public class UserModel {
 
