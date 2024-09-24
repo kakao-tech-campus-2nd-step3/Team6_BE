@@ -19,9 +19,7 @@ import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -42,7 +40,7 @@ class AnswerIntegrationTest {
     private AnswerRepository answerRepository;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         Users user = Users.builder()
                 .name("Test User")
                 .email("test@example.com")
@@ -68,7 +66,7 @@ class AnswerIntegrationTest {
 
         for (int i = 1; i <= 5; i++) {
             Question question = Question.builder()
-                    .content("Test Question "+ i)
+                    .content("Test Question " + i)
                     .build();
             questionRepository.save(question);
 
@@ -79,7 +77,7 @@ class AnswerIntegrationTest {
                     .picked(userRepository.findById(2L).orElseThrow())
                     .hintCount(0)
                     .build();
-            ReflectionTestUtils.setField(answer, "createdAt", LocalDateTime.of(2024, 9, 19, 0,0));
+            ReflectionTestUtils.setField(answer, "createdAt", LocalDateTime.of(2024, 9, 19, 0, 0));
             answerRepository.save(answer);
         }
 
@@ -89,11 +87,11 @@ class AnswerIntegrationTest {
     @DisplayName("답변 목록 새로고침 테스트")
     void refreshAnswerListTest() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setAttribute("userId","1");
+        request.setAttribute("userId", "1");
 
         mockMvc.perform(get("/api/answer/refresh")
-                .requestAttr("userId", "1")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .requestAttr("userId", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.users").isArray())
                 .andExpect(jsonPath("$.users.length()").value(5))
@@ -108,7 +106,7 @@ class AnswerIntegrationTest {
     @DisplayName("공통 질문에 답변하기 테스트")
     void answerToCommonQuestionTest() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setAttribute("userId","1");
+        request.setAttribute("userId", "1");
 
         Long questionId = 1L;
         Long pickedId = 2L;

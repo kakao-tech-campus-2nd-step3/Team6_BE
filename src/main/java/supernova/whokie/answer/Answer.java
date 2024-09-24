@@ -1,11 +1,7 @@
 package supernova.whokie.answer;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.question.Question;
 import supernova.whokie.user.Users;
@@ -36,7 +32,7 @@ public class Answer extends BaseTimeEntity {
 
     private Integer hintCount;
 
-    public static Answer create(Question question, Users picker, Users picked, Integer hintCount){
+    public static Answer create(Question question, Users picker, Users picked, Integer hintCount) {
         return Answer.builder()
                 .question(question)
                 .picker(picker)

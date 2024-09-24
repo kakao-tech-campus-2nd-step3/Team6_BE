@@ -53,7 +53,7 @@ class AnswerServiceTest {
                 .picked(mock(Users.class))
                 .hintCount(3)
                 .build();
-        ReflectionTestUtils.setField(dummyAnswer, "createdAt", LocalDateTime.of(2024, 9, 19, 0,0));
+        ReflectionTestUtils.setField(dummyAnswer, "createdAt", LocalDateTime.of(2024, 9, 19, 0, 0));
 
         Page<Answer> answerPage = new PageImpl<>(List.of(dummyAnswer), PageRequest.of(0, 10), 1);
 

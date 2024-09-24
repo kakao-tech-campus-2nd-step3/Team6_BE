@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import supernova.whokie.answer.Answer;
 import supernova.whokie.answer.controller.dto.AnswerCommand;
-import supernova.whokie.answer.controller.dto.AnswerRecord;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.friend.Friend;
@@ -60,7 +59,7 @@ public class AnswerService {
         answerRepository.save(answer);
     }
 
-    public AnswerResponse.Refresh refreshAnswerList(Long userId){
+    public AnswerResponse.Refresh refreshAnswerList(Long userId) {
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
         Pageable pageable = PageRequest.of(0, FRIEND_LIMIT);
         List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), pageable);
