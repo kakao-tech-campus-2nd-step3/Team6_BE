@@ -7,6 +7,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.user.Users;
@@ -15,6 +16,7 @@ import supernova.whokie.user.Users;
 @AllArgsConstructor
 @Builder
 @Entity
+@Getter
 public class ProfileQuestion extends BaseTimeEntity {
 
     @Id
@@ -24,7 +26,7 @@ public class ProfileQuestion extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Users users;
+    private Users user;
 
     private Boolean profileQuestionStatus;
 }
