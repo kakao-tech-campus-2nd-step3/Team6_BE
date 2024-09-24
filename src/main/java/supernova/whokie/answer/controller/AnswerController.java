@@ -1,5 +1,6 @@
 package supernova.whokie.answer.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -32,7 +33,7 @@ public class AnswerController {
 
     @PostMapping("/common")
     public GlobalResponse common(
-            @RequestBody AnswerRequest.Common request,
+            @Valid @RequestBody AnswerRequest.Common request,
             @Authenticate Long userId
     ) {
         answerService.answerToCommonQuestion(userId, request.toCommand());

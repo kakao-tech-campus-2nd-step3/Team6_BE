@@ -1,9 +1,13 @@
 package supernova.whokie.answer.controller.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class AnswerRequest {
 
     public record Common(
+            @NotNull
             Long questionId,
+            @NotNull
             Long pickedId
     ) {
         public AnswerCommand.CommonAnswer toCommand() {
