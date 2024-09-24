@@ -12,10 +12,17 @@ public class UserResponse {
 
     @Builder
     public record PickedInfo(
-        Long userId,
-        String name,
-        String imageUrl
+            Long userId,
+            String name,
+            String imageUrl
     ) {
+        public static PickedInfo from(Users user){
+            return PickedInfo.builder()
+                    .userId(user.getId())
+                    .name(user.getName())
+                    .imageUrl(user.getImageUrl())
+                    .build();
+        }
 
     }
 

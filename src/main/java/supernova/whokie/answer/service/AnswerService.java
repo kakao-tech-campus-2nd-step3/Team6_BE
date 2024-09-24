@@ -11,7 +11,7 @@ import supernova.whokie.answer.controller.dto.AnswerRecord;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.friend.Friend;
-import supernova.whokie.friend.repository.FriendRepository;
+import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.controller.dto.UserResponse;
@@ -45,11 +45,7 @@ public class AnswerService {
         List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), pageable);
 
         List<UserResponse.PickedInfo> friendsInfoList = randomFriends.stream().map(
-                friend -> UserResponse.PickedInfo.builder()
-                        .userId(friend.getFriendUser().getId())
-                        .name(friend.getFriendUser().getName())
-                        .imageUrl(friend.getFriendUser().getImageUrl())
-                        .build()
+                friend -> UserResponse.PickedInfo.from(friend.getFriendUser())
         ).toList();
 
         return AnswerResponse.Refresh.builder()

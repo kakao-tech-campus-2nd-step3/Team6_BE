@@ -15,7 +15,7 @@ import supernova.whokie.answer.Answer;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.friend.Friend;
-import supernova.whokie.friend.repository.FriendRepository;
+import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.question.Question;
 import supernova.whokie.user.Users;
