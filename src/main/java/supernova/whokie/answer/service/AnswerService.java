@@ -42,8 +42,7 @@ public class AnswerService {
 
         List<AnswerResponse.Record> answerResponse = answers.stream()
                 .map(answer -> {
-                    AnswerRecord answerRecord = AnswerRecord.from(answer);
-                    return AnswerResponse.Record.from(answerRecord);
+                    return AnswerResponse.Record.from(answer);
                 })
                 .toList();
 

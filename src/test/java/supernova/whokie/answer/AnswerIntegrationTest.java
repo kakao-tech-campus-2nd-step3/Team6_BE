@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.friend.Friend;
@@ -17,6 +18,7 @@ import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +38,8 @@ class AnswerIntegrationTest {
     private FriendRepository friendRepository;
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private AnswerRepository answerRepository;
 
     @BeforeEach
     void setUp(){
@@ -62,10 +66,23 @@ class AnswerIntegrationTest {
             friendRepository.save(friend);
         }
 
-        Question question = Question.builder()
-                .content("Test Question")
-                .build();
-        questionRepository.save(question);
+        for (int i = 1; i <= 5; i++) {
+            Question question = Question.builder()
+                    .content("Test Question "+ i)
+                    .build();
+            questionRepository.save(question);
+
+            // 답변 설정
+            Answer answer = Answer.builder()
+                    .question(question)
+                    .picker(user)
+                    .picked(userRepository.findById(2L).orElseThrow())
+                    .hintCount(0)
+                    .build();
+            ReflectionTestUtils.setField(answer, "createdAt", LocalDateTime.of(2024, 9, 19, 0,0));
+            answerRepository.save(answer);
+        }
+
     }
 
     @Test
@@ -107,4 +124,24 @@ class AnswerIntegrationTest {
 
     }
 
+    @Test
+    @DisplayName("전체 질문 기록 조회 테스트")
+    void getAnswerRecordTest() throws Exception {
+        mockMvc.perform(get("/api/answer/record")
+                        .requestAttr("userId", "1")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content.length()").value(5))
+                .andExpect(jsonPath("$.page").value(0))
+                .andExpect(jsonPath("$.size").value(10))
+                .andExpect(jsonPath("$.totalPages").value(1))
+                .andExpect(jsonPath("$.totalElements").value(5))
+                .andDo(result -> {
+                    String responseContent = result.getResponse().getContentAsString();
+                    System.out.println("전체 질문 기록 내용: " + responseContent);
+                });
+    }
 }
