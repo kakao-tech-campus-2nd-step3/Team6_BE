@@ -1,11 +1,7 @@
 package supernova.whokie.answer.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,11 +15,13 @@ import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.question.Question;
 import supernova.whokie.user.Users;
+import supernova.whokie.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -33,6 +31,8 @@ class AnswerServiceTest {
     private AnswerRepository answerRepository;
     @MockBean
     private FriendRepository friendRepository;
+    @MockBean
+    private UserRepository userRepository;
 
     @Autowired
     private AnswerService answerService;
@@ -97,8 +97,9 @@ class AnswerServiceTest {
 
         //when
         when(friendRepository.findRandomFriendsByHostUser(dummyUser.getId(), any(Pageable.class))).thenReturn(dummyFriends);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(dummyUser));
 
-        AnswerResponse.Refresh refreshResponse = answerService.refreshAnswerList(dummyUser);
+        AnswerResponse.Refresh refreshResponse = answerService.refreshAnswerList(dummyUser.getId());
 
         //then
         assertEquals(5, refreshResponse.users().size());

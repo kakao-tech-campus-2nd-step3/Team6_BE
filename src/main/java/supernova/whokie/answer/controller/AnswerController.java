@@ -1,5 +1,6 @@
 package supernova.whokie.answer.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import supernova.whokie.answer.controller.dto.AnswerRequest;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
+import supernova.whokie.answer.service.AnswerService;
+import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.user.controller.dto.UserResponse;
@@ -22,7 +25,10 @@ import static org.hibernate.internal.util.collections.CollectionHelper.listOf;
 
 @RestController
 @RequestMapping("/api/answer")
+@RequiredArgsConstructor
 public class AnswerController {
+
+    private final AnswerService answerService;
 
     @PostMapping("/common")
     public GlobalResponse common(
@@ -39,12 +45,10 @@ public class AnswerController {
     }
 
     @GetMapping("/refresh")
-    public AnswerResponse.Refresh refresh() {
-        return AnswerResponse.Refresh.builder().users(
-                listOf(new UserResponse.PickedInfo(1L, "dummy", "dummy"),
-                        new UserResponse.PickedInfo(2L, "dummy", "dummy"),
-                        new UserResponse.PickedInfo(3L, "dummy", "dummy"))
-        ).build();
+    public AnswerResponse.Refresh refresh(
+            @Authenticate Long userId
+    ) {
+        return answerService.refreshAnswerList(userId);
     }
 
     @GetMapping("/record")

@@ -13,8 +13,10 @@ import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
+import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.controller.dto.UserResponse;
+import supernova.whokie.user.repository.UserRepository;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class AnswerService {
 
     private final AnswerRepository answerRepository;
     private final FriendRepository friendRepository;
+    private final UserRepository userRepository;
 
 
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Users user) {
@@ -40,7 +43,8 @@ public class AnswerService {
         return PagingResponse.from(new PageImpl<>(answerResponse, pageable, answers.getTotalElements()));
     }
 
-    public AnswerResponse.Refresh refreshAnswerList(Users user){
+    public AnswerResponse.Refresh refreshAnswerList(Long userId){
+        Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
         Pageable pageable = PageRequest.of(0, FRIEND_LIMIT);
         List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), pageable);
 
