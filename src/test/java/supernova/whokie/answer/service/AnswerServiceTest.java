@@ -9,6 +9,7 @@ import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 import supernova.whokie.answer.Answer;
 import supernova.whokie.answer.controller.dto.AnswerCommand;
+import supernova.whokie.answer.controller.dto.AnswerModel;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.friend.Friend;
@@ -135,7 +136,7 @@ class AnswerServiceTest {
         when(friendRepository.findRandomFriendsByHostUser(anyLong(), any(Pageable.class))).thenReturn(dummyFriends);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(dummyUser));
 
-        AnswerResponse.Refresh refreshResponse = answerService.refreshAnswerList(dummyUser.getId());
+        AnswerModel.Refresh refreshResponse = answerService.refreshAnswerList(dummyUser.getId());
 
         //then
         assertEquals(5, refreshResponse.users().size());

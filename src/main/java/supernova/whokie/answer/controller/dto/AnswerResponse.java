@@ -13,6 +13,11 @@ public class AnswerResponse {
     public record Refresh(
             List<UserResponse.PickedInfo> users
     ) {
+        public static Refresh from(AnswerModel.Refresh refresh){
+            return Refresh.builder()
+                    .users(refresh.users())
+                    .build();
+        }
 
     }
 

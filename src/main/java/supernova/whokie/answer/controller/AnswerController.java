@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import supernova.whokie.answer.controller.dto.AnswerModel;
 import supernova.whokie.answer.controller.dto.AnswerRequest;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.service.AnswerService;
@@ -42,7 +43,8 @@ public class AnswerController {
     public AnswerResponse.Refresh refresh(
             @Authenticate Long userId
     ) {
-        return answerService.refreshAnswerList(userId);
+        AnswerModel.Refresh refresh = answerService.refreshAnswerList(userId);
+        return AnswerResponse.Refresh.from(refresh);
     }
 
     @GetMapping("/record")
