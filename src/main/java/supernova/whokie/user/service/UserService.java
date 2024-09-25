@@ -45,7 +45,7 @@ public class UserService {
                     .gender(Gender.fromString(kakaoAccount.gender()))
                     .imageUrl(kakaoAccount.profile().profileImageUrl())
                     .role(Role.USER)
-                    //.kakaoCode(partner.uuid())
+                    .kakaoCode("test")
                     .build()
             ));
 
