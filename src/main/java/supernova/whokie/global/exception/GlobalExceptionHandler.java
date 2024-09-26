@@ -51,12 +51,5 @@ public class GlobalExceptionHandler {
         log.error("Internal Server Error", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(problemDetail);
     }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ProblemDetail> illegalArgumentException(IllegalArgumentException e) {
-        ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problemDetail.setTitle("Illegal Argument Error");
-        problemDetail.setDetail(e.getMessage());
-        return ResponseEntity.badRequest().body(problemDetail);
-    }
+    
 }
