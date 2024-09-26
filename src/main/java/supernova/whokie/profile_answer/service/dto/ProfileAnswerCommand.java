@@ -3,12 +3,11 @@ package supernova.whokie.profile_answer.service.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import supernova.whokie.global.exception.SelfValidating;
 import supernova.whokie.profile_answer.ProfileAnswer;
 import supernova.whokie.profile_question.ProfileQuestion;
 import supernova.whokie.user.Users;
 
-public class ProfileAnswerCommand extends SelfValidating {
+public class ProfileAnswerCommand {
 
     @Builder
     public record Create(
