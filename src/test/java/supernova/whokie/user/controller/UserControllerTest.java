@@ -2,8 +2,6 @@ package supernova.whokie.user.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,13 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.auth.JwtInterceptor;
 import supernova.whokie.global.auth.JwtProvider;
-import supernova.whokie.profile.Profile;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
-import supernova.whokie.user.service.UserService;
-import supernova.whokie.user.service.dto.UserModel;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -56,7 +50,7 @@ class UserControllerTest {
             .email("test@gmail.com")
             .point(100)
             .age(25)
-            .kakaoCode("kakao_code")
+            .kakaoId("kakao_code")
             .gender(Gender.M)
             .role(Role.USER)
             .build();

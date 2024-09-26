@@ -34,8 +34,8 @@ class FriendServiceTest {
         KakaoDto.Profile profile1 = new KakaoDto.Profile(1L, "string1", null, null, null);
         KakaoDto.Profile profile2 = new KakaoDto.Profile(2L, "string2", null, null, null);
         List<KakaoDto.Profile> profiles = List.of(profile1, profile2);
-        Users user1 = Users.builder().id(2L).kakaoCode("string2").build();
-        Users user2 = Users.builder().id(3L).kakaoCode("string3").build();
+        Users user1 = Users.builder().id(2L).kakaoId("string2").build();
+        Users user2 = Users.builder().id(3L).kakaoId("string3").build();
         List<Users> users = List.of(user1, user2);
 
         // when
@@ -43,7 +43,7 @@ class FriendServiceTest {
 
         // then
         assertThat(actual).hasSize(1);
-        assertThat(actual.getFirst().getKakaoCode()).isEqualTo(profile1.uuid());
+        assertThat(actual.getFirst().getKakaoId()).isEqualTo(profile1.uuid());
     }
 
 

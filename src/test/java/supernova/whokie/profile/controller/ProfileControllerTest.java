@@ -1,6 +1,5 @@
 package supernova.whokie.profile.controller;
 
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,7 +48,7 @@ public class ProfileControllerTest {
             .email("test@gmail.com")
             .point(100)
             .age(25)
-            .kakaoCode("kakao_code")
+            .kakaoId("kakao_code")
             .gender(Gender.M)
             .role(Role.USER)
             .build();

@@ -42,11 +42,11 @@ class UserRepositoryTest {
     @DisplayName("kakaoCode리스트로 Users 조회")
     void findByKakaoCodeInTest() {
         // given
-        Users user1 = Users.builder().id(1L).kakaoCode("user1").build();
-        Users user2 = Users.builder().id(2L).kakaoCode("user2").build();
-        Users user3 = Users.builder().id(3L).kakaoCode("user3").build();
+        Users user1 = Users.builder().id(1L).kakaoId("user1").build();
+        Users user2 = Users.builder().id(2L).kakaoId("user2").build();
+        Users user3 = Users.builder().id(3L).kakaoId("user3").build();
         List<Users> users = List.of(user1, user2, user3);
-        List<String> kakaoCodes = users.stream().map(Users::getKakaoCode).toList();
+        List<String> kakaoCodes = users.stream().map(Users::getKakaoId).toList();
         List<Users> savedUsers = List.of(user1, user2);
         userRepository.saveAll(savedUsers);
 

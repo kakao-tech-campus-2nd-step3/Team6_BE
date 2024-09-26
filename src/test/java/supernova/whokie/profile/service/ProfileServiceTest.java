@@ -18,7 +18,6 @@ import supernova.whokie.profile.service.dto.ProfileModel;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class ProfileServiceTest {
@@ -40,7 +39,7 @@ public class ProfileServiceTest {
             .email("test@gmail.com")
             .point(100)
             .age(25)
-            .kakaoCode("kakao_code")
+            .kakaoId("kakao_code")
             .gender(Gender.M)
             .role(Role.USER)
             .build();
