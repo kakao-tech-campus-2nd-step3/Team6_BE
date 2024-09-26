@@ -15,7 +15,7 @@ public class AnswerResponse {
     public record Refresh(
             List<UserModel.PickedInfo> users
     ) {
-        public static Refresh from(AnswerModel.Refresh refresh){
+        public static AnswerResponse.Refresh from(AnswerModel.Refresh refresh){
             return Refresh.builder()
                     .users(refresh.users())
                     .build();
@@ -31,7 +31,7 @@ public class AnswerResponse {
             int hintCount,
             LocalDate createdAt
     ) {
-        public static Record from(Answer answer) {
+        public static AnswerResponse.Record from(Answer answer) {
             return new Record(
                     answer.getId(),
                     answer.getQuestion().getId(),

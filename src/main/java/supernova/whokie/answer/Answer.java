@@ -1,6 +1,7 @@
 package supernova.whokie.answer;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.question.Question;
@@ -19,17 +20,19 @@ public class Answer extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id")
+    @JoinColumn(name = "question_id", nullable = false)
     private Question question; // question id
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "picker_id")
+    @JoinColumn(name = "picker_id", nullable = false)
     private Users picker; // picker id
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "picked_id")
+    @JoinColumn(name = "picked_id", nullable = false)
     private Users picked; // picked id
 
+    @Column(nullable = false)
+    @Min(0)
     private Integer hintCount;
 
     public static Answer create(Question question, Users picker, Users picked, Integer hintCount) {

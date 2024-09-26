@@ -13,7 +13,7 @@ public class AnswerModel {
             List<UserModel.PickedInfo> users
 
     ){
-        public static Refresh from(List<UserModel.PickedInfo> friendsInfoList){
+        public static AnswerModel.Refresh from(List<UserModel.PickedInfo> friendsInfoList){
             return Refresh.builder()
                     .users(friendsInfoList)
                     .build();
