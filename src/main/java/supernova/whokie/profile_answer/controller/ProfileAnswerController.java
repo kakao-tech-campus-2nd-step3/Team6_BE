@@ -37,8 +37,7 @@ public class ProfileAnswerController {
         @Authenticate Long userId,
         @RequestBody @Valid ProfileAnswerRequest.Answer request
     ) {
-
-        profileAnswerService.createProfileAnswer(userId, Answer.toCommand(request));
+        profileAnswerService.createProfileAnswer(userId, request.toCommand());
         return GlobalResponse.builder().message("저장에 성공했습니다.").build();
     }
 
