@@ -6,6 +6,7 @@ import supernova.whokie.user.Role;
 
 import java.time.LocalDate;
 import supernova.whokie.user.Users;
+import supernova.whokie.user.service.dto.UserModel;
 
 public class UserResponse {
 
@@ -16,11 +17,11 @@ public class UserResponse {
         String name,
         String imageUrl
     ) {
-        public static PickedInfo from(Users user){
+        public static UserResponse.PickedInfo from(UserModel.PickedInfo pickedInfo){
             return PickedInfo.builder()
-                    .userId(user.getId())
-                    .name(user.getName())
-                    .imageUrl(user.getImageUrl())
+                    .userId(pickedInfo.userId())
+                    .name(pickedInfo.name())
+                    .imageUrl(pickedInfo.imageUrl())
                     .build();
         }
 

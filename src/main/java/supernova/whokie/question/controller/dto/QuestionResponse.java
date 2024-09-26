@@ -5,6 +5,7 @@ import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.user.controller.dto.UserResponse;
+import supernova.whokie.user.service.dto.UserModel;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -49,9 +50,9 @@ public class QuestionResponse {
     public record CommonQuestion(
             Long questionId,
             String content,
-            List<UserResponse.PickedInfo> users
+            List<UserModel.PickedInfo> users
     ) {
-        public static CommonQuestion from(Question question, List<UserResponse.PickedInfo> friendList) {
+        public static CommonQuestion from(Question question, List<UserModel.PickedInfo> friendList) {
             return CommonQuestion.builder()
                     .questionId(question.getId())
                     .content(question.getContent())

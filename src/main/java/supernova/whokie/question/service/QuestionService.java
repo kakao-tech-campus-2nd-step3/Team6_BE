@@ -15,6 +15,7 @@ import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.repository.UserRepository;
+import supernova.whokie.user.service.dto.UserModel;
 
 import java.util.List;
 
@@ -51,12 +52,12 @@ public class QuestionService {
                 .toList();
     }
 
-    private List<UserResponse.PickedInfo> getFriendList(Users user) {
+    private List<UserModel.PickedInfo> getFriendList(Users user) {
         Pageable pageable = PageRequest.of(0, friendLimit);
         List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), pageable);
 
         return randomFriends.stream()
-                .map(friend -> UserResponse.PickedInfo.from(friend.getFriendUser()))
+                .map(friend -> UserModel.PickedInfo.from(friend.getFriendUser()))
                 .toList();
     }
 
