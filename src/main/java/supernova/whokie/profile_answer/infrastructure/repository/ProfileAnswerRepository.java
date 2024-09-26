@@ -1,5 +1,6 @@
 package supernova.whokie.profile_answer.infrastructure.repository;
 
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,7 @@ public interface ProfileAnswerRepository extends JpaRepository<ProfileAnswer, Lo
 
     @Query("SELECT pa FROM ProfileAnswer pa JOIN FETCH pa.profileQuestion WHERE pa.profileQuestion.user.id = :userId")
     Page<ProfileAnswer> findAllByUserId(Long userId, Pageable pageable);
+
+    @Query("SELECT pa FROM ProfileAnswer pa JOIN FETCH pa.answeredUser WHERE pa.id = :id")
+    Optional<ProfileAnswer> findByIdWithAnsweredUser(Long id);
 }
