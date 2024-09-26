@@ -41,4 +41,15 @@ public class ProfileAnswerService {
 
         profileAnswerRepository.save(profileAnswer);
     }
+
+    public void deleteProfileAnswer(Long userId, Long profileAnswerId) {
+        ProfileAnswer profileAnswer = profileAnswerRepository.findByIdWithAnsweredUser(
+                profileAnswerId)
+            .orElseThrow(() -> new EntityNotFoundException("해당하는 프로필 답변이 존재하지 않습니다."));
+
+        if (!profileAnswer.isOwner(userId)) {
+            throw new IllegalArgumentException("답변을 작성한 사람만 삭제할 수 있습니다.");
+        }
+        profileAnswerRepository.deleteById(profileAnswerId);
+    }
 }
