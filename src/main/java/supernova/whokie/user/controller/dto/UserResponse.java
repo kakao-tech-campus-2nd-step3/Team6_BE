@@ -6,6 +6,7 @@ import supernova.whokie.user.Role;
 
 import java.time.LocalDate;
 import supernova.whokie.user.Users;
+import supernova.whokie.user.service.dto.UserModel;
 
 public class UserResponse {
 
@@ -16,11 +17,11 @@ public class UserResponse {
             String name,
             String imageUrl
     ) {
-        public static PickedInfo from(Users user){
+        public static UserResponse.PickedInfo from(UserModel.PickedInfo pickedInfo){
             return PickedInfo.builder()
-                    .userId(user.getId())
-                    .name(user.getName())
-                    .imageUrl(user.getImageUrl())
+                    .userId(pickedInfo.userId())
+                    .name(pickedInfo.name())
+                    .imageUrl(pickedInfo.imageUrl())
                     .build();
         }
 
@@ -38,13 +39,13 @@ public class UserResponse {
 
         public static Info from(Users user) {
             return Info.builder()
-                .email(user.getEmail())
-                .gender(user.getGender())
-                .age(user.getAge())
-                .name(user.getName())
-                .role(user.getRole())
-                .createdAt(user.getCreatedAt().toLocalDate())
-                .build();
+                    .email(user.getEmail())
+                    .gender(user.getGender())
+                    .age(user.getAge())
+                    .name(user.getName())
+                    .role(user.getRole())
+                    .createdAt(user.getCreatedAt().toLocalDate())
+                    .build();
         }
     }
 
@@ -55,8 +56,8 @@ public class UserResponse {
 
         public static Point from(Users user) {
             return Point.builder()
-                .amount(user.getPoint())
-                .build();
+                    .amount(user.getPoint())
+                    .build();
         }
     }
 }
