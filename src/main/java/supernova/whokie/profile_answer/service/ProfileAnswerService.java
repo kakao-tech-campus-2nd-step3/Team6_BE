@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import supernova.whokie.global.exception.EntityNotFoundException;
+import supernova.whokie.global.exception.ForbiddenException;
 import supernova.whokie.profile_answer.ProfileAnswer;
 import supernova.whokie.profile_answer.infrastructure.repository.ProfileAnswerRepository;
 import supernova.whokie.profile_answer.service.dto.ProfileAnswerCommand;
@@ -48,7 +49,7 @@ public class ProfileAnswerService {
             .orElseThrow(() -> new EntityNotFoundException("해당하는 프로필 답변이 존재하지 않습니다."));
 
         if (!profileAnswer.isOwner(userId)) {
-            throw new IllegalArgumentException("답변을 작성한 사람만 삭제할 수 있습니다.");
+            throw new ForbiddenException("답변을 작성한 사람만 삭제할 수 있습니다.");
         }
         profileAnswerRepository.deleteById(profileAnswerId);
     }
