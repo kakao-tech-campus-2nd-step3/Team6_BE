@@ -1,6 +1,7 @@
 package supernova.whokie.answer.controller.dto;
 
 import jakarta.validation.constraints.NotNull;
+import supernova.whokie.answer.service.dto.AnswerCommand;
 
 public class AnswerRequest {
 
