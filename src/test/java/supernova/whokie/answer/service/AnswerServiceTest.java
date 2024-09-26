@@ -94,7 +94,7 @@ class AnswerServiceTest {
         when(command.questionId()).thenReturn(questionId);
         when(command.pickedId()).thenReturn(pickedId);
 
-        when(command.toEntity(eq(question), eq(user), eq(picked))).thenReturn(answer);
+        when(command.toEntity(eq(question), eq(user), eq(picked), anyInt())).thenReturn(answer);
 
         // when
         answerService.answerToCommonQuestion(userId, command);

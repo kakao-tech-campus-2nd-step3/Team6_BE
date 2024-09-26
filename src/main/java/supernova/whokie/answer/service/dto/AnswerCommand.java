@@ -12,8 +12,8 @@ public class AnswerCommand {
             Long questionId,
             Long pickedId
     ) {
-        public Answer toEntity(Question question, Users user, Users picked) {
-            return Answer.create(question, user, picked, AnswerService.DEFAULT_HINT_COUNT);
+        public Answer toEntity(Question question, Users user, Users picked, int hintCount) {
+            return Answer.create(question, user, picked, hintCount);
         }
     }
 }
