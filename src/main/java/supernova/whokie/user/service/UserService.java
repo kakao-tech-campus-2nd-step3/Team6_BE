@@ -11,8 +11,11 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.apiCaller.dto.KakaoAccount;
 import supernova.whokie.user.controller.dto.UserResponse;
+import supernova.whokie.user.infrastructure.apiCaller.dto.Partner;
+import supernova.whokie.user.infrastructure.apiCaller.dto.UserInfoResponse;
 import supernova.whokie.user.repository.UserRepository;
 import supernova.whokie.user.infrastructure.apiCaller.UserApiCaller;
+import supernova.whokie.user.service.dto.UserModel;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +31,9 @@ public class UserService {
 
     @Transactional
     public String register(String code) {
-        KakaoAccount kakaoAccount = userApiCaller.extractUserInfo(code);
+        UserInfoResponse userInfoResponse = userApiCaller.extractUserInfo(code);
+        KakaoAccount kakaoAccount = userInfoResponse.kakaoAccount();
+        Partner partner = userInfoResponse.forPartner();
 
         Users user = userRepository.findByEmail(kakaoAccount.email())
             .orElseGet(() -> userRepository.save(
@@ -40,28 +45,26 @@ public class UserService {
                     .gender(Gender.fromString(kakaoAccount.gender()))
                     .imageUrl(kakaoAccount.profile().profileImageUrl())
                     .role(Role.USER)
+                    //.kakaoCode(partner.uuid())
                     .build()
             ));
 
-        if (user.isBeta()) {
-            user.changeRole();
-        }
-
         String token = jwtProvider.createToken(user.getId(), user.getRole());
+        System.out.println(token);
         return token;
     }
 
-    public UserResponse.Info getUserInfo(Long userId) {
+    public UserModel.Info getUserInfo(Long userId) {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return UserResponse.Info.from(user);
+        return UserModel.Info.from(user);
     }
 
-    public UserResponse.Point getPoint(Long userId) {
+    public UserModel.Point getPoint(Long userId) {
         Users user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return UserResponse.Point.from(user);
+        return UserModel.Point.from(user);
     }
 }

@@ -53,7 +53,7 @@ public class FriendService {
                         .name(profile.profileNickname())
                         .kakaoCode(profile.uuid())
                         .imageUrl(profile.profileThumbnailImage())
-                        .role(Role.BETA)
+                        //.role(Role.BETA)  어찌합니까 어떡해야 할까요
                         .build())
                 .toList();
     }
