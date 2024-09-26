@@ -39,5 +39,8 @@ public class ProfileAnswer extends BaseTimeEntity {
     @JoinColumn(name = "answered_user_id", nullable = false)
     private Users answeredUser;
 
+    public boolean isOwner(Long userId) {
+        return answeredUser.getId().equals(userId);
+    }
 
 }
