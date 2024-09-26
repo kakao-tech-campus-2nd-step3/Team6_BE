@@ -32,12 +32,13 @@ public class Users extends BaseTimeEntity {
     private Integer age;
 
     @NotNull
-    private String kakaoCode;
+    private Long kakaoId;
 
     @Enumerated(EnumType.STRING)
     @NotNull
     private Gender gender;
 
+    @NotNull
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)

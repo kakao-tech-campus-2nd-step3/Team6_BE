@@ -1,11 +1,8 @@
-package supernova.whokie.user.controller;
+package supernova.whokie.profile.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,11 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import supernova.whokie.global.auth.JwtInterceptor;
 import supernova.whokie.global.auth.JwtProvider;
+import supernova.whokie.profile.Profile;
+import supernova.whokie.profile.infrastructure.ProfileRepository;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
@@ -26,22 +24,22 @@ import supernova.whokie.user.repository.UserRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
-class UserControllerTest {
+public class ProfileControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private ProfileRepository profileRepository;
 
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MockMvc mockMvc;
+
     @MockBean
     private JwtProvider jwtProvider;
 
-    @MockBean
-    private JwtInterceptor jwtInterceptor;
-
     private Users user;
+    private Profile profile;
 
     @BeforeEach
     void setUp() {
@@ -56,35 +54,30 @@ class UserControllerTest {
             .build();
 
         userRepository.save(user);
+
+        profile = Profile.builder()
+            .users(user)
+            .todayVisited(2)
+            .totalVisited(12)
+            .description("test")
+            .backgroundImageUrl("test")
+            .build();
+
+        profileRepository.save(profile);
     }
 
     @Test
-    @DisplayName("유저 정보 조회")
-    void getUserInfo() throws Exception {
-        String token = jwtProvider.createToken(user.getId(), user.getRole());
-        given(jwtInterceptor.preHandle(any(), any(), any())).willReturn(true);
-
-        mockMvc.perform(get("/api/user/mypage")
-                .header("Authorization", "Bearer " + token)
-                .requestAttr("userId", String.valueOf(user.getId()))
+    @DisplayName("프로필 조회")
+    void getProfileInfo() throws Exception {
+        mockMvc.perform(get("/api/profile/{user-id}", user.getId())
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.email").value("test@gmail.com"))
-            .andExpect(jsonPath("$.gender").value("M"))
-            .andExpect(jsonPath("$.age").value(25))
             .andExpect(jsonPath("$.name").value("test"))
-            .andExpect(jsonPath("$.role").value("USER"))
+            .andExpect(jsonPath("$.description").value("test"))
+            .andExpect(jsonPath("$.todayVisited").value(2))
+            .andExpect(jsonPath("$.totalVisited").value(12))
+            .andExpect(jsonPath("$.backgroundImageUrl").value("test"))
             .andDo(print());
     }
 
-    @Test
-    @DisplayName("유저 포인트 조회")
-    void getUserPoint() throws Exception {
-        mockMvc.perform(get("/api/user/point")
-                .requestAttr("userId", String.valueOf(user.getId()))
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.amount").value(100))
-            .andDo(print());
-    }
 }

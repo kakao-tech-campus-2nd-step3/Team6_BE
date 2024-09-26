@@ -9,7 +9,6 @@ import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
 import supernova.whokie.global.exception.EntityNotFoundException;
-import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
@@ -45,13 +44,13 @@ public class FriendService {
     }
 
     public List<Users> filterNewProfiles(List<KakaoDto.Profile> profiles, List<Users> users) {
-        List<String> existingKakaoCodes = users.stream().map(Users::getKakaoCode).toList();
+        List<String> existingKakaoCodes = users.stream().map(Users::getKakaoId).toList();
 
         return profiles.stream()
                 .filter(profile -> !existingKakaoCodes.contains(profile.uuid()))
                 .map(profile -> Users.builder()
                         .name(profile.profileNickname())
-                        .kakaoCode(profile.uuid())
+                        .kakaoId(profile.uuid())
                         .imageUrl(profile.profileThumbnailImage())
                         //.role(Role.BETA)  어찌합니까 어떡해야 할까요
                         .build())
