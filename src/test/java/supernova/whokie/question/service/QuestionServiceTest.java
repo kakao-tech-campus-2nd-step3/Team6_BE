@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.question.Question;
+import supernova.whokie.question.controller.dto.QuestionModel;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
@@ -84,7 +85,9 @@ class QuestionServiceTest {
         when(questionRepository.findRandomQuestions(any(Pageable.class))).thenReturn(dummyQuestions);
         when(friendRepository.findRandomFriendsByHostUser(eq(dummyUser.getId()), any(Pageable.class))).thenReturn(dummyFriends);
 
-        QuestionResponse.CommonQuestions commonQuestions = questionService.getCommonQuestion(dummyUser.getId());
+        List<QuestionModel.CommonQuestion> commonQuestionList = questionService.getCommonQuestion(dummyUser.getId());
+        QuestionResponse.CommonQuestions commonQuestions = QuestionResponse.CommonQuestions.from(commonQuestionList);
+
 
         // then
         assertEquals(10, commonQuestions.questions().size());

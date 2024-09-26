@@ -8,6 +8,7 @@ import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
+import supernova.whokie.question.controller.dto.QuestionModel;
 import supernova.whokie.question.controller.dto.QuestionRequest;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.service.QuestionService;
@@ -62,7 +63,8 @@ public class QuestionController {
     public QuestionResponse.CommonQuestions getCommonQuestions(
             @Authenticate Long userId
     ) {
-        return questionService.getCommonQuestion(userId);
+        List<QuestionModel.CommonQuestion> commonQuestions = questionService.getCommonQuestion(userId);
+        return QuestionResponse.CommonQuestions.from(commonQuestions);
     }
 
 }

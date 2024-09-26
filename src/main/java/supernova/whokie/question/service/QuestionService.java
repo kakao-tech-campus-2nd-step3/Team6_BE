@@ -8,6 +8,7 @@ import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.question.Question;
+import supernova.whokie.question.controller.dto.QuestionModel;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
@@ -27,28 +28,26 @@ public class QuestionService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
 
-    public QuestionResponse.CommonQuestions getCommonQuestion(Long userId) {
+    public List<QuestionModel.CommonQuestion> getCommonQuestion(Long userId) {
 
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
 
-        List<QuestionResponse.CommonQuestion> commonQuestions = getCommonQuestionList(user);
+        List<QuestionModel.CommonQuestion> commonQuestions = getCommonQuestionList(user);
 
-        return QuestionResponse.CommonQuestions.builder()
-                .questions(commonQuestions)
-                .build();
+        return commonQuestions;
     }
 
 
-    private List<QuestionResponse.CommonQuestion> getCommonQuestionList(Users user) {
+    private List<QuestionModel.CommonQuestion> getCommonQuestionList(Users user) {
         Pageable pageable = PageRequest.of(0, QUESTION_LIMIT);
 
         List<Question> randomQuestions = questionRepository.findRandomQuestions(pageable);
 
-        List<QuestionResponse.CommonQuestion> commonQuestions = randomQuestions.stream()
+        List<QuestionModel.CommonQuestion> commonQuestions = randomQuestions.stream()
                 .map(question -> {
                     List<UserResponse.PickedInfo> friendList = getFriendList(user);
 
-                    return QuestionResponse.CommonQuestion.from(question, friendList);
+                    return QuestionModel.CommonQuestion.from(question, friendList);
                 })
                 .toList();
         return commonQuestions;

@@ -30,6 +30,17 @@ public class QuestionResponse {
     public record CommonQuestions(
             List<CommonQuestion> questions
     ) {
+        public static CommonQuestions from(List<QuestionModel.CommonQuestion> commonQuestions){
+            return CommonQuestions.builder()
+                            .questions(
+                                    commonQuestions.stream().map(
+                                            commonQuestion -> CommonQuestion.builder()
+                                                    .questionId(commonQuestion.questionId())
+                                                    .content(commonQuestion.content())
+                                                    .users(commonQuestion.users())
+                                                    .build()
+                                    ).toList()).build();
+        }
 
     }
 
