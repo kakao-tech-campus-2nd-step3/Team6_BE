@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-import supernova.whokie.answer.controller.dto.AnswerModel;
+import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.answer.controller.dto.AnswerRequest;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.service.AnswerService;

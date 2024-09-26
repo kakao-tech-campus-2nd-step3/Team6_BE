@@ -8,7 +8,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 import supernova.whokie.answer.Answer;
-import supernova.whokie.answer.controller.dto.AnswerModel;
+import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.answer.service.dto.AnswerCommand;

@@ -2,6 +2,7 @@ package supernova.whokie.answer.controller.dto;
 
 import lombok.Builder;
 import supernova.whokie.answer.Answer;
+import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.user.controller.dto.UserResponse;
 
 import java.time.LocalDate;
