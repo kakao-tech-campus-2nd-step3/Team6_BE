@@ -1,41 +1,50 @@
 package supernova.whokie.profile_answer.controller;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.profile_answer.controller.dto.ProfileAnswerRequest;
 import supernova.whokie.profile_answer.controller.dto.ProfileAnswerResponse;
-
-import java.awt.print.Pageable;
-import java.time.LocalDate;
-import java.util.List;
+import supernova.whokie.profile_answer.service.ProfileAnswerService;
+import supernova.whokie.profile_answer.service.dto.ProfileAnswerModel;
 
 @RestController
-@RequestMapping("/api/profile/answer")
+@RequestMapping("/api/profile")
+@RequiredArgsConstructor
 public class ProfileAnswerController {
 
-    @GetMapping("/")
+    private final ProfileAnswerService profileAnswerService;
+
+    @GetMapping("/answer")
     public PagingResponse<ProfileAnswerResponse.Answer> getProfileAnswerPaging(
-            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+        @Authenticate Long userId,
+        @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        return new PagingResponse<>(
-                List.of(new ProfileAnswerResponse.Answer(1L, "answer1", "quest1", LocalDate.now()),
-                        new ProfileAnswerResponse.Answer(2L, "answer2", "quest1", LocalDate.now())),
-                2, 1, 2, 1);
+        Page<ProfileAnswerModel.Info> page = profileAnswerService.getProfileAnswers(userId,
+            pageable);
+        return PagingResponse.from(page.map(ProfileAnswerResponse.Answer::from));
     }
 
-    @PostMapping("/")
+    @PostMapping("/answer")
     public GlobalResponse postProfileAnswer(
-            @RequestBody ProfileAnswerRequest.Answer request
+        @Authenticate Long userId,
+        @RequestBody ProfileAnswerRequest.Answer request
     ) {
+        System.out.println("userId = " + userId);
+        System.out.println("post");
         return GlobalResponse.builder().message("message").build();
     }
 
-    @DeleteMapping("/{profile-answer-id}")
+    @DeleteMapping("/answer/{profile-answer-id}")
     public GlobalResponse deleteProfileAnswer(
-            @PathVariable("profile-answer-id") String profileAnswerId
+        @Authenticate Long userId,
+        @PathVariable("profile-answer-id") String profileAnswerId
     ) {
         return GlobalResponse.builder().message("message").build();
     }
