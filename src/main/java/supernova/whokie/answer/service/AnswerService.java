@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.answer.Answer;
 import supernova.whokie.answer.controller.dto.AnswerCommand;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
@@ -34,20 +35,20 @@ public class AnswerService {
     private final QuestionRepository questionRepository;
 
 
+    @Transactional(readOnly = true)
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId) {
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
 
         Page<Answer> answers = answerRepository.findAllByPicker(pageable, user);
 
         List<AnswerResponse.Record> answerResponse = answers.stream()
-                .map(answer -> {
-                    return AnswerResponse.Record.from(answer);
-                })
+                .map(AnswerResponse.Record::from)
                 .toList();
 
         return PagingResponse.from(new PageImpl<>(answerResponse, pageable, answers.getTotalElements()));
     }
 
+    @Transactional
     public void answerToCommonQuestion(Long userId, AnswerCommand.CommonAnswer command) {
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
         Question question = questionRepository.findById(command.questionId())
@@ -59,6 +60,7 @@ public class AnswerService {
         answerRepository.save(answer);
     }
 
+    @Transactional(readOnly = true)
     public AnswerResponse.Refresh refreshAnswerList(Long userId) {
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
         Pageable pageable = PageRequest.of(0, FRIEND_LIMIT);
