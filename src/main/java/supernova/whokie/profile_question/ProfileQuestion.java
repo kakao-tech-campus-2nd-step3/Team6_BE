@@ -36,4 +36,8 @@ public class ProfileQuestion extends BaseTimeEntity {
 
     @Column(nullable = false)
     private Boolean profileQuestionStatus;
+
+    public boolean isOwner(Long userId) {
+        return user.getId().equals(userId);
+    }
 }
