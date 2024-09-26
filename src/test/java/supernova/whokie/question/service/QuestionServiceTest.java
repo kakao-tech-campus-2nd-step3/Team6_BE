@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.question.Question;
-import supernova.whokie.question.controller.dto.QuestionModel;
+import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;

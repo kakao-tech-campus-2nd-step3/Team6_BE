@@ -3,6 +3,7 @@ package supernova.whokie.question.controller.dto;
 import lombok.Builder;
 import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
 import supernova.whokie.question.Question;
+import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.user.controller.dto.UserResponse;
 
 import java.time.LocalDate;
