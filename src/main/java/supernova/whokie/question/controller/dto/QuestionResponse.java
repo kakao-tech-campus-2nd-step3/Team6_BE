@@ -30,16 +30,16 @@ public class QuestionResponse {
     public record CommonQuestions(
             List<CommonQuestion> questions
     ) {
-        public static CommonQuestions from(List<QuestionModel.CommonQuestion> commonQuestions){
+        public static CommonQuestions from(List<QuestionModel.CommonQuestion> commonQuestions) {
             return CommonQuestions.builder()
-                            .questions(
-                                    commonQuestions.stream().map(
-                                            commonQuestion -> CommonQuestion.builder()
-                                                    .questionId(commonQuestion.questionId())
-                                                    .content(commonQuestion.content())
-                                                    .users(commonQuestion.users())
-                                                    .build()
-                                    ).toList()).build();
+                    .questions(
+                            commonQuestions.stream().map(
+                                    commonQuestion -> CommonQuestion.builder()
+                                            .questionId(commonQuestion.questionId())
+                                            .content(commonQuestion.content())
+                                            .users(commonQuestion.users())
+                                            .build()
+                            ).toList()).build();
         }
 
     }
@@ -50,7 +50,7 @@ public class QuestionResponse {
             String content,
             List<UserResponse.PickedInfo> users
     ) {
-        public static CommonQuestion from(Question question, List<UserResponse.PickedInfo> friendList){
+        public static CommonQuestion from(Question question, List<UserResponse.PickedInfo> friendList) {
             return CommonQuestion.builder()
                     .questionId(question.getId())
                     .content(question.getContent())

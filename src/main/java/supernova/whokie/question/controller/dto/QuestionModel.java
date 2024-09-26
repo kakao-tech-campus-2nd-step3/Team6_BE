@@ -12,8 +12,8 @@ public class QuestionModel {
             Long questionId,
             String content,
             List<UserResponse.PickedInfo> users
-    ){
-        public static CommonQuestion from(Question question, List<UserResponse.PickedInfo> friendList){
+    ) {
+        public static CommonQuestion from(Question question, List<UserResponse.PickedInfo> friendList) {
             return CommonQuestion.builder()
                     .questionId(question.getId())
                     .content(question.getContent())
