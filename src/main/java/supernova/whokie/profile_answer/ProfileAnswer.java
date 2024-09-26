@@ -7,6 +7,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.profile_question.ProfileQuestion;
@@ -16,6 +17,7 @@ import supernova.whokie.user.Users;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class ProfileAnswer extends BaseTimeEntity {
 
     @Id
