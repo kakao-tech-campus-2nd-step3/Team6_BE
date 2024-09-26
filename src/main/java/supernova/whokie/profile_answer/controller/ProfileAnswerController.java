@@ -41,11 +41,12 @@ public class ProfileAnswerController {
         return GlobalResponse.builder().message("저장에 성공했습니다.").build();
     }
 
-    @DeleteMapping("/answer/{profile-answer-id}")
+    @DeleteMapping("/api/profile/answer/{profile-answer-id}")
     public GlobalResponse deleteProfileAnswer(
         @Authenticate Long userId,
-        @PathVariable("profile-answer-id") String profileAnswerId
+        @PathVariable("profile-answer-id") Long profileAnswerId
     ) {
+        profileAnswerService.deleteProfileAnswer(userId, profileAnswerId);
         return GlobalResponse.builder().message("message").build();
     }
 }
