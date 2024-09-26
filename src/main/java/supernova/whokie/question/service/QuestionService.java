@@ -1,6 +1,7 @@
 package supernova.whokie.question.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuestionService {
 
-    public static final int FRIEND_LIMIT = 5;
-    public static final int QUESTION_LIMIT = 10;
+    @Value("${friend-limit}")
+    private int friendLimit;
+
+    @Value("${question-limit}")
+    private int questionLimit;
 
     private final QuestionRepository questionRepository;
     private final FriendRepository friendRepository;
@@ -38,7 +42,7 @@ public class QuestionService {
 
 
     private List<QuestionModel.CommonQuestion> getCommonQuestionList(Users user) {
-        Pageable pageable = PageRequest.of(0, QUESTION_LIMIT);
+        Pageable pageable = PageRequest.of(0, questionLimit);
 
         List<Question> randomQuestions = questionRepository.findRandomQuestions(pageable);
 
@@ -48,7 +52,7 @@ public class QuestionService {
     }
 
     private List<UserResponse.PickedInfo> getFriendList(Users user) {
-        Pageable pageable = PageRequest.of(0, FRIEND_LIMIT);
+        Pageable pageable = PageRequest.of(0, friendLimit);
         List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), pageable);
 
         return randomFriends.stream()
