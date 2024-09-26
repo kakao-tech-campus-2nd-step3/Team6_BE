@@ -33,9 +33,7 @@ public class QuestionService {
 
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
 
-        List<QuestionModel.CommonQuestion> commonQuestions = getCommonQuestionList(user);
-
-        return commonQuestions;
+        return getCommonQuestionList(user);
     }
 
 
@@ -44,24 +42,18 @@ public class QuestionService {
 
         List<Question> randomQuestions = questionRepository.findRandomQuestions(pageable);
 
-        List<QuestionModel.CommonQuestion> commonQuestions = randomQuestions.stream()
-                .map(question -> {
-                    List<UserResponse.PickedInfo> friendList = getFriendList(user);
-
-                    return QuestionModel.CommonQuestion.from(question, friendList);
-                })
+        return randomQuestions.stream()
+                .map(question -> QuestionModel.CommonQuestion.from(question, getFriendList(user)))
                 .toList();
-        return commonQuestions;
     }
 
     private List<UserResponse.PickedInfo> getFriendList(Users user) {
         Pageable pageable = PageRequest.of(0, FRIEND_LIMIT);
         List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), pageable);
 
-        List<UserResponse.PickedInfo> friendList = randomFriends.stream()
+        return randomFriends.stream()
                 .map(friend -> UserResponse.PickedInfo.from(friend.getFriendUser()))
                 .toList();
-        return friendList;
     }
 
 }
