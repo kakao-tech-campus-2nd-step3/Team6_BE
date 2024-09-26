@@ -1,5 +1,6 @@
 package supernova.whokie.profile_answer.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,18 +11,18 @@ import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.profile_answer.controller.dto.ProfileAnswerRequest;
+import supernova.whokie.profile_answer.controller.dto.ProfileAnswerRequest.Answer;
 import supernova.whokie.profile_answer.controller.dto.ProfileAnswerResponse;
 import supernova.whokie.profile_answer.service.ProfileAnswerService;
 import supernova.whokie.profile_answer.service.dto.ProfileAnswerModel;
 
 @RestController
-@RequestMapping("/api/profile")
 @RequiredArgsConstructor
 public class ProfileAnswerController {
 
     private final ProfileAnswerService profileAnswerService;
 
-    @GetMapping("/answer")
+    @GetMapping("/api/profile/answer")
     public PagingResponse<ProfileAnswerResponse.Answer> getProfileAnswerPaging(
         @Authenticate Long userId,
         @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
@@ -31,14 +32,14 @@ public class ProfileAnswerController {
         return PagingResponse.from(page.map(ProfileAnswerResponse.Answer::from));
     }
 
-    @PostMapping("/answer")
+    @PostMapping("/api/profile/answer")
     public GlobalResponse postProfileAnswer(
         @Authenticate Long userId,
-        @RequestBody ProfileAnswerRequest.Answer request
+        @RequestBody @Valid ProfileAnswerRequest.Answer request
     ) {
-        System.out.println("userId = " + userId);
-        System.out.println("post");
-        return GlobalResponse.builder().message("message").build();
+
+        profileAnswerService.createProfileAnswer(userId, Answer.toCommand(request));
+        return GlobalResponse.builder().message("저장에 성공했습니다.").build();
     }
 
     @DeleteMapping("/answer/{profile-answer-id}")
