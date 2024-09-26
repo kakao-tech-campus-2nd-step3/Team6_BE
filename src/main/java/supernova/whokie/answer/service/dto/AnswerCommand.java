@@ -1,4 +1,4 @@
-package supernova.whokie.answer.controller.dto;
+package supernova.whokie.answer.service.dto;
 
 import lombok.Builder;
 import supernova.whokie.answer.Answer;
