@@ -47,7 +47,7 @@ public class QuestionController {
             @PathVariable("group-id") String groupId,
             @RequestParam("status") Boolean status,
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
-            ) {
+    ) {
         return new PagingResponse<>(
                 List.of(new QuestionResponse.Info(1L, "질문1", 1L, true, "작성자1", LocalDate.now()),
                         new QuestionResponse.Info(2L, "질문2", 1L, true, "작성자2", LocalDate.now())),

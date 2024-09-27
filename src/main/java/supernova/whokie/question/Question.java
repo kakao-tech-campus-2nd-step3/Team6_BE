@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import supernova.whokie.global.BaseTimeEntity;
+import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.user.Users;
 
 @AllArgsConstructor
