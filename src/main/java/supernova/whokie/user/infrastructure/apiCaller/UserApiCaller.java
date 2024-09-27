@@ -65,11 +65,12 @@ public class UserApiCaller {
         return body;
     }
 
-    public KakaoAccount extractUserInfo(String code) {
+    public UserInfoResponse extractUserInfo(String code) {
         String userInfoUrl = kakaoProperties.userInfoUrl();
 
         TokenInfoResponse tokenResponse = getAccessToken(code);
         String accessToken = tokenResponse.accessToken();
+        System.out.println(accessToken);
 
         UserInfoResponse response = restClient.get()
             .uri(URI.create(userInfoUrl))
@@ -78,6 +79,6 @@ public class UserApiCaller {
             .toEntity(UserInfoResponse.class)
             .getBody();
 
-        return response.kakaoAccount();
+        return response;
     }
 }
