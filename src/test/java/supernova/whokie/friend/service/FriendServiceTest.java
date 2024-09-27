@@ -1,5 +1,7 @@
 package supernova.whokie.friend.service;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
 import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.friend.service.dto.FriendCommand;
 import supernova.whokie.friend.service.dto.FriendModel;
 import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.user.Gender;
@@ -19,6 +23,7 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -40,6 +45,9 @@ class FriendServiceTest {
     private FriendKakaoApiCaller apiCaller;
     @MockBean
     private JwtProvider jwtProvider;
+    @PersistenceContext
+    EntityManager entityManager;
+
 
     @Test
     @DisplayName("getKakaoFriends 테스트")
@@ -72,6 +80,58 @@ class FriendServiceTest {
         assertThat(actual.get(2).isFriend()).isTrue();
     }
 
+    @Test
+    @DisplayName("새로운 친구 리스트 저장")
+    void saveFriendsTest() {
+        // given
+        Long hostId = 1L;
+        Users host = Users.builder().id(hostId).name("name").email("email1").point(0).age(1).kakaoId(1L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user1 = Users.builder().id(2L).name("name").email("email2").point(0).age(1).kakaoId(2L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user2 = Users.builder().id(3L).name("name").email("email3").point(0).age(1).kakaoId(3L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user3 = Users.builder().id(4L).name("name").email("email4").point(0).age(1).kakaoId(4L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        userRepository.saveAll(List.of(host, user1, user2, user3));
+
+        FriendCommand.Update command = FriendCommand.Update.builder()
+                .friendIds(List.of(user1.getId(), user2.getId(), user3.getId()))
+                .build();
+
+        // when
+        friendService.saveFriends(hostId, command, new ArrayList<>());
+        List<Friend> actual = friendRepository.findByHostUserIdFetchJoin(hostId);
+
+        // then
+        assertThat(actual).hasSize(3);
+    }
+
+    @Test
+    @Transactional
+    @DisplayName("누락된 Friend 삭제")
+    void deleteFriendsTest() {
+        Long hostId = 1L;
+        Users host = Users.builder().id(hostId).name("name").email("email1").point(0).age(1).kakaoId(1L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user1 = Users.builder().id(2L).name("name").email("email2").point(0).age(1).kakaoId(2L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user2 = Users.builder().id(3L).name("name").email("email3").point(0).age(1).kakaoId(3L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user3 = Users.builder().id(4L).name("name").email("email4").point(0).age(1).kakaoId(4L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        userRepository.saveAll(List.of(host, user1, user2, user3));
+        Friend friend1 = new Friend(1L, host, user1);
+        Friend friend2 = new Friend(2L, host, user2);
+        Friend friend3 = new Friend(3L, host, user3);
+        friendRepository.saveAll(List.of(friend1, friend2, friend3));
+
+        FriendCommand.Update command = FriendCommand.Update.builder()
+                .friendIds(List.of(user1.getId(), user2.getId()))
+                .build();
+
+        entityManager.flush();
+        entityManager.clear();
+
+        // when
+        friendService.deleteFriends(command, List.of(friend1, friend2, friend3));
+        List<Friend> actual = friendRepository.findByHostUserIdFetchJoin(hostId);
+
+        // then
+        assertThat(actual).hasSize(2);
+    }
 
     @Test
     @DisplayName("새로운 친구만 추출")
@@ -113,11 +173,11 @@ class FriendServiceTest {
         List<Friend> existingFriends = List.of(friend1, friend2);
 
         // when
-        List<Friend> actual = friendService.filteringDeleteFriendUserIds(friendUserIds, existingFriends);
+        List<Long> actual = friendService.filteringDeleteFriendUserIds(friendUserIds, existingFriends);
 
         // then
         assertThat(actual).hasSize(1);
-        assertThat(actual.getFirst()).isEqualTo(friend2);
+        assertThat(actual.getFirst()).isEqualTo(friend2.getId());
     }
 
     @Test

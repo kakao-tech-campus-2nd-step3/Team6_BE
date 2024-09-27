@@ -1,9 +1,11 @@
 package supernova.whokie.friend.service;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.friend.Friend;
+import supernova.whokie.friend.event.FriendEventDto;
 import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
 import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
@@ -23,6 +25,7 @@ public class FriendService {
     private final FriendKakaoApiCaller apiCaller;
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public List<FriendModel.Info> getKakaoFriends(Long userId) {
@@ -33,7 +36,7 @@ public class FriendService {
         List<Users> friendUsers = userRepository.findByKakaoIdIn(kakaoId);
 
         // 사용자의 모든 Friend 조회
-        List<Friend> existingList = friendRepository.findByHostUserId(userId);
+        List<Friend> existingList = friendRepository.findByHostUserIdFetchJoin(userId);
         Set<Long> existingSet = extractFriendUserIdAsSet(existingList);
 
         return friendUsers.stream()
@@ -41,23 +44,19 @@ public class FriendService {
                 .toList();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public void updateFriends(Long userId, FriendCommand.Update command) {
-        // 사용자 Users 조회
-        Users host = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
         // 사용자의 모든 Friend 조회
-        List<Friend> existingFriends = friendRepository.findByHostUser(host);
+        List<Friend> existingFriends = friendRepository.findByHostUserIdFetchJoin(userId);
 
-        // 친구 삭제
-        deleteFriends(command, existingFriends);
-
-        // 친구 저장
-        saveFriends(host, command, existingFriends);
+        // 비동기로 친구 삭제 및 저장
+        eventPublisher.publishEvent(FriendEventDto.Update.toDto(userId, command, existingFriends));
     }
 
-    public void saveFriends(Users host, FriendCommand.Update command, List<Friend> existingFriends) {
+    @Transactional
+    public void saveFriends(Long hostId, FriendCommand.Update command, List<Friend> existingFriends) {
+        Users host = userRepository.findById(hostId)
+                .orElseThrow(()-> new EntityNotFoundException("User not found."));
         // 새로운 Friend 필터링
         List<Long> newFriendIds = filteringNewFriendUserIds(command.friendIds(), existingFriends);
 
@@ -68,12 +67,13 @@ public class FriendService {
         friendRepository.saveAll(command.toEntity(host, friendUsers));
     }
 
+    @Transactional
     public void deleteFriends(FriendCommand.Update command, List<Friend> existingFriends) {
         // 삭제할 Friend 필터링
-        List<Friend> deleteFriends = filteringDeleteFriendUserIds(command.friendIds(), existingFriends);
+        List<Long> deleteFriendIds = filteringDeleteFriendUserIds(command.friendIds(), existingFriends);
 
         // Friends 삭제
-        friendRepository.deleteAll(deleteFriends);
+        friendRepository.deleteByIdIn(deleteFriendIds);
     }
 
     public List<Long> filteringNewFriendUserIds(List<Long> friendUserIds, List<Friend> existingFriends) {
@@ -83,9 +83,10 @@ public class FriendService {
                 .toList();
     }
 
-    public List<Friend> filteringDeleteFriendUserIds(List<Long> friendUserIds, List<Friend> existingFriends) {
+    public List<Long> filteringDeleteFriendUserIds(List<Long> friendUserIds, List<Friend> existingFriends) {
         return existingFriends.stream()
                 .filter(friend -> !friendUserIds.contains(friend.getFriendUserId()))
+                .map(Friend::getId)
                 .toList();
     }
 
