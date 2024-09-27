@@ -18,8 +18,8 @@ class UsersTest {
         Users user3 = Users.builder().id(3L).build();
 
         // when
-        boolean actual1 = user1.isFriend(set);
-        boolean actual2 = user3.isFriend(set);
+        boolean actual1 = set.contains(user1.getId());
+        boolean actual2 = set.contains(user3.getId());
 
         // then
         assertThat(actual1).isTrue();

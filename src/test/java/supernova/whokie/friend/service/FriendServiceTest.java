@@ -8,11 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
 import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.friend.service.dto.FriendModel;
+import supernova.whokie.user.Gender;
+import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
@@ -23,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+//@ActiveProfiles("test")
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -41,18 +45,18 @@ class FriendServiceTest {
     void getKakaoFriendsTest() {
         // given
         Long userId = 1L;
-        KakaoDto.Profile profile1 = new KakaoDto.Profile(1L, "uuid1", false, "nickname1", "image1");
-        KakaoDto.Profile profile2 = new KakaoDto.Profile(2L, "uuid2", false, "nickname2", "image2");
-        KakaoDto.Profile profile3 = new KakaoDto.Profile(3L, "uuid3", false, "nickname3", "image3");
+        KakaoDto.Profile profile1 = new KakaoDto.Profile(2L, "uuid1", false, "nickname1", "image1");
+        KakaoDto.Profile profile2 = new KakaoDto.Profile(3L, "uuid2", false, "nickname2", "image2");
+        KakaoDto.Profile profile3 = new KakaoDto.Profile(4L, "uuid3", false, "nickname3", "image3");
         List<KakaoDto.Profile> profiles = List.of(profile1, profile2, profile3);
         KakaoDto.Friends kakaodto = new KakaoDto.Friends(null, profiles);
         given(apiCaller.getKakaoFriends(any()))
                 .willReturn(kakaodto);
 
-        Users host = Users.builder().id(userId).build();
-        Users user1 = Users.builder().id(2L).kakaoCode(profile1.uuid()).build();
-        Users user2 = Users.builder().id(3L).kakaoCode(profile2.uuid()).build();
-        Users user3 = Users.builder().id(4L).kakaoCode(profile3.uuid()).build();
+        Users host = Users.builder().id(userId).name("name").email("email1").point(0).age(1).kakaoId(1L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user1 = Users.builder().id(2L).name("name").email("email2").point(0).age(1).kakaoId(profile1.id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user2 = Users.builder().id(3L).name("name").email("email3").point(0).age(1).kakaoId(profile2.id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user3 = Users.builder().id(4L).name("name").email("email4").point(0).age(1).kakaoId(profile3.id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
         userRepository.saveAll(List.of(host, user1, user2, user3));
 
         Friend friend = new Friend(1L, host, user3);

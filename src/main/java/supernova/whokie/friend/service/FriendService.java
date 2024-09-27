@@ -29,15 +29,15 @@ public class FriendService {
         // userId로 kakaoAccessToken 조회
         String accessToken = "testwsetest";
         List<KakaoDto.Profile> profiles = apiCaller.getKakaoFriends(accessToken).elements();
-        List<String> kakaoCodes = profiles.stream().map(KakaoDto.Profile::uuid).toList();
-        List<Users> friendUsers = userRepository.findByKakaoCodeIn(kakaoCodes);
+        List<Long> kakaoId = profiles.stream().map(KakaoDto.Profile::id).toList();
+        List<Users> friendUsers = userRepository.findByKakaoIdIn(kakaoId);
 
         // 사용자의 모든 Friend 조회
         List<Friend> existingList = friendRepository.findByHostUserId(userId);
         Set<Long> existingSet = extractFriendUserIdAsSet(existingList);
 
         return friendUsers.stream()
-                .map(user -> FriendModel.Info.from(user, user.isFriend(existingSet)))
+                .map(user -> FriendModel.Info.from(user, existingSet.contains(user.getId())))
                 .toList();
     }
 

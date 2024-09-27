@@ -1,8 +1,5 @@
 package supernova.whokie.user.service;
 
-import java.lang.reflect.Field;
-import java.time.LocalDateTime;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,9 +14,12 @@ import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -42,7 +42,7 @@ class UserServiceTest {
             .email("test@gmail.com")
             .point(1000)
             .age(30)
-            .kakaoId("code")
+            .kakaoId(1L)
             .gender(Gender.M)
             .imageUrl("test")
             .role(Role.USER)
