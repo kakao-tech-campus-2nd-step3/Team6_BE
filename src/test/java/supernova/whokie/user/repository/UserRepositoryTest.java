@@ -40,18 +40,18 @@ class UserRepositoryTest {
 
     @Test
     @DisplayName("kakaoCode리스트로 Users 조회")
-    void findByKakaoCodeInTest() {
+    void findByKakaoIdInTest() {
         // given
-        Users user1 = Users.builder().id(1L).kakaoId("user1").build();
-        Users user2 = Users.builder().id(2L).kakaoId("user2").build();
-        Users user3 = Users.builder().id(3L).kakaoId("user3").build();
+        Users user1 = Users.builder().id(1L).kakaoId(1L).build();
+        Users user2 = Users.builder().id(2L).kakaoId(2L).build();
+        Users user3 = Users.builder().id(3L).kakaoId(3L).build();
         List<Users> users = List.of(user1, user2, user3);
-        List<String> kakaoCodes = users.stream().map(Users::getKakaoId).toList();
+        List<Long> kakaoIds = users.stream().map(Users::getKakaoId).toList();
         List<Users> savedUsers = List.of(user1, user2);
         userRepository.saveAll(savedUsers);
 
         // when
-        List<Users> actual = userRepository.findByKakaoCodeIn(kakaoCodes);
+        List<Users> actual = userRepository.findByKakaoIdIn(kakaoIds);
 
         // then
         assertThat(actual).hasSize(2);

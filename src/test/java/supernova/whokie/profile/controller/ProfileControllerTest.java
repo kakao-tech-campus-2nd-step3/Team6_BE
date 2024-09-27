@@ -48,7 +48,7 @@ public class ProfileControllerTest {
             .email("test@gmail.com")
             .point(100)
             .age(25)
-            .kakaoId("kakao_code")
+            .kakaoId(1L)
             .gender(Gender.M)
             .role(Role.USER)
             .build();
