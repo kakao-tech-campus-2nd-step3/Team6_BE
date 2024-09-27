@@ -9,7 +9,7 @@ public class FriendResponse {
 
     @Builder
     public record Infos(
-            List<Info> friends
+            List<FriendResponse.Info> friends
     ) {
         public static Infos from(List<FriendModel.Info> infos) {
             return Infos.builder()
