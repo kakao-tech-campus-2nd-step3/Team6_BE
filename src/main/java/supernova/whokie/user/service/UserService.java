@@ -62,7 +62,6 @@ public class UserService {
             });
 
         String token = jwtProvider.createToken(user.getId(), user.getRole());
-        System.out.println(token);
         return token;
     }
 
@@ -78,5 +77,36 @@ public class UserService {
             .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         return UserModel.Point.from(user);
+    }
+
+    @Transactional
+    public String testRegister() {  // 로그인 테스트용
+        Users user = Users.builder()
+            .id(1L)
+            .name("test")
+            .email("test@gmail.com")
+            .point(1000)
+            .age(30)
+            .kakaoId(1L)
+            .gender(Gender.M)
+            .imageUrl("test")
+            .role(Role.USER)
+            .build();
+
+        userRepository.save(user);
+
+        Profile profile = Profile.builder()
+            .id(1L)
+            .users(user)
+            .todayVisited(2)
+            .totalVisited(12)
+            .description("test")
+            .backgroundImageUrl("test")
+            .build();
+
+        profileRepository.save(profile);
+
+        String token = jwtProvider.createToken(user.getId(), user.getRole());
+        return token;
     }
 }
