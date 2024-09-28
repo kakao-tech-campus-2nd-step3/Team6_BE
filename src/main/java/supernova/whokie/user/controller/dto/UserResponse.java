@@ -5,7 +5,6 @@ import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 
 import java.time.LocalDate;
-import supernova.whokie.user.Users;
 import supernova.whokie.user.service.dto.UserModel;
 
 public class UserResponse {
@@ -13,9 +12,9 @@ public class UserResponse {
 
     @Builder
     public record PickedInfo(
-        Long userId,
-        String name,
-        String imageUrl
+            Long userId,
+            String name,
+            String imageUrl
     ) {
         public static UserResponse.PickedInfo from(UserModel.PickedInfo pickedInfo){
             return PickedInfo.builder()
@@ -37,15 +36,15 @@ public class UserResponse {
             LocalDate createdAt
     ) {
 
-        public static Info from(Users user) {
+        public static Info from(UserModel.Info user) {
             return Info.builder()
-                .email(user.getEmail())
-                .gender(user.getGender())
-                .age(user.getAge())
-                .name(user.getName())
-                .role(user.getRole())
-                .createdAt(user.getCreatedAt().toLocalDate())
-                .build();
+                    .email(user.email())
+                    .gender(user.gender())
+                    .age(user.age())
+                    .name(user.name())
+                    .role(user.role())
+                    .createdAt(user.createdAt())
+                    .build();
         }
     }
 
@@ -54,10 +53,10 @@ public class UserResponse {
             int amount
     ) {
 
-        public static Point from(Users user) {
+        public static Point from(UserModel.Point user) {
             return Point.builder()
-                .amount(user.getPoint())
-                .build();
+                    .amount(user.amount())
+                    .build();
         }
     }
 }

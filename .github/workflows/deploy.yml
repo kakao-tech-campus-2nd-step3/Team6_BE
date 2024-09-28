@@ -16,11 +16,11 @@ jobs:
 
     steps:
       # 지정한 저장소(현재 REPO)에서 코드를 워크플로우 환경으로 가져오도록 하는 github action
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       # Java를 설정하는 github action
       - name: Set up JDK 21
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'adopt'
