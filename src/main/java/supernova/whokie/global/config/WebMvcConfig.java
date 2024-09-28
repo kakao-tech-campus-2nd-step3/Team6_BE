@@ -32,9 +32,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // Todo 경로 수정 해야함
-        /*registry.addInterceptor(jwtInterceptor())
-            .addPathPatterns("/api/**");*/
+        registry.addInterceptor(jwtInterceptor())
+            .addPathPatterns("/api/**");
     }
 
     @Override

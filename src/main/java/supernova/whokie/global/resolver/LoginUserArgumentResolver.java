@@ -7,6 +7,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import supernova.whokie.global.annotation.Authenticate;
+import supernova.whokie.global.exception.AuthenticationException;
 
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -21,6 +22,9 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String userId = (String) request.getAttribute("userId");
 
+        if (userId == null) {
+            throw new AuthenticationException("로그인 후 이용해주세요.");
+        }
         return Long.parseLong(userId);
     }
 }
