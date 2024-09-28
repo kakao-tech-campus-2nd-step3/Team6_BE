@@ -11,7 +11,7 @@ import supernova.whokie.group.Groups;
 import supernova.whokie.group.repository.GroupsRepository;
 import supernova.whokie.ranking.Ranking;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.repository.UsersRepository;
+import supernova.whokie.user.infrastructure.repository.UsersRepository;
 
 import java.util.List;
 

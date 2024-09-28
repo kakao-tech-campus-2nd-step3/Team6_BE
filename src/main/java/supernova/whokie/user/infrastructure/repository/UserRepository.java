@@ -1,4 +1,4 @@
-package supernova.whokie.user.repository;
+package supernova.whokie.user.infrastructure.repository;
 
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
