@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.TestPropertySource;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.question.Question;
@@ -26,6 +27,10 @@ import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
+@TestPropertySource(properties = {
+        "spring.profiles.active=default",
+        "jwt.secret=abcd"
+})
 class QuestionServiceTest {
 
     @MockBean
