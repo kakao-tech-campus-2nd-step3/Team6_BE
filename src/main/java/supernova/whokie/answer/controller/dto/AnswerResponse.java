@@ -3,7 +3,6 @@ package supernova.whokie.answer.controller.dto;
 import lombok.Builder;
 import supernova.whokie.answer.Answer;
 import supernova.whokie.answer.service.dto.AnswerModel;
-import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.service.dto.UserModel;
 
 import java.time.LocalDate;
@@ -15,7 +14,7 @@ public class AnswerResponse {
     public record Refresh(
             List<UserModel.PickedInfo> users
     ) {
-        public static AnswerResponse.Refresh from(AnswerModel.Refresh refresh){
+        public static AnswerResponse.Refresh from(AnswerModel.Refresh refresh) {
             return Refresh.builder()
                     .users(refresh.users())
                     .build();

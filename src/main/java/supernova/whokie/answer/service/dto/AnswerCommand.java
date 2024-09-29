@@ -2,7 +2,6 @@ package supernova.whokie.answer.service.dto;
 
 import lombok.Builder;
 import supernova.whokie.answer.Answer;
-import supernova.whokie.answer.service.AnswerService;
 import supernova.whokie.question.Question;
 import supernova.whokie.user.Users;
 

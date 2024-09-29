@@ -4,15 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.answer.Answer;
-import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.answer.service.dto.AnswerCommand;
+import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
@@ -20,7 +19,6 @@ import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.repository.UserRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
@@ -29,17 +27,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AnswerService {
-    @Value("${friend-limit}")
-    private int friendLimit;
-    @Value("${default-hint-count}")
-    private int defaultHintCount;
-
-
     private final AnswerRepository answerRepository;
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
-
+    @Value("${friend-limit}")
+    private int friendLimit;
+    @Value("${default-hint-count}")
+    private int defaultHintCount;
 
     @Transactional(readOnly = true)
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId) {
