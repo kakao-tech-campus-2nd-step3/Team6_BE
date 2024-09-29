@@ -8,10 +8,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.question.repository.QuestionRepository;
+import supernova.whokie.user.Gender;
+import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 
@@ -21,6 +25,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestPropertySource(properties = {
+        "spring.profiles.active=default",
+        "jwt.secret=abcd"
+})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+
 class QuestionIntegrationTest {
 
     @Autowired
@@ -41,6 +51,12 @@ class QuestionIntegrationTest {
         Users user = Users.builder()
                 .name("Test User")
                 .email("test@example.com")
+                .point(0)
+                .age(20)
+                .kakaoId(1234567890L)
+                .gender(Gender.M)
+                .imageUrl("default_image_url.jpg")
+                .role(Role.USER)
                 .build();
         userRepository.save(user);
 
@@ -49,8 +65,21 @@ class QuestionIntegrationTest {
             Users friendUser = Users.builder()
                     .name("Friend " + i)
                     .email("friend" + i + "@example.com")
+                    .point(0)
+                    .age(20)
+                    .kakaoId(1234567890L + i)
+                    .gender(Gender.F)
+                    .imageUrl("default_image_url_friend_" + i + ".jpg")
+                    .role(Role.USER)
                     .build();
             userRepository.save(friendUser);
+
+
+            Friend friend = Friend.builder()
+                    .hostUser(user)
+                    .friendUser(friendUser)
+                    .build();
+            friendRepository.save(friend);
         }
 
 
@@ -64,15 +93,6 @@ class QuestionIntegrationTest {
             questionRepository.save(question);
         }
 
-
-        for (int i = 1; i <= 5; i++) {
-            Users friendUser = userRepository.findById((long) i).orElseThrow();
-            Friend friend = Friend.builder()
-                    .hostUser(user)
-                    .friendUser(friendUser)
-                    .build();
-            friendRepository.save(friend);
-        }
     }
 
 
