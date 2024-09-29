@@ -69,10 +69,9 @@ public class AnswerService {
     @Transactional(readOnly = true)
     public AnswerModel.Refresh refreshAnswerList(Long userId) {
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
-        Pageable pageable = PageRequest.of(0, friendLimit);
-        List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), pageable);
+        List<Friend> allFriends = friendRepository.findAllByHostUser(user);
 
-        List<UserModel.PickedInfo> friendsInfoList = randomFriends.stream().map(
+        List<UserModel.PickedInfo> friendsInfoList = allFriends.stream().map(
                 friend -> UserModel.PickedInfo.from(friend.getFriendUser())
         ).toList();
 

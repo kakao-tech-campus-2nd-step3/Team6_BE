@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
 import supernova.whokie.answer.Answer;
 import supernova.whokie.answer.service.dto.AnswerModel;
@@ -29,6 +30,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@TestPropertySource(properties = {
+        "spring.profiles.active=default",
+        "jwt.secret=abcd"
+})
 class AnswerServiceTest {
     @MockBean
     private AnswerRepository answerRepository;
@@ -133,7 +138,7 @@ class AnswerServiceTest {
         );
 
         //when
-        when(friendRepository.findRandomFriendsByHostUser(anyLong(), any(Pageable.class))).thenReturn(dummyFriends);
+        when(friendRepository.findAllByHostUser(any(Users.class))).thenReturn(dummyFriends);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(dummyUser));
 
         AnswerModel.Refresh refreshResponse = answerService.refreshAnswerList(dummyUser.getId());
@@ -141,6 +146,6 @@ class AnswerServiceTest {
         //then
         assertEquals(5, refreshResponse.users().size());
 
-        verify(friendRepository, times(1)).findRandomFriendsByHostUser(anyLong(), any(Pageable.class));
+        verify(friendRepository, times(1)).findAllByHostUser(any(Users.class));
     }
 }
