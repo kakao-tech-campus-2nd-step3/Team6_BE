@@ -25,7 +25,7 @@ public class GroupMemberController {
             @Authenticate Long userId
     ) {
         groupMemberService.delegateLeader(userId, request.toCommand());
-        return GlobalResponse.builder().message("OK").build();
+        return GlobalResponse.builder().message("그룹장 위임에 성공하였습니다.").build();
     }
 
     @PostMapping("/expel")

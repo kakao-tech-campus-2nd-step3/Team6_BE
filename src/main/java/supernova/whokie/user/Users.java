@@ -38,7 +38,6 @@ public class Users extends BaseTimeEntity {
     @NotNull
     private Gender gender;
 
-    @NotNull
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
