@@ -33,4 +33,19 @@ public class GroupMember extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private GroupStatus groupStatus;
 
+    public boolean isLeader() {
+        return this.groupRole == GroupRole.LEADER;
+    }
+
+    public boolean isApproved() {
+        return this.groupStatus == GroupStatus.APPROVED;
+    }
+
+    public void changeRole() {
+        if (isLeader()) {
+            groupRole = GroupRole.MEMBER;
+        } else {
+            groupRole = GroupRole.LEADER;
+        }
+    }
 }
