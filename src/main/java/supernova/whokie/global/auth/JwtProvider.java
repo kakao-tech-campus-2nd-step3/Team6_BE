@@ -16,7 +16,7 @@ import supernova.whokie.user.Role;
 public class JwtProvider {
 
     @Value("${jwt.secret}")
-    private static String secretKey;
+    private String secretKey;
     private final long validityInMilliseconds = 60 * 60 * 1000;
 
     public String createToken(Long id, Role role) {

@@ -1,6 +1,8 @@
 package supernova.whokie.user;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import supernova.whokie.global.entity.BaseTimeEntity;
 
@@ -15,24 +17,31 @@ public class Users extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String name;
+
+    @NotNull
+    @Column(unique = true)
     private String email;
+
+    @NotNull
+    @Min(0)
     private Integer point;
+
+    @NotNull
     private Integer age;
-    private String kakaoCode;
+
+    @NotNull
+    private Long kakaoId;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private Gender gender;
+
+    @NotNull
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private Role role;
-
-    public boolean isBeta() {
-        return this.role == Role.BETA;
-    }
-
-    public void changeRole() {
-        this.role = Role.USER;
-    }
 }

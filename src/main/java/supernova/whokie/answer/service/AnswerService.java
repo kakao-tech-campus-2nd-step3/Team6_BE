@@ -9,10 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.answer.Answer;
+import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.answer.service.dto.AnswerCommand;
-import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
@@ -20,6 +20,7 @@ import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
+import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.repository.UserRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
@@ -32,6 +33,7 @@ public class AnswerService {
     private int friendLimit;
     @Value("${default-hint-count}")
     private int defaultHintCount;
+
 
     private final AnswerRepository answerRepository;
     private final FriendRepository friendRepository;
@@ -46,7 +48,7 @@ public class AnswerService {
         Page<Answer> answers = answerRepository.findAllByPicker(pageable, user);
 
         List<AnswerResponse.Record> answerResponse = answers.stream()
-                .map(answer -> AnswerResponse.Record.from(answer))
+                .map(AnswerResponse.Record::from)
                 .toList();
 
         return PagingResponse.from(new PageImpl<>(answerResponse, pageable, answers.getTotalElements()));

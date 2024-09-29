@@ -16,6 +16,7 @@ import supernova.whokie.global.resolver.LoginUserArgumentResolver;
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
+
     private final JwtProvider jwtProvider;
 
     @Bean
@@ -33,7 +34,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // Todo 경로 수정 해야함
         registry.addInterceptor(jwtInterceptor())
-            .addPathPatterns("/api/user/mypage");
+            .addPathPatterns("/api/user/mypage")
+            .addPathPatterns("/api/profile/**")
+        ;
     }
 
     @Override
