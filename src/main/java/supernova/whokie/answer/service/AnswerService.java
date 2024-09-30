@@ -87,6 +87,7 @@ public class AnswerService {
         answer.increaseHintCount();
     }
 
+    @Transactional(readOnly = true)
     public List<AnswerModel.Hint> getHints(Long userId, String answerId){
         Long parsedAnswerId = Long.parseLong(answerId);
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
@@ -95,6 +96,7 @@ public class AnswerService {
         if(isNotPicked(answer, user)){
             throw new InvalidEntityException("해당 답변의 picked유저가 아닙니다.");
         }
+
         List<AnswerModel.Hint> allHints = new ArrayList<>();
 
         for(int i = 1; i <= maxHintCount; i++){
