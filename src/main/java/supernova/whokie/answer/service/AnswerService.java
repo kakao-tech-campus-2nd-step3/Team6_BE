@@ -32,10 +32,10 @@ public class AnswerService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
-    @Value("${friend-limit}")
-    private int friendLimit;
     @Value("${default-hint-count}")
     private int defaultHintCount;
+    @Value("${max-hint-count}")
+    private int maxHintCount;
 
     @Transactional(readOnly = true)
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId) {
@@ -96,7 +96,7 @@ public class AnswerService {
         }
         List<AnswerModel.Hint> allHints = new ArrayList<>();
 
-        for(int i = 1; i <= 3; i++){
+        for(int i = 1; i <= maxHintCount; i++){
             boolean valid = (i <= answer.getHintCount());
             allHints.add(AnswerModel.Hint.from(answer.getPicker(), i, valid));
         }
