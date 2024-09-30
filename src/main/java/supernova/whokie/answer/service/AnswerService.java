@@ -16,6 +16,7 @@ import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.global.exception.EntityNotFoundException;
+import supernova.whokie.global.exception.InvalidEntityException;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
@@ -80,7 +81,7 @@ public class AnswerService {
         Answer answer = answerRepository.findById(command.answerId()).orElseThrow(() -> new EntityNotFoundException("해당 답변을 찾을 수 없습니다."));
 
         if(isNotPicked(answer, user)){
-            throw new IllegalArgumentException("해당 답변의 picked가 아닙니다."); // TODO 예외처리 수정
+            throw new InvalidEntityException("해당 답변의 picked유저가 아닙니다.");
         }
 
         answer.increaseHintCount();
@@ -92,7 +93,7 @@ public class AnswerService {
         Answer answer = answerRepository.findById(parsedAnswerId).orElseThrow(() -> new EntityNotFoundException("해당 답변을 찾을 수 없습니다."));
 
         if(isNotPicked(answer, user)){
-            throw new IllegalArgumentException("해당 답변의 picked가 아닙니다."); // TODO 예외처리 수정
+            throw new InvalidEntityException("해당 답변의 picked유저가 아닙니다.");
         }
         List<AnswerModel.Hint> allHints = new ArrayList<>();
 
