@@ -97,7 +97,7 @@ class AnswerIntegrationTest {
                     .question(question)
                     .picker(user)
                     .picked(userRepository.findById(2L).orElseThrow())
-                    .hintCount(0)
+                    .hintCount(2)
                     .build();
             ReflectionTestUtils.setField(answer, "createdAt", LocalDateTime.of(2024, 9, 19, 0, 0));
             answerRepository.save(answer);
@@ -161,6 +161,45 @@ class AnswerIntegrationTest {
                 .andDo(result -> {
                     String responseContent = result.getResponse().getContentAsString();
                     System.out.println("전체 질문 기록 내용: " + responseContent);
+                });
+    }
+
+    @Test
+    @DisplayName("Hints 조회 테스트")
+    void getHintsTest() throws Exception {
+        String answerId = "1";
+
+        mockMvc.perform(get("/api/answer/hint/{answer-id}", answerId)
+                        .requestAttr("userId", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.hints").isArray())
+                .andExpect(jsonPath("$.hints.length()").value(3))
+                .andExpect(jsonPath("$.hints[0].valid").value(true))
+                .andExpect(jsonPath("$.hints[1].valid").value(true))
+                .andExpect(jsonPath("$.hints[2].valid").value(false))
+                .andDo(result -> {
+                    String responseContent = result.getResponse().getContentAsString();
+                    System.out.println("Hints 내용: " + responseContent);
+                });
+    }
+
+    @Test
+    @DisplayName("힌트 구매 테스트")
+    void purchaseHintTest() throws Exception {
+        Long answerId = 1L;
+
+        String requestBody = String.format("{\"answerId\": %d}", answerId);
+
+        mockMvc.perform(post("/api/answer/hint")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+                        .requestAttr("userId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("힌트를 성공적으로 구매하였습니다!"))
+                .andDo(result -> {
+                    String responseContent = result.getResponse().getContentAsString();
+                    System.out.println("구매 응답 내용: " + responseContent);
                 });
     }
 }
