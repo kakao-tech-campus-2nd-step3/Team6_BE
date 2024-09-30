@@ -1,6 +1,7 @@
 package supernova.whokie.answer.service.dto;
 
 import lombok.Builder;
+import supernova.whokie.global.exception.InvalidEntityException;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.dto.UserModel;
 
@@ -32,7 +33,7 @@ public class AnswerModel {
                 case 1 -> Hint.builder().hintNum(1).valid(valid).content(String.valueOf(user.getGender())).build();
                 case 2 -> Hint.builder().hintNum(2).valid(valid).content(String.valueOf(user.getAge())).build();
                 case 3 -> Hint.builder().hintNum(3).valid(valid).content(user.getName()).build();
-                default -> throw new IllegalArgumentException("유효하지 않은 hintCount입니다. ");
+                default -> throw new InvalidEntityException("유효하지 않은 hintCount입니다. ");
             };
         }
 
