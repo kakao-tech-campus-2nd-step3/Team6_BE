@@ -71,8 +71,10 @@ public class AnswerController {
 
     @PostMapping("/hint")
     public GlobalResponse purchaseHint(
-            @RequestBody AnswerRequest.Purchase request
+            @Valid @RequestBody AnswerRequest.Purchase request,
+            @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("message").build();
+        answerService.purchaseHint(userId, request.toCommand());
+        return GlobalResponse.builder().message("힌트를 성공적으로 구매하였습니다!").build();
     }
 }

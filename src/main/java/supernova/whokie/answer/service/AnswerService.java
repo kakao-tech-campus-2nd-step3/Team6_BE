@@ -72,4 +72,21 @@ public class AnswerService {
 
         return AnswerModel.Refresh.from(friendsInfoList);
     }
+
+    @Transactional
+    public void purchaseHint(Long userId, AnswerCommand.Purchase command){
+        Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
+        Answer answer = answerRepository.findById(command.answerId()).orElseThrow(() -> new EntityNotFoundException("해당 답변을 찾을 수 없습니다."));
+
+        if(isNotPicker(answer, user)){
+            throw new IllegalArgumentException("해당 답변의 picker가 아닙니다."); // TODO 예외처리 수정
+        }
+
+        answer.increaseHintCount();
+    }
+
+    public boolean isNotPicker(Answer answer, Users user) {
+
+        return !answer.getPicker().getId().equals(user.getId());
+    }
 }
