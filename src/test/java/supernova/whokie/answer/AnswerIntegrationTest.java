@@ -96,8 +96,8 @@ class AnswerIntegrationTest {
             // 답변 설정
             Answer answer = Answer.builder()
                     .question(question)
-                    .picker(user)
-                    .picked(userRepository.findById(2L).orElseThrow())
+                    .picker(userRepository.findById(2L).orElseThrow())
+                    .picked(user)
                     .hintCount(2)
                     .build();
             ReflectionTestUtils.setField(answer, "createdAt", LocalDateTime.of(2024, 9, 19, 0, 0));
@@ -147,6 +147,22 @@ class AnswerIntegrationTest {
     @Test
     @DisplayName("전체 질문 기록 조회 테스트")
     void getAnswerRecordTest() throws Exception {
+        // 별도의 더미 데이터 생성
+        for (int i = 1; i <= 5; i++) {
+            Question question = Question.builder()
+                    .content("Custom Test Question " + i)
+                    .build();
+            questionRepository.save(question);
+
+            Answer answer = Answer.builder()
+                    .question(question)
+                    .picker(userRepository.findById(1L).orElseThrow())
+                    .picked(userRepository.findById(2L).orElseThrow())
+                    .hintCount(3)
+                    .build();
+            ReflectionTestUtils.setField(answer, "createdAt", LocalDateTime.of(2024, 9, 20, 0, 0)); // 날짜 설정
+            answerRepository.save(answer);
+        }
         mockMvc.perform(get("/api/answer/record")
                         .requestAttr("userId", "1")
                         .param("page", "0")
