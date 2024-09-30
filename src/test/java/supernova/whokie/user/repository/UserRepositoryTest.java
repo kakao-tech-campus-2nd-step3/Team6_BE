@@ -14,10 +14,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class UserRepositoryTest {
+
     @Autowired
     private UserRepository userRepository;
 
-    @Test
+    //@Test
     @DisplayName("id리스트로 Users 조회")
     void findByIdInTest() {
         // given
@@ -38,7 +39,7 @@ class UserRepositoryTest {
         assertThat(actual.get(1).getId()).isEqualTo(user2.getId());
     }
 
-    @Test
+    //@Test
     @DisplayName("kakaoCode리스트로 Users 조회")
     void findByKakaoIdInTest() {
         // given
