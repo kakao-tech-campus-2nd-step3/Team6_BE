@@ -22,6 +22,7 @@ import supernova.whokie.user.Users;
 import supernova.whokie.user.repository.UserRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -83,6 +84,24 @@ public class AnswerService {
         }
 
         answer.increaseHintCount();
+    }
+
+    public List<AnswerModel.Hint> getHints(Long userId, String answerId){
+        Long parsedAnswerId = Long.parseLong(answerId);
+        Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
+        Answer answer = answerRepository.findById(parsedAnswerId).orElseThrow(() -> new EntityNotFoundException("해당 답변을 찾을 수 없습니다."));
+
+        if(isNotPicker(answer, user)){
+            throw new IllegalArgumentException("해당 답변의 picker가 아닙니다."); // TODO 예외처리 수정
+        }
+        List<AnswerModel.Hint> allHints = new ArrayList<>();
+
+        for(int i = 1; i <= 3; i++){
+            boolean valid = (i <= answer.getHintCount());
+            allHints.add(AnswerModel.Hint.from(user, i, valid));
+        }
+
+        return allHints;
     }
 
     public boolean isNotPicker(Answer answer, Users user) {
