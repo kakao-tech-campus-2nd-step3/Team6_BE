@@ -79,8 +79,8 @@ public class AnswerService {
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
         Answer answer = answerRepository.findById(command.answerId()).orElseThrow(() -> new EntityNotFoundException("해당 답변을 찾을 수 없습니다."));
 
-        if(isNotPicker(answer, user)){
-            throw new IllegalArgumentException("해당 답변의 picker가 아닙니다."); // TODO 예외처리 수정
+        if(isNotPicked(answer, user)){
+            throw new IllegalArgumentException("해당 답변의 picked가 아닙니다."); // TODO 예외처리 수정
         }
 
         answer.increaseHintCount();
@@ -91,21 +91,21 @@ public class AnswerService {
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
         Answer answer = answerRepository.findById(parsedAnswerId).orElseThrow(() -> new EntityNotFoundException("해당 답변을 찾을 수 없습니다."));
 
-        if(isNotPicker(answer, user)){
-            throw new IllegalArgumentException("해당 답변의 picker가 아닙니다."); // TODO 예외처리 수정
+        if(isNotPicked(answer, user)){
+            throw new IllegalArgumentException("해당 답변의 picked가 아닙니다."); // TODO 예외처리 수정
         }
         List<AnswerModel.Hint> allHints = new ArrayList<>();
 
         for(int i = 1; i <= 3; i++){
             boolean valid = (i <= answer.getHintCount());
-            allHints.add(AnswerModel.Hint.from(user, i, valid));
+            allHints.add(AnswerModel.Hint.from(answer.getPicker(), i, valid));
         }
 
         return allHints;
     }
 
-    public boolean isNotPicker(Answer answer, Users user) {
+    public boolean isNotPicked(Answer answer, Users user) {
 
-        return !answer.getPicker().getId().equals(user.getId());
+        return !answer.getPicked().getId().equals(user.getId());
     }
 }
