@@ -36,7 +36,8 @@ jobs:
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew    
-          ./gradlew clean build -x test
+          ./gradlew bootRun --args='--spring.profiles.active=dev'
+
 
       # dockerfile을 통해 이미지를 빌드하고, 이를 docker repo로 push 합니다.
       # 이 때 사용되는 ${{ secrets.DOCKER_REPO }}/directors-dev 가 위에서 만든 도커 repository 입니다.
