@@ -16,8 +16,10 @@ public class Ranking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String question;
 
+    @Column(nullable = false)
     private Integer count;
 
     @ManyToOne(fetch = FetchType.LAZY)
