@@ -20,3 +20,4 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     List<Friend> findAllByHostUser(Users user);
 }
+
