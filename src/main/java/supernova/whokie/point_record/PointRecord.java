@@ -27,4 +27,12 @@ public class PointRecord extends BaseTimeEntity {
     private PointRecordOption option;
 
     private String description;
+
+    public static PointRecord create(Long userId, Integer point, PointRecordOption option, String description) {
+        return PointRecord.builder()
+                .userId(userId)
+                .point(point)
+                .option(option)
+                .description(description).build();
+    }
 }

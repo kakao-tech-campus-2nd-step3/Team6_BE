@@ -16,6 +16,9 @@ import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.global.exception.EntityNotFoundException;
+import supernova.whokie.point_record.PointRecord;
+import supernova.whokie.point_record.PointRecordOption;
+import supernova.whokie.point_record.infrastructure.repository.PointRecordRepository;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
@@ -31,10 +34,14 @@ public class AnswerService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
-    @Value("${friend-limit}")
-    private int friendLimit;
+    private final PointRecordRepository pointRecordRepository;
+
+    @Value("${answer-point}")
+    private int answerPoint;
     @Value("${default-hint-count}")
     private int defaultHintCount;
+    @Value("${point-earn-message}")
+    private String pointEarnMessage;
 
     @Transactional(readOnly = true)
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId) {
@@ -59,6 +66,12 @@ public class AnswerService {
 
         Answer answer = command.toEntity(question, user, picked, defaultHintCount);
         answerRepository.save(answer);
+
+        user.increasePoint(answerPoint);
+
+        PointRecord pointRecord = PointRecord.create(userId, answerPoint, PointRecordOption.CHARGED, pointEarnMessage);
+        pointRecordRepository.save(pointRecord);
+
     }
 
     @Transactional(readOnly = true)

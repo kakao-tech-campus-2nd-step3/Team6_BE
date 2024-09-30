@@ -44,4 +44,8 @@ public class Users extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @NotNull
     private Role role;
+
+    public void increasePoint(int point) {
+        this.point += point;
+    }
 }
