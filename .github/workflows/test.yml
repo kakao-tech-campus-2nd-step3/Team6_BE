@@ -2,7 +2,7 @@ name: Test
 
 on:
   pull_request:
-    branches: [ "Develop", "Master", "Weekly/*", "issue/*" ]
+    branches: [ "Develop", "Master", "Weekly", "issue/*" ]
 permissions: write-all
 
 jobs:
@@ -34,7 +34,8 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Gradle build를 수행합니다.
-        run: ./gradlew clean build
+        run: ./gradlew clean build -Dspring.profiles.active=dev
+
 
       - name: 테스트 결과를 PR에 코멘트로 등록합니다
         uses: EnricoMi/publish-unit-test-result-action@v1
