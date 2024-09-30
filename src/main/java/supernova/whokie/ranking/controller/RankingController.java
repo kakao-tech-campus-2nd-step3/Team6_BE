@@ -1,26 +1,34 @@
 package supernova.whokie.ranking.controller;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.ranking.controller.dto.RankingResponse;
-
-import java.util.List;
+import supernova.whokie.ranking.service.RankingService;
 
 @RestController
-@RequestMapping("/api/profile/ranking")
+@RequestMapping("/api/ranking")
+@AllArgsConstructor
 public class RankingController {
+    private final RankingService rankingService;
 
     @GetMapping("/{user-Id}")
     public RankingResponse.Ranks getProfileRanking(
-            @PathVariable("user-Id") String userId
+            @NotNull @Min(1) @PathVariable("user-Id") Long userId
     ) {
-        return RankingResponse.Ranks.builder()
-                .ranks(List.of(new RankingResponse.Rank(1L, 12L, "quest1", 1, 123, "GLOBAL"),
-                        new RankingResponse.Rank(2L, 13L, "quest2", 2, 12, "group1"),
-                        new RankingResponse.Rank(3L, 14L, "quest3", 3, 1, "group1")))
-                .build();
+        return RankingResponse.Ranks.from(rankingService.getUserRanking(userId));
+    }
+
+    @GetMapping("")
+    public RankingResponse.Ranks getMyProfileRanking(
+            @Authenticate Long userId
+    ) {
+        return RankingResponse.Ranks.from(rankingService.getUserRanking(userId));
     }
 
 }

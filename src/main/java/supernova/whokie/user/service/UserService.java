@@ -5,13 +5,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.auth.JwtProvider;
+import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.controller.dto.KakaoAccount;
-import supernova.whokie.user.controller.dto.UserResponse;
+import supernova.whokie.user.infrastructure.apiCaller.dto.KakaoAccount;
+import supernova.whokie.user.infrastructure.apiCaller.dto.Partner;
+import supernova.whokie.user.infrastructure.apiCaller.dto.UserInfoResponse;
 import supernova.whokie.user.repository.UserRepository;
-import supernova.whokie.user.util.UserApiCaller;
+import supernova.whokie.user.infrastructure.apiCaller.UserApiCaller;
+import supernova.whokie.user.service.dto.UserModel;
 
 @Service
 @RequiredArgsConstructor
@@ -27,18 +30,20 @@ public class UserService {
 
     @Transactional
     public String register(String code) {
-        KakaoAccount kakaoAccount = userApiCaller.extractUserInfo(code);
-
+        UserInfoResponse userInfoResponse = userApiCaller.extractUserInfo(code);
+        KakaoAccount kakaoAccount = userInfoResponse.kakaoAccount();
+        Partner partner = userInfoResponse.forPartner();
         Users user = userRepository.findByEmail(kakaoAccount.email())
             .orElseGet(() -> userRepository.save(
                 Users.builder()
                     .name(kakaoAccount.name())
                     .email(kakaoAccount.email())
                     .point(0)
-                    .age(LocalDate.now().getYear() - Integer.parseInt(kakaoAccount.birthyear()))
+                    .age(LocalDate.now().getYear() - Integer.parseInt(kakaoAccount.birthYear()))
                     .gender(Gender.fromString(kakaoAccount.gender()))
-                    .imageUrl(kakaoAccount.profile().profile_image_url())
+                    .imageUrl(kakaoAccount.profile().profileImageUrl())
                     .role(Role.USER)
+                    .kakaoId(userInfoResponse.id())
                     .build()
             ));
 
@@ -47,17 +52,17 @@ public class UserService {
         return token;
     }
 
-    public UserResponse.Info getUserInfo(Long userId) {
+    public UserModel.Info getUserInfo(Long userId) {
         Users user = userRepository.findById(userId)
-            .orElseThrow();
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return UserResponse.Info.from(user);
+        return UserModel.Info.from(user);
     }
 
-    public UserResponse.Point getPoint(Long userId) {
+    public UserModel.Point getPoint(Long userId) {
         Users user = userRepository.findById(userId)
-            .orElseThrow();
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        return UserResponse.Point.from(user);
+        return UserModel.Point.from(user);
     }
 }

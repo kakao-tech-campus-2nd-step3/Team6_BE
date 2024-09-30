@@ -4,14 +4,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import supernova.whokie.global.BaseTimeEntity;
+import lombok.*;
+import supernova.whokie.global.entity.BaseTimeEntity;
 
 @Builder
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class PointRecord extends BaseTimeEntity {
