@@ -37,6 +37,8 @@ public class AnswerService {
     private int defaultHintCount;
     @Value("${max-hint-count}")
     private int maxHintCount;
+    @Value("${hint-purchase-point}")
+    private int hintPurchasePoint;
 
     @Transactional(readOnly = true)
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId) {
@@ -80,10 +82,13 @@ public class AnswerService {
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
         Answer answer = answerRepository.findById(command.answerId()).orElseThrow(() -> new EntityNotFoundException("해당 답변을 찾을 수 없습니다."));
 
-        if (isNotPicked(answer, user)) {
-            throw new InvalidEntityException("해당 답변의 picked유저가 아닙니다.");
+        validateIsPickedUser(answer, user);
+
+        if(user.hasNotEnoughPoint(hintPurchasePoint)){
+            throw new InvalidEntityException("포인트가 부족합니다.");
         }
 
+        user.decreasePoint(hintPurchasePoint);
         answer.increaseHintCount();
     }
 
@@ -93,9 +98,7 @@ public class AnswerService {
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
         Answer answer = answerRepository.findById(parsedAnswerId).orElseThrow(() -> new EntityNotFoundException("해당 답변을 찾을 수 없습니다."));
 
-        if (isNotPicked(answer, user)) {
-            throw new InvalidEntityException("해당 답변의 picked유저가 아닙니다.");
-        }
+        validateIsPickedUser(answer, user);
 
         List<AnswerModel.Hint> allHints = new ArrayList<>();
 
@@ -107,7 +110,13 @@ public class AnswerService {
         return allHints;
     }
 
-    public boolean isNotPicked(Answer answer, Users user) {
+    private void validateIsPickedUser(Answer answer, Users user) {
+        if (isNotPicked(answer, user)) {
+            throw new InvalidEntityException("해당 답변의 picked유저가 아닙니다.");
+        }
+    }
+
+    private boolean isNotPicked(Answer answer, Users user) {
         return !answer.getPicked().getId().equals(user.getId());
     }
 }

@@ -24,6 +24,7 @@ import supernova.whokie.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -54,7 +55,7 @@ class AnswerIntegrationTest {
         Users user = Users.builder()
                 .name("Test User")
                 .email("test@example.com")
-                .point(0)
+                .point(100)
                 .age(20)
                 .kakaoId(1234567890L)
                 .gender(Gender.M)
@@ -67,7 +68,7 @@ class AnswerIntegrationTest {
             Users friendUser = Users.builder()
                     .name("Friend " + i)
                     .email("friend" + i + "@example.com")
-                    .point(0)
+                    .point(100)
                     .age(20)
                     .kakaoId(1234567890L + i)
                     .gender(Gender.F)
@@ -205,6 +206,10 @@ class AnswerIntegrationTest {
     @DisplayName("힌트 구매 테스트")
     void purchaseHintTest() throws Exception {
         Long answerId = 1L;
+        Long userId = 1L;
+        int hintPurchasePoint = 5;
+
+        int initialPoint = userRepository.findById(userId).orElseThrow().getPoint();
 
         String requestBody = String.format("{\"answerId\": %d}", answerId);
 
@@ -218,5 +223,10 @@ class AnswerIntegrationTest {
                     String responseContent = result.getResponse().getContentAsString();
                     System.out.println("구매 응답 내용: " + responseContent);
                 });
+
+        //유저 포인트 감소 확인
+        Users userAfterPurchase = userRepository.findById(userId).orElseThrow();
+        int finalPoint = userAfterPurchase.getPoint();
+        assertThat(finalPoint).isEqualTo(initialPoint - hintPurchasePoint);
     }
 }

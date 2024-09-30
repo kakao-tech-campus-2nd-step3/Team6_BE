@@ -44,4 +44,12 @@ public class Users extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @NotNull
     private Role role;
+
+    public boolean hasNotEnoughPoint(int point){
+        return this.point < point;
+    }
+
+    public void decreasePoint(int point) {
+        this.point -= point;
+    }
 }
