@@ -19,7 +19,7 @@ public class AnswerCommand {
     @Builder
     public record Purchase(
             Long answerId
-    ){
+    ) {
 
     }
 }

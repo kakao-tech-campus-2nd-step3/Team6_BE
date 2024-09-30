@@ -27,8 +27,8 @@ public class AnswerModel {
             int hintNum,
             Boolean valid,
             String content
-    ){
-        public static AnswerModel.Hint from(Users user, int hintCount, boolean valid){
+    ) {
+        public static AnswerModel.Hint from(Users user, int hintCount, boolean valid) {
             return switch (hintCount) {
                 case 1 -> Hint.builder().hintNum(1).valid(valid).content(String.valueOf(user.getGender())).build();
                 case 2 -> Hint.builder().hintNum(2).valid(valid).content(String.valueOf(user.getAge())).build();

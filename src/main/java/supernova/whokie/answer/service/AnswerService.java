@@ -76,11 +76,11 @@ public class AnswerService {
     }
 
     @Transactional
-    public void purchaseHint(Long userId, AnswerCommand.Purchase command){
+    public void purchaseHint(Long userId, AnswerCommand.Purchase command) {
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
         Answer answer = answerRepository.findById(command.answerId()).orElseThrow(() -> new EntityNotFoundException("해당 답변을 찾을 수 없습니다."));
 
-        if(isNotPicked(answer, user)){
+        if (isNotPicked(answer, user)) {
             throw new InvalidEntityException("해당 답변의 picked유저가 아닙니다.");
         }
 
@@ -88,18 +88,18 @@ public class AnswerService {
     }
 
     @Transactional(readOnly = true)
-    public List<AnswerModel.Hint> getHints(Long userId, String answerId){
+    public List<AnswerModel.Hint> getHints(Long userId, String answerId) {
         Long parsedAnswerId = Long.parseLong(answerId);
         Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
         Answer answer = answerRepository.findById(parsedAnswerId).orElseThrow(() -> new EntityNotFoundException("해당 답변을 찾을 수 없습니다."));
 
-        if(isNotPicked(answer, user)){
+        if (isNotPicked(answer, user)) {
             throw new InvalidEntityException("해당 답변의 picked유저가 아닙니다.");
         }
 
         List<AnswerModel.Hint> allHints = new ArrayList<>();
 
-        for(int i = 1; i <= maxHintCount; i++){
+        for (int i = 1; i <= maxHintCount; i++) {
             boolean valid = (i <= answer.getHintCount());
             allHints.add(AnswerModel.Hint.from(answer.getPicker(), i, valid));
         }
@@ -108,7 +108,6 @@ public class AnswerService {
     }
 
     public boolean isNotPicked(Answer answer, Users user) {
-
         return !answer.getPicked().getId().equals(user.getId());
     }
 }
