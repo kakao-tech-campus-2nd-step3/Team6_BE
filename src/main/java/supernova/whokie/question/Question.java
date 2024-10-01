@@ -17,6 +17,7 @@ import supernova.whokie.user.Users;
 public class Question extends BaseTimeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String content;
@@ -26,7 +27,7 @@ public class Question extends BaseTimeEntity {
 
     private Long groupId; // group id
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private Users writer;
 

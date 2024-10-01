@@ -10,44 +10,51 @@ public class UserModel {
 
     @Builder
     public record PickedInfo(
-        Long userId,
-        String name,
-        String imageUrl
+            Long userId,
+            String name,
+            String imageUrl
     ) {
+        public static PickedInfo from(Users user){
+            return PickedInfo.builder()
+                    .userId(user.getId())
+                    .name(user.getName())
+                    .imageUrl(user.getImageUrl())
+                    .build();
+        }
 
     }
 
     @Builder
     public record Info(
-        String email,
-        Gender gender,
-        int age,
-        String name,
-        Role role,
-        LocalDate createdAt
+            String email,
+            Gender gender,
+            int age,
+            String name,
+            Role role,
+            LocalDate createdAt
     ) {
 
         public static UserModel.Info from(Users user) {
             return UserModel.Info.builder()
-                .email(user.getEmail())
-                .gender(user.getGender())
-                .age(user.getAge())
-                .name(user.getName())
-                .role(user.getRole())
-                .createdAt(user.getCreatedAt().toLocalDate())
-                .build();
+                    .email(user.getEmail())
+                    .gender(user.getGender())
+                    .age(user.getAge())
+                    .name(user.getName())
+                    .role(user.getRole())
+                    .createdAt(user.getCreatedAt().toLocalDate())
+                    .build();
         }
     }
 
     @Builder
     public record Point(
-        int amount
+            int amount
     ) {
 
         public static UserModel.Point from(Users user) {
             return UserModel.Point.builder()
-                .amount(user.getPoint())
-                .build();
+                    .amount(user.getPoint())
+                    .build();
         }
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import supernova.whokie.group.Groups;
 import supernova.whokie.ranking.Ranking;
 import supernova.whokie.ranking.infrastructure.repoistory.RankingRepository;
@@ -23,7 +24,12 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@TestPropertySource(properties = {
+    "spring.profiles.active=default",
+    "jwt.secret=abcd"
+})
 class RankingServiceTest {
+
     @Autowired
     private RankingService rankingService;
     @MockBean
@@ -39,7 +45,7 @@ class RankingServiceTest {
         Ranking ranking3 = Ranking.builder().count(80).groups(group).build();
         List<Ranking> entities = List.of(ranking1, ranking2, ranking3);
         given(rankingRepository.findTop3ByUsers_IdOrderByCountDesc(any()))
-                .willReturn(entities);
+            .willReturn(entities);
 
         // when
         List<RankingModel.Rank> actual = rankingService.getUserRanking(1L);
