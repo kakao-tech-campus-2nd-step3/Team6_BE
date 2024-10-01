@@ -34,7 +34,7 @@ public class GroupMemberService {
 
     public void validateCurrentLeader(Long userId, Long pastLeaderId) {
         if (!userId.equals(pastLeaderId)) {
-            throw new ForbiddenException("해당 그룹 내의 유저만 권한을 위임할 수 있습니다.");
+            throw new ForbiddenException("해당 그룹 내의 리더가 아닙니다.");
         }
     }
 
@@ -53,5 +53,19 @@ public class GroupMemberService {
     public void changeLeader(GroupMember leader, GroupMember newLeader) {
         leader.changeRole();
         newLeader.changeRole();
+    }
+
+    @Transactional
+    public void expelMember(Long userId, GroupMemberCommand.Expel command) {
+        GroupMember leader = groupMemberRepository.findByUserIdAndGroupId(userId,
+                command.groupId())
+            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+        validateLeader(leader);
+
+        GroupMember member = groupMemberRepository.findByUserIdAndGroupId(command.userId(),
+                command.groupId())
+            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+
+        groupMemberRepository.deleteByUserId(member.getId());
     }
 }

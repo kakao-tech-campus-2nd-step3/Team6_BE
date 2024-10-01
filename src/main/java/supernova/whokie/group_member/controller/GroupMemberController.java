@@ -30,9 +30,11 @@ public class GroupMemberController {
 
     @PostMapping("/expel")
     public GlobalResponse expelGroupMember(
-            @RequestBody GroupMemberRequest.Expel request
+            @RequestBody GroupMemberRequest.Expel request,
+            @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("OK").build();
+        groupMemberService.expelMember(userId, request.toCommand());
+        return GlobalResponse.builder().message("그룹 멤버 강퇴에 성공하였습니다.").build();
     }
 
     @GetMapping("/{group-id}/member")

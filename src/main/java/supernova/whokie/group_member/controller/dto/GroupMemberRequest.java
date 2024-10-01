@@ -28,9 +28,19 @@ public class GroupMemberRequest {
     }
 
     public record Expel(
+            @NotNull
+            @Positive
             Long groupId,
+            @NotNull
+            @Positive
             Long userId
     ) {
 
+        public GroupMemberCommand.Expel toCommand() {
+            return GroupMemberCommand.Expel.builder()
+                .groupId(groupId)
+                .userId(userId)
+                .build();
+        }
     }
 }
