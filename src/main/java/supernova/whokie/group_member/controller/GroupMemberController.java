@@ -12,6 +12,8 @@ import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
 import java.time.LocalDate;
 import java.util.List;
 import supernova.whokie.group_member.service.GroupMemberService;
+import supernova.whokie.group_member.service.dto.GroupMemberModel;
+import supernova.whokie.group_member.service.dto.GroupMemberModel.Members;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,10 +42,10 @@ public class GroupMemberController {
 
     @GetMapping("/{group-id}/member")
     public GroupMemberResponse.Members getGroupMemberList(
-            @PathVariable("group-id") String groupId
+            @PathVariable("group-id") Long groupId,
+            @Authenticate Long userId
     ) {
-        return new GroupMemberResponse.Members(List.of(
-                new GroupMemberResponse.Member(1L, 1L, GroupRole.MEMBER, "멤버임", LocalDate.now()),
-                new GroupMemberResponse.Member(2L, 2L, GroupRole.LEADER, "리터임", LocalDate.now())));
+        GroupMemberModel.Members model = groupMemberService.getGroupMembers(userId, groupId);
+        return GroupMemberResponse.Members.from(model);
     }
 }
