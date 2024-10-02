@@ -6,6 +6,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,12 +17,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.GroupRole;
 import supernova.whokie.group_member.GroupStatus;
 import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
 import supernova.whokie.group_member.service.dto.GroupMemberCommand;
+import supernova.whokie.group_member.service.dto.GroupMemberModel;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
@@ -133,4 +137,35 @@ public class GroupMemberServiceTest {
         verify(groupMemberRepository).deleteByUserIdAndGroupId(member.getId(), command.groupId());
     }
 
+    @Test
+    @DisplayName("그룹 내 멤버 조회")
+    void getGroupMembers() throws Exception {
+        // given
+        given(groupMemberRepository.findByUserIdAndGroupId(userId, groupId))
+            .willReturn(Optional.of(member));
+
+        given(groupMemberRepository.findAllByGroupId(groupId))
+            .willReturn(List.of(leader, member));
+
+        Field createdAtField = BaseTimeEntity.class.getDeclaredField("createdAt");
+        createdAtField.setAccessible(true);
+        createdAtField.set(leader, LocalDateTime.now());
+        createdAtField.set(member, LocalDateTime.now());
+
+        // when
+        GroupMemberModel.Members members = groupMemberService.getGroupMembers(userId, groupId);
+
+        // then
+        assertThat(members.members()).hasSize(2);
+        assertThat(members.members().get(0).userId()).isEqualTo(user1.getId());
+        assertThat(members.members().get(0).userName()).isEqualTo(user1.getName());
+        assertThat(members.members().get(0).role()).isEqualTo(GroupRole.LEADER);
+
+        assertThat(members.members().get(1).userId()).isEqualTo(user2.getId());
+        assertThat(members.members().get(1).userName()).isEqualTo(user2.getName());
+        assertThat(members.members().get(1).role()).isEqualTo(GroupRole.MEMBER);
+
+        verify(groupMemberRepository).findByUserIdAndGroupId(userId, groupId);
+        verify(groupMemberRepository).findAllByGroupId(groupId);
+    }
 }
