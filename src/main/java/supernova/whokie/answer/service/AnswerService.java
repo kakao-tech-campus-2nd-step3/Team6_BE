@@ -19,9 +19,11 @@ import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
+import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.infrastructure.repository.UsersRepository;
 
 import java.util.List;
+import supernova.whokie.user.service.dto.UserModel;
 
 @Service
 @RequiredArgsConstructor
