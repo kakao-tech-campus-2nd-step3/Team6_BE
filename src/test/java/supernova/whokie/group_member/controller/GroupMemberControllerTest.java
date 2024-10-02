@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.auth.JwtInterceptor;
@@ -37,6 +40,7 @@ import supernova.whokie.user.infrastructure.repository.UsersRepository;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class GroupMemberControllerTest {
 
     @Autowired
@@ -137,5 +141,26 @@ public class GroupMemberControllerTest {
 
         assertThat(updatedLeader.getGroupRole()).isEqualTo(GroupRole.MEMBER);
         assertThat(updatedNewLeader.getGroupRole()).isEqualTo(GroupRole.LEADER);
+    }
+
+    @Test
+    @DisplayName("그룹 내 멤버 강퇴 테스트")
+    void expelMember() throws Exception {
+        String requestJson = String.format("{\"groupId\": %d, \"userId\": %d}", groupId, member.getId());
+        String token = jwtProvider.createToken(1L, Role.USER);
+        given(jwtInterceptor.preHandle(any(), any(), any())).willReturn(true);
+
+        mockMvc.perform(post("/api/group/expel")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .requestAttr("userId", String.valueOf(1L)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.message").value("그룹 멤버 강퇴에 성공하였습니다."))
+            .andDo(print());
+
+        List<GroupMember> groupMembers = groupMemberRepository.findAll();
+
+        assertThat(groupMembers.size()).isEqualTo(1);
     }
 }

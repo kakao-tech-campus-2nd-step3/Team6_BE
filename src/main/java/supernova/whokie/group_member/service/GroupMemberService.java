@@ -66,6 +66,6 @@ public class GroupMemberService {
                 command.groupId())
             .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
 
-        groupMemberRepository.deleteByUserId(member.getId());
+        groupMemberRepository.deleteByUserIdAndGroupId(member.getId(), command.groupId());
     }
 }
