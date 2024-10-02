@@ -19,5 +19,6 @@ public class AppRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         System.out.println("===================활성화된 프로필===================");
         System.out.println("Active profiles : " + Arrays.toString(environment.getActiveProfiles()));
+        System.out.println("db url : " + environment.getProperty("spring.datasource.url"));
     }
 }
