@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -24,6 +25,7 @@ import supernova.whokie.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -33,7 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
         "spring.profiles.active=default",
-        "jwt.secret=abcd"
+        "jwt.secret=abcd",
+        "spring.sql.init.mode=never"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class AnswerIntegrationTest {
@@ -47,6 +50,9 @@ class AnswerIntegrationTest {
     private QuestionRepository questionRepository;
     @Autowired
     private AnswerRepository answerRepository;
+
+    @Value("${answer-point}")
+    private int answerPoint;
 
     @BeforeEach
     void setUp() {
@@ -129,6 +135,9 @@ class AnswerIntegrationTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute("userId", "1");
 
+        Long userId = 1L;
+        int initialPoint = userRepository.findById(userId).orElseThrow().getPoint();
+
         Long questionId = 1L;
         Long pickedId = 2L;
 
@@ -140,7 +149,9 @@ class AnswerIntegrationTest {
                         .requestAttr("userId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("답변 완료"));
-
+        Users userAfterAnswer = userRepository.findById(userId).orElseThrow();
+        int finalPoint = userAfterAnswer.getPoint();
+        assertThat(finalPoint).isEqualTo(initialPoint + answerPoint);
     }
 
     @Test
