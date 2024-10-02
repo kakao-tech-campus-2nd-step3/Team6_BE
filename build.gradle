@@ -36,6 +36,10 @@ dependencies {
     //swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 
+    // JPA, Hibernate 호환성 문제
+    implementation 'org.hibernate:hibernate-core:6.2.7.Final'
+
+
     // MySQL JDBC 드라이버 추가
     runtimeOnly 'mysql:mysql-connector-java:8.0.33'
 
