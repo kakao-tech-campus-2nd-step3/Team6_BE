@@ -57,13 +57,14 @@ class UserControllerTest {
             .age(25)
             .kakaoId(1L)
             .gender(Gender.M)
+            .imageUrl("imageUrl")
             .role(Role.USER)
             .build();
 
         userRepository.save(user);
     }
 
-    //@Test
+    @Test
     @DisplayName("유저 정보 조회")
     void getUserInfo() throws Exception {
         String token = jwtProvider.createToken(user.getId(), user.getRole());
