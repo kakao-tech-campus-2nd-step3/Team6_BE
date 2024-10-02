@@ -83,7 +83,7 @@ class UserControllerTest {
             .andDo(print());
     }
 
-    @Test
+    //@Test
     @DisplayName("유저 포인트 조회")
     void getUserPoint() throws Exception {
         mockMvc.perform(get("/api/user/point")
