@@ -2,7 +2,7 @@ name: Test
 
 on:
   pull_request:
-    branches: [ "Develop", "Master", "Weekly", "issue/*" ]
+    branches: [ "Develop", "Master", "Weekly-5", "issue/*" ]
 permissions: write-all
 
 jobs:
