@@ -22,6 +22,7 @@ public class AppRunner implements ApplicationRunner {
         System.out.println("db url : " + environment.getProperty("spring.datasource.url"));
         System.out.println(
             "db username : " + environment.getProperty("spring.datasource.username"));
+        System.out.println("secret key : " + environment.getProperty("jwt.secret"));
 
     }
 }
