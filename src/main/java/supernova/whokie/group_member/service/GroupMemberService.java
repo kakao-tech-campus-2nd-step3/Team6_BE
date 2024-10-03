@@ -3,6 +3,7 @@ package supernova.whokie.group_member.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import supernova.whokie.global.exception.AlreadyExistException;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.infrastructure.repository.GroupsRepository;
@@ -27,6 +28,10 @@ public class GroupMemberService {
 
         Users user = usersRepository.findById(command.userId())
             .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        if (groupMemberRepository.existsByUsersAndGroups(user, group)) {
+            throw new AlreadyExistException("이미 가입된 그룹입니다.");
+        }
 
         GroupMember groupMember = command.toEntity(user, group);
 
