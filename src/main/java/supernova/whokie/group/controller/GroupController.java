@@ -1,5 +1,6 @@
 package supernova.whokie.group.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -26,7 +27,7 @@ public class GroupController {
 
     @PostMapping("")
     public GlobalResponse createGroup(
-        @RequestBody GroupRequest.Create request,
+        @RequestBody @Valid GroupRequest.Create request,
         @Authenticate Long userId
     ) {
         Long groupId = groupService.createGroup(request.toCommand());
@@ -37,9 +38,12 @@ public class GroupController {
 
     @PostMapping("/join")
     public GlobalResponse joinGroup(
-        @RequestBody GroupRequest.Join request
+        @RequestBody @Valid GroupRequest.Join request,
+        @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("dummy").build();
+        groupMemberService.addMemberToGroup(
+            request.toGroupMemberCommand(request.groupId(), userId));
+        return GlobalResponse.builder().message("그룹 가입에 성공하셨습니다.").build();
     }
 
     @GetMapping("/{group-id}/invite")
