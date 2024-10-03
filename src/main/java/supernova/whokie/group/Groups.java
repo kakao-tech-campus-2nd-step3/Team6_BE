@@ -1,6 +1,8 @@
 package supernova.whokie.group;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 import supernova.whokie.global.entity.BaseTimeEntity;
@@ -13,6 +15,7 @@ import supernova.whokie.global.entity.BaseTimeEntity;
 public class Groups extends BaseTimeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String groupName;

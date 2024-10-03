@@ -13,6 +13,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.group.Groups;
+import supernova.whokie.group.repository.GroupsRepository;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
@@ -27,10 +29,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
         "spring.profiles.active=default",
-        "jwt.secret=abcd"
+        "jwt.secret=abcd",
+        "spring.sql.init.mode=never"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-
 class QuestionIntegrationTest {
 
     @Autowired
@@ -45,9 +47,11 @@ class QuestionIntegrationTest {
     @Autowired
     private FriendRepository friendRepository;
 
+    @Autowired
+    private GroupsRepository groupsRepository;
+
     @BeforeEach
     void setUp() {
-
         Users user = Users.builder()
                 .name("Test User")
                 .email("test@example.com")
@@ -82,13 +86,32 @@ class QuestionIntegrationTest {
             friendRepository.save(friend);
         }
 
+        Groups group = Groups.builder()
+                .groupName("test group")
+                .groupImageUrl("test imageUrl")
+                .description("test group desc")
+                .build();
+        groupsRepository.save(group);
 
+        //승인된 그룹질문
         for (int i = 1; i <= 10; i++) {
             Question question = Question.builder()
                     .id((long) i)
                     .content("Question " + i)
                     .writer(user)
+                    .groupId(1L)
                     .questionStatus(QuestionStatus.APPROVED)
+                    .build();
+            questionRepository.save(question);
+        }
+        //거절된 그룹질문
+        for (int i =11; i <= 20; i++) {
+            Question question = Question.builder()
+                    .id((long) i)
+                    .content("Question " + i)
+                    .writer(user)
+                    .groupId(1L)
+                    .questionStatus(QuestionStatus.REJECTED)
                     .build();
             questionRepository.save(question);
         }
@@ -114,4 +137,49 @@ class QuestionIntegrationTest {
                     System.out.println("questions 내용: " + responseContent);
                 });
     }
+
+    @Test
+    @DisplayName("상태에 따른 질문 목록을 정상적으로 가져오는지 테스트 (APPROVED 상태)")
+    void getGroupQuestionPagingApprovedTest() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("userId", "1");
+
+        mockMvc.perform(get("/api/group/1/question")
+                        .param("status", "true") // APPROVED 상태
+                        .requestAttr("userId", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content.length()").value(10))
+                .andExpect(jsonPath("$.totalElements").value(10))
+                .andExpect(jsonPath("$.totalPages").value(1))
+                .andExpect(jsonPath("$.page").value(0))
+                .andDo(result -> {
+                    String responseContent = result.getResponse().getContentAsString();
+                    System.out.println("APPROVED 상태의 질문 목록: " + responseContent);
+                });
+    }
+
+    @Test
+    @DisplayName("상태에 따른 질문 목록을 정상적으로 가져오는지 테스트 (REJECTED 상태)")
+    void getGroupQuestionPagingRejectedTest() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("userId", "1");
+
+        mockMvc.perform(get("/api/group/1/question")
+                        .param("status", "false") // REJECTED 상태
+                        .requestAttr("userId", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content.length()").value(10))
+                .andExpect(jsonPath("$.totalElements").value(10))
+                .andExpect(jsonPath("$.totalPages").value(1))
+                .andExpect(jsonPath("$.page").value(0))
+                .andDo(result -> {
+                    String responseContent = result.getResponse().getContentAsString();
+                    System.out.println("REJECTED 상태의 질문 목록: " + responseContent);
+                });
+    }
+
 }
