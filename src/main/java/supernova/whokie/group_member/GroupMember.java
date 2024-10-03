@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.group.Groups;
@@ -14,9 +15,11 @@ import supernova.whokie.user.Users;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
+@Getter
 public class GroupMember extends BaseTimeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -32,5 +35,9 @@ public class GroupMember extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private GroupStatus groupStatus;
+
+    public void changeGroupRole(GroupRole groupRole) {
+        this.groupRole = groupRole;
+    }
 
 }
