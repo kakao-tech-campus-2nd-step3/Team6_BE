@@ -1,5 +1,6 @@
 package supernova.whokie.group.controller.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import supernova.whokie.group.service.dto.GroupCommand;
 import supernova.whokie.group_member.GroupRole;
@@ -8,11 +9,11 @@ import supernova.whokie.group_member.service.dto.GroupMemberCommand;
 public class GroupRequest {
 
     public record Create(
-        @NotNull
+        @NotBlank
         String groupName,
-        @NotNull
+        @NotBlank
         String groupDescription,
-        @NotNull
+        @NotBlank
         String groupImageUrl
     ) {
 
@@ -56,10 +57,20 @@ public class GroupRequest {
 
 
     public record Modify(
+        @NotNull
         Long groupId,
+        @NotBlank
         String groupName,
-        String description
+        @NotBlank
+        String groupDescription
     ) {
 
+        public GroupCommand.Modify toCommand() {
+            return GroupCommand.Modify.builder()
+                .groupId(groupId)
+                .groupName(groupName)
+                .description(groupDescription)
+                .build();
+        }
     }
 }
