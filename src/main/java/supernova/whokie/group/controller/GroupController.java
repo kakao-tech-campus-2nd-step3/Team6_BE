@@ -55,9 +55,11 @@ public class GroupController {
 
     @PostMapping("/exit")
     public GlobalResponse exitGroup(
-        @RequestBody GroupRequest.Exit request
+        @RequestBody @Valid GroupRequest.Exit request,
+        @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("dummy").build();
+        groupMemberService.removeMemberFromGroup(request.groupId(), userId);
+        return GlobalResponse.builder().message("그룹 탈퇴에 성공하였습니다.").build();
     }
 
     @GetMapping("/{group-id}")

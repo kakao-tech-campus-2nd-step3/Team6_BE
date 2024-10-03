@@ -48,6 +48,7 @@ public class GroupRequest {
     }
 
     public record Exit(
+        @NotNull
         Long groupId
     ) {
 

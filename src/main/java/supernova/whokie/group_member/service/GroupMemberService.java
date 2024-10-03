@@ -29,12 +29,23 @@ public class GroupMemberService {
         Users user = usersRepository.findById(command.userId())
             .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        if (groupMemberRepository.existsByUsersAndGroups(user, group)) {
+        if (groupMemberRepository.existsByUsersIdAndGroupsId(command.userId(), command.groupId())) {
             throw new AlreadyExistException("이미 가입된 그룹입니다.");
         }
 
         GroupMember groupMember = command.toEntity(user, group);
 
         groupMemberRepository.save(groupMember);
+    }
+
+    @Transactional
+    public void removeMemberFromGroup(Long groupId, Long userId) {
+        groupsRepository.findById(groupId)
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 그룹입니다."));
+
+        GroupMember groupMember = groupMemberRepository.findByUsersIdAndGroupsId(userId, groupId)
+            .orElseThrow(() -> new EntityNotFoundException("그룹에 가입되어 있지 않습니다."));
+        //TODO 그룹장 정책 필요
+        groupMemberRepository.delete(groupMember);
     }
 }
