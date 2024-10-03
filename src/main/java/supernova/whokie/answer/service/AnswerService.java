@@ -37,8 +37,12 @@ public class AnswerService {
     private int defaultHintCount;
     @Value("${max-hint-count}")
     private int maxHintCount;
-    @Value("${hint-purchase-point}")
-    private int hintPurchasePoint;
+    @Value("${first-hint-purchase-point}")
+    private int firstHintPurchasePoint;
+    @Value("${second-hint-purchase-point}")
+    private int secondHintPurchasePoint;
+    @Value("${third-hint-purchase-point}")
+    private int thirdHintPurchasePoint;
 
     @Transactional(readOnly = true)
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId) {
@@ -84,12 +88,30 @@ public class AnswerService {
 
         validateIsPickedUser(answer, user);
 
+
+
+        decreaseUserPoint(user, answer);
+        answer.increaseHintCount();
+    }
+
+    private void decreaseUserPoint(Users user, Answer answer) {
+        switch (answer.getHintCount()){
+            case 1 :
+                checkUserHasNotEnoughPoint(user, firstHintPurchasePoint);
+                user.decreasePoint(firstHintPurchasePoint); break;
+            case 2 :
+                checkUserHasNotEnoughPoint(user, secondHintPurchasePoint);
+                user.decreasePoint(secondHintPurchasePoint); break;
+            case 3 :
+                checkUserHasNotEnoughPoint(user, thirdHintPurchasePoint);
+                user.decreasePoint(thirdHintPurchasePoint); break;
+        }
+    }
+
+    private static void checkUserHasNotEnoughPoint(Users user, int hintPurchasePoint) {
         if(user.hasNotEnoughPoint(hintPurchasePoint)){
             throw new InvalidEntityException("포인트가 부족합니다.");
         }
-
-        user.decreasePoint(hintPurchasePoint);
-        answer.increaseHintCount();
     }
 
     @Transactional(readOnly = true)

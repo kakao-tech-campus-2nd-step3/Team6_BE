@@ -207,7 +207,7 @@ class AnswerIntegrationTest {
     void purchaseHintTest() throws Exception {
         Long answerId = 1L;
         Long userId = 1L;
-        int hintPurchasePoint = 5;
+        int hintPurchasePoint = 20;
 
         int initialPoint = userRepository.findById(userId).orElseThrow().getPoint();
 
