@@ -59,4 +59,12 @@ public class GlobalExceptionHandler {
         problemDetail.setDetail(e.getMessage());
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
+
+    @ExceptionHandler(AlreadyExistException.class)
+    public ResponseEntity<ProblemDetail> alreadyExistException(AlreadyExistException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(e.getStatus());
+        problemDetail.setTitle(e.getTitle());
+        problemDetail.setDetail(e.getMessage());
+        return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
+    }
 }
