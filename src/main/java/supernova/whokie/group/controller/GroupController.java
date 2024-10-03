@@ -72,11 +72,13 @@ public class GroupController {
         return PagingResponse.from(page.map(GroupResponse.InfoWithMemberCount::from));
     }
 
-    @PatchMapping("modify")
+    @PatchMapping("/modify")
     public GlobalResponse modifyGroup(
-        @RequestBody GroupRequest.Modify request
+        @RequestBody @Valid GroupRequest.Modify request,
+        @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("dummy").build();
+        groupService.modifyGroup(request.toCommand(), userId);
+        return GlobalResponse.builder().message("그룹 정보 수정에 성공하였습니다.").build();
     }
 
     @GetMapping("/{group-id}/info")
