@@ -65,4 +65,10 @@ public class UserService {
 
         return UserModel.Point.from(user);
     }
+
+    public String getAccessToken() {
+        String token = jwtProvider.createToken(1L, Role.USER);
+        System.out.println(token);
+        return token;
+    }
 }

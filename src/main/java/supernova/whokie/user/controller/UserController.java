@@ -54,4 +54,9 @@ public class UserController {
         UserModel.Point response = userService.getPoint(userId);
         return ResponseEntity.ok().body(UserResponse.Point.from(response));
     }
+
+    @GetMapping("/test")
+    public String getAccessToken() {
+        return userService.getAccessToken();
+    }
 }
