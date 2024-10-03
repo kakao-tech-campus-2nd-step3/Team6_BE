@@ -17,6 +17,7 @@ import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.question.Question;
+import supernova.whokie.question.QuestionStatus;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
@@ -95,6 +96,8 @@ class AnswerIntegrationTest {
         for (int i = 1; i <= 5; i++) {
             Question question = Question.builder()
                     .content("Test Question " + i)
+                    .questionStatus(QuestionStatus.APPROVED)
+                    .writer(user)
                     .build();
             questionRepository.save(question);
 
