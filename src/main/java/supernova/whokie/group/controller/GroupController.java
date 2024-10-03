@@ -2,6 +2,8 @@ package supernova.whokie.group.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +13,8 @@ import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.group.controller.dto.GroupRequest;
 import supernova.whokie.group.controller.dto.GroupResponse;
 
-import java.awt.print.Pageable;
-import java.util.List;
 import supernova.whokie.group.service.GroupService;
+import supernova.whokie.group.service.dto.GroupModel;
 import supernova.whokie.group_member.service.GroupMemberService;
 
 @RestController
@@ -63,13 +64,12 @@ public class GroupController {
     }
 
     @GetMapping("/{group-id}")
-    public PagingResponse<GroupResponse.Info> getGroupPaging(
+    public PagingResponse<GroupResponse.InfoWithMemberCount> getGroupPaging(
         @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        return new PagingResponse<>(
-            List.of(new GroupResponse.Info(1L, "group1", "groupImageUrl", 12),
-                new GroupResponse.Info(2L, "group2", "groupImageUrl", 12)),
-            2, 0, 1, 1);
+        Page<GroupModel.InfoWithMemberCount> page = groupService.getGroups(pageable);
+
+        return PagingResponse.from(page.map(GroupResponse.InfoWithMemberCount::from));
     }
 
     @PatchMapping("modify")
@@ -83,6 +83,6 @@ public class GroupController {
     public GroupResponse.Info getGroupInfo(
         @PathVariable("group-id") Long groupId
     ) {
-        return new GroupResponse.Info(groupId, "group1", "groupImageUrl", 12);
+        return null;
     }
 }
