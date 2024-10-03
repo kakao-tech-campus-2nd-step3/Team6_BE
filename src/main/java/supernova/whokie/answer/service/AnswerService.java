@@ -2,6 +2,7 @@ package supernova.whokie.answer.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.point_record.PointRecord;
 import supernova.whokie.point_record.PointRecordOption;
+import supernova.whokie.point_record.event.PointRecordEventDto;
 import supernova.whokie.point_record.infrastructure.repository.PointRecordRepository;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.repository.QuestionRepository;
@@ -35,6 +37,7 @@ public class AnswerService {
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
     private final PointRecordRepository pointRecordRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Value("${answer-point}")
     private int answerPoint;
@@ -68,10 +71,13 @@ public class AnswerService {
         answerRepository.save(answer);
 
         user.increasePoint(answerPoint);
+        eventPublisher.publishEvent(PointRecordEventDto.Earn.toDto(userId, answerPoint, 0, PointRecordOption.CHARGED, pointEarnMessage ));
 
-        PointRecord pointRecord = PointRecord.create(userId, answerPoint, PointRecordOption.CHARGED, pointEarnMessage);
+    }
+
+    public void recordEarnPoint(PointRecordEventDto.Earn event) {
+        PointRecord pointRecord = PointRecord.create(event.userId(), event.point(), event.amount(), event.option(), event.message());
         pointRecordRepository.save(pointRecord);
-
     }
 
     @Transactional(readOnly = true)
