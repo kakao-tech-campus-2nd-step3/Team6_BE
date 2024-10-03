@@ -34,9 +34,17 @@ public class GroupRequest {
     }
 
     public record Join(
+        @NotNull
         Long groupId
     ) {
 
+        public GroupMemberCommand.Create toGroupMemberCommand(Long groupId, Long userId) {
+            return GroupMemberCommand.Create.builder()
+                .role(GroupRole.MEMBER)
+                .groupId(groupId)
+                .userId(userId)
+                .build();
+        }
     }
 
     public record Exit(
