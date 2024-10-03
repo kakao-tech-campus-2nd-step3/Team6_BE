@@ -13,7 +13,7 @@ import supernova.whokie.global.entity.BaseTimeEntity;
 @Builder
 @Getter
 public class Groups extends BaseTimeEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,4 +21,9 @@ public class Groups extends BaseTimeEntity {
     private String groupName;
     private String description;
     private String groupImageUrl;
+
+    public void modify(String groupName, String description) {
+        this.groupName = groupName;
+        this.description = description;
+    }
 }
