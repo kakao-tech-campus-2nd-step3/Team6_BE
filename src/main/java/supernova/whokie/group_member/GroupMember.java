@@ -40,4 +40,7 @@ public class GroupMember extends BaseTimeEntity {
         this.groupRole = groupRole;
     }
 
+    public boolean isLeader() {
+        return this.groupRole == GroupRole.LEADER;
+    }
 }
