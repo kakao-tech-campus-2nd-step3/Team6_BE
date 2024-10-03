@@ -20,4 +20,13 @@ public class GroupCommand {
                 .build();
         }
     }
+
+    @Builder
+    public record Modify(
+        Long groupId,
+        String groupName,
+        String description
+    ) {
+
+    }
 }
