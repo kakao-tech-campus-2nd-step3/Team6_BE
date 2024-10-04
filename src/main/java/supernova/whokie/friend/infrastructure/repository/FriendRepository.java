@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
     @Query("SELECT f FROM Friend f JOIN FETCH f.friendUser WHERE f.hostUser.id = :hostUserId")
-    List<Friend> findByHostUserIdFetchJoin(Long hostUserId);
+    List<Friend> findByHostUserIdFetchJoin(@Param("hostUserId") Long hostUserId);
 
     void deleteByIdIn(List<Long> ids);
 

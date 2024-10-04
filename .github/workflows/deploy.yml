@@ -16,6 +16,9 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       CLIENT_ID: ${{ secrets.CLIENT_ID }}
       REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     runs-on: ubuntu-latest
 

@@ -15,4 +15,11 @@ public class AnswerCommand {
             return Answer.create(question, user, picked, hintCount);
         }
     }
+
+    @Builder
+    public record Purchase(
+            Long answerId
+    ) {
+
+    }
 }

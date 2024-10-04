@@ -16,12 +16,15 @@ import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.global.exception.EntityNotFoundException;
+import supernova.whokie.global.exception.InvalidEntityException;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.infrastructure.repository.UsersRepository;
 
+
+import java.util.ArrayList;
 import java.util.List;
 import supernova.whokie.user.service.dto.UserModel;
 
@@ -32,10 +35,16 @@ public class AnswerService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
-    @Value("${friend-limit}")
-    private int friendLimit;
     @Value("${default-hint-count}")
     private int defaultHintCount;
+    @Value("${max-hint-count}")
+    private int maxHintCount;
+    @Value("${first-hint-purchase-point}")
+    private int firstHintPurchasePoint;
+    @Value("${second-hint-purchase-point}")
+    private int secondHintPurchasePoint;
+    @Value("${third-hint-purchase-point}")
+    private int thirdHintPurchasePoint;
 
     @Transactional(readOnly = true)
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId) {
@@ -72,5 +81,66 @@ public class AnswerService {
         ).toList();
 
         return AnswerModel.Refresh.from(friendsInfoList);
+    }
+
+    @Transactional
+    public void purchaseHint(Long userId, AnswerCommand.Purchase command) {
+        Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
+        Answer answer = answerRepository.findById(command.answerId()).orElseThrow(() -> new EntityNotFoundException("해당 답변을 찾을 수 없습니다."));
+
+        validateIsPickedUser(answer, user);
+
+
+
+        decreaseUserPoint(user, answer);
+        answer.increaseHintCount();
+    }
+
+    private void decreaseUserPoint(Users user, Answer answer) {
+        switch (answer.getHintCount()){
+            case 1 :
+                checkUserHasNotEnoughPoint(user, firstHintPurchasePoint);
+                user.decreasePoint(firstHintPurchasePoint); break;
+            case 2 :
+                checkUserHasNotEnoughPoint(user, secondHintPurchasePoint);
+                user.decreasePoint(secondHintPurchasePoint); break;
+            case 3 :
+                checkUserHasNotEnoughPoint(user, thirdHintPurchasePoint);
+                user.decreasePoint(thirdHintPurchasePoint); break;
+        }
+    }
+
+    private static void checkUserHasNotEnoughPoint(Users user, int hintPurchasePoint) {
+        if(user.hasNotEnoughPoint(hintPurchasePoint)){
+            throw new InvalidEntityException("포인트가 부족합니다.");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<AnswerModel.Hint> getHints(Long userId, String answerId) {
+        Long parsedAnswerId = Long.parseLong(answerId);
+        Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
+        Answer answer = answerRepository.findById(parsedAnswerId).orElseThrow(() -> new EntityNotFoundException("해당 답변을 찾을 수 없습니다."));
+
+        validateIsPickedUser(answer, user);
+
+        List<AnswerModel.Hint> allHints = new ArrayList<>();
+
+        for (int i = 1; i <= maxHintCount; i++) {
+            boolean valid = (i <= answer.getHintCount());
+            allHints.add(AnswerModel.Hint.from(answer.getPicker(), i, valid));
+        }
+
+        return allHints;
+    }
+
+    private void validateIsPickedUser(Answer answer, Users user) {
+        if (isNotPicked(answer, user)) {
+            throw new InvalidEntityException("해당 답변의 picked유저가 아닙니다.");
+        }
+    }
+
+    private boolean isNotPicked(Answer answer, Users user) {
+        return !answer.getPicked().getId().equals(user.getId());
     }
 }
