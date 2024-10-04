@@ -59,4 +59,12 @@ public class GlobalExceptionHandler {
         problemDetail.setDetail(e.getMessage());
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
+
+    @ExceptionHandler(InvalidEntityException.class)
+    public ResponseEntity<ProblemDetail> InvalidEntityException(ForbiddenException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(e.getStatus());
+        problemDetail.setTitle(e.getTitle());
+        problemDetail.setDetail(e.getMessage());
+        return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
+    }
 }

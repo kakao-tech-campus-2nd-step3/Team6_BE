@@ -44,4 +44,8 @@ public class Answer extends BaseTimeEntity {
                 .build();
     }
 
+    public void increaseHintCount() {
+        this.hintCount++;
+    }
+
 }
