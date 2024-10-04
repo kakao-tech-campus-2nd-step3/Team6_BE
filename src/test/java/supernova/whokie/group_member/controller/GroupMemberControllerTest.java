@@ -22,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.auth.JwtInterceptor;
@@ -43,6 +44,11 @@ import supernova.whokie.user.infrastructure.repository.UsersRepository;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@TestPropertySource(properties = {
+    "spring.profiles.active=default",
+    "jwt.secret=abcd",
+    "spring.sql.init.mode=never"
+})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class GroupMemberControllerTest {
 
@@ -124,7 +130,9 @@ public class GroupMemberControllerTest {
     @Test
     @DisplayName("그룹장 위임 테스트")
     void delegateLeader() throws Exception {
-        String requestJson = String.format("{\"groupId\": %d, \"newLeaderId\": %d, \"pastLeaderId\": %d}", groupId, newLeaderId, pastLeaderId);
+        String requestJson = String.format(
+            "{\"groupId\": %d, \"newLeaderId\": %d, \"pastLeaderId\": %d}", groupId, newLeaderId,
+            pastLeaderId);
         String token = jwtProvider.createToken(1L, Role.USER);
         given(jwtInterceptor.preHandle(any(), any(), any())).willReturn(true);
 
@@ -137,9 +145,11 @@ public class GroupMemberControllerTest {
             .andExpect(jsonPath("$.message").value("그룹장 위임에 성공하였습니다."))
             .andDo(print());
 
-        GroupMember updatedLeader = groupMemberRepository.findByUserIdAndGroupId(pastLeaderId, groupId)
+        GroupMember updatedLeader = groupMemberRepository.findByUserIdAndGroupId(pastLeaderId,
+                groupId)
             .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
-        GroupMember updatedNewLeader = groupMemberRepository.findByUserIdAndGroupId(newLeaderId, groupId)
+        GroupMember updatedNewLeader = groupMemberRepository.findByUserIdAndGroupId(newLeaderId,
+                groupId)
             .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
 
         assertThat(updatedLeader.getGroupRole()).isEqualTo(GroupRole.MEMBER);
@@ -149,7 +159,8 @@ public class GroupMemberControllerTest {
     @Test
     @DisplayName("그룹 내 멤버 강퇴 테스트")
     void expelMember() throws Exception {
-        String requestJson = String.format("{\"groupId\": %d, \"userId\": %d}", groupId, member.getId());
+        String requestJson = String.format("{\"groupId\": %d, \"userId\": %d}", groupId,
+            member.getId());
         String token = jwtProvider.createToken(1L, Role.USER);
         given(jwtInterceptor.preHandle(any(), any(), any())).willReturn(true);
 
@@ -173,7 +184,6 @@ public class GroupMemberControllerTest {
         String token = jwtProvider.createToken(1L, Role.USER);
         given(jwtInterceptor.preHandle(any(), any(), any())).willReturn(true);
 
-
         mockMvc.perform(get("/api/group/{group-id}/member", group.getId())
                 .header("Authorization", "Bearer " + token)
                 .requestAttr("userId", String.valueOf(1L))
@@ -184,12 +194,14 @@ public class GroupMemberControllerTest {
             .andExpect(jsonPath("$.members[0].userId").value(user1.getId()))
             .andExpect(jsonPath("$.members[0].role").value(leader.getGroupRole().toString()))
             .andExpect(jsonPath("$.members[0].userName").value(user1.getName()))
-            .andExpect(jsonPath("$.members[0].joinedAt").value(leader.getCreatedAt().toLocalDate().toString()))
+            .andExpect(jsonPath("$.members[0].joinedAt").value(
+                leader.getCreatedAt().toLocalDate().toString()))
             .andExpect(jsonPath("$.members[1].groupMemberId").value(member.getId()))
             .andExpect(jsonPath("$.members[1].userId").value(user2.getId()))
             .andExpect(jsonPath("$.members[1].role").value(member.getGroupRole().toString()))
             .andExpect(jsonPath("$.members[1].userName").value(user2.getName()))
-            .andExpect(jsonPath("$.members[1].joinedAt").value(member.getCreatedAt().toLocalDate().toString()))
+            .andExpect(jsonPath("$.members[1].joinedAt").value(
+                member.getCreatedAt().toLocalDate().toString()))
             .andExpect(status().isOk())
             .andDo(print());
     }
