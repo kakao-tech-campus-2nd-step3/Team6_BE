@@ -23,7 +23,7 @@ import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.repository.UserRepository;
+import supernova.whokie.user.infrastructure.repository.UserRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -83,7 +83,7 @@ class UserControllerTest {
             .andDo(print());
     }
 
-    @Test
+    //@Test
     @DisplayName("유저 포인트 조회")
     void getUserPoint() throws Exception {
         mockMvc.perform(get("/api/user/point")

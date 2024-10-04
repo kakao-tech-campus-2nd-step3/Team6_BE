@@ -13,7 +13,7 @@ import supernova.whokie.friend.service.dto.FriendCommand;
 import supernova.whokie.friend.service.dto.FriendModel;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.repository.UserRepository;
+import supernova.whokie.user.infrastructure.repository.UserRepository;
 
 import java.util.List;
 import java.util.Set;

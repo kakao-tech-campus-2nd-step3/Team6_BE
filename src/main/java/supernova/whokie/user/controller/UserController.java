@@ -9,12 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
-import supernova.whokie.user.Gender;
-import supernova.whokie.user.Role;
 import supernova.whokie.user.controller.dto.UserResponse;
-
-import java.time.LocalDate;
-import supernova.whokie.user.controller.dto.UserResponse.Point;
 import supernova.whokie.user.service.UserService;
 import supernova.whokie.user.service.dto.UserModel;
 
@@ -53,5 +48,14 @@ public class UserController {
     public ResponseEntity<UserResponse.Point> getUserPoint(@Authenticate Long userId) {
         UserModel.Point response = userService.getPoint(userId);
         return ResponseEntity.ok().body(UserResponse.Point.from(response));
+    }
+
+    @GetMapping("/test/login")
+    public ResponseEntity<GlobalResponse> testLogin() { // 로그인 테스트용
+        String token = userService.testRegister();
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header("Authorization", token)
+            .body(GlobalResponse.builder().message("로그인이 완료되었습니다.").build());
     }
 }

@@ -70,7 +70,6 @@ public class UserApiCaller {
 
         TokenInfoResponse tokenResponse = getAccessToken(code);
         String accessToken = tokenResponse.accessToken();
-        System.out.println(accessToken);
 
         UserInfoResponse response = restClient.get()
             .uri(URI.create(userInfoUrl))
