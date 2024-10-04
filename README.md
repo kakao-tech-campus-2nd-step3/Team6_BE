@@ -8,3 +8,10 @@
 * 비동기로 수행되는 메서드들의 성공을 보장하기 위해서 비동기 로그 테이블을 생성하려고 합니다. 그러면 비동기 리스너 1개당 하나의 로그 테이블이 생성되어야 하는건가요? 그렇지 않다면 일반적으로 비동기로 처리되는 로직의 성공을 보장하기 위해서 어떤 방법을 사용하나요?
 
 ### 유승욱
+- 현재 GroupMemberService에서 가독성을 높이기 위해 delegateLeader 내부의 로직의 일부분을 여러 개의 메서드로 나누어 구현하였는데, 여기서 드는 의문점이 이왕 메서드를 나누어 작성하였으면
+```
+ GroupMember leader = groupMemberRepository.findByUserIdAndGroupId(command.pastLeaderId(),
+                command.groupId())
+            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+```
+같은 부분도 전부 메서드로 만들어 일관성을 지키는게 나은지 궁금합니다. 그리고 가독성을 챙기기 위한 메서드가 많아지니 서비스 클래스가 지저분해진다는 느낌을 받아 좋지 않은 방식인가? 라는 생각을 했는데  제가 진행한 방식이 괜찮은 방식인지 궁금합니다. 
