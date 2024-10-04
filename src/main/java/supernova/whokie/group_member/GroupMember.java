@@ -58,4 +58,8 @@ public class GroupMember extends BaseTimeEntity {
     public GroupRole getGroupRole() {
         return groupRole;
     }
+
+    public Long getId() {
+        return id;
+    }
 }

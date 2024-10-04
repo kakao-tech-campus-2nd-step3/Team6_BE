@@ -12,4 +12,11 @@ public class GroupMemberCommand {
     ) {
 
     }
+    @Builder
+    public record Expel(
+        Long groupId,
+        Long userId
+    ) {
+
+    }
 }

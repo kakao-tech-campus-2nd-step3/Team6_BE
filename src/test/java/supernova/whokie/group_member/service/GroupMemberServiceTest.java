@@ -2,6 +2,11 @@ package supernova.whokie.group_member.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
+
+import java.util.List;
 
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -107,5 +112,24 @@ public class GroupMemberServiceTest {
         // then
         assertThat(leader.getGroupRole()).isEqualTo(GroupRole.MEMBER);
         assertThat(member.getGroupRole()).isEqualTo(GroupRole.LEADER);
+    }
+    @Test
+    @DisplayName("그룹 내 멤버 강퇴")
+    void expelMember() {
+        // given
+        GroupMemberCommand.Expel command = new GroupMemberCommand.Expel(groupId, member.getId());
+        given(groupMemberRepository.findByUserIdAndGroupId(leader.getId(), groupId))
+            .willReturn(Optional.of(leader));
+
+        given(groupMemberRepository.findByUserIdAndGroupId(member.getId(), groupId))
+            .willReturn(Optional.of(member));
+
+        doNothing().when(groupMemberRepository).deleteByUserIdAndGroupId(member.getId(), command.groupId());
+
+        // when
+        groupMemberService.expelMember(1L, command);
+
+        // then
+        verify(groupMemberRepository).deleteByUserIdAndGroupId(member.getId(), command.groupId());
     }
 }
