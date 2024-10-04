@@ -20,10 +20,10 @@ import supernova.whokie.global.exception.InvalidEntityException;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
+import supernova.whokie.user.infrastructure.repository.UsersRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
 import java.util.ArrayList;
-import supernova.whokie.user.infrastructure.repository.UsersRepository;
 import java.util.List;
 
 @Service
