@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.group.Groups;
@@ -14,6 +15,7 @@ import supernova.whokie.user.Users;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Getter
 @Entity
 public class GroupMember extends BaseTimeEntity {
 
@@ -53,13 +55,5 @@ public class GroupMember extends BaseTimeEntity {
         } else {
             groupRole = GroupRole.LEADER;
         }
-    }
-
-    public GroupRole getGroupRole() {
-        return groupRole;
-    }
-
-    public Long getId() {
-        return id;
     }
 }

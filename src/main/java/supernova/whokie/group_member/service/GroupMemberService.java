@@ -1,5 +1,6 @@
 package supernova.whokie.group_member.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +9,8 @@ import supernova.whokie.global.exception.ForbiddenException;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
 import supernova.whokie.group_member.service.dto.GroupMemberCommand;
+import supernova.whokie.group_member.service.dto.GroupMemberModel.Member;
+import supernova.whokie.group_member.service.dto.GroupMemberModel.Members;
 
 @Service
 @RequiredArgsConstructor
@@ -67,5 +70,13 @@ public class GroupMemberService {
             .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
 
         groupMemberRepository.deleteByUserIdAndGroupId(member.getId(), command.groupId());
+    }
+
+    public Members getGroupMembers(Long userId, Long groupId) {
+        GroupMember member = groupMemberRepository.findByUserIdAndGroupId(userId, groupId)
+            .orElseThrow(() -> new EntityNotFoundException("해당 그룹의 유저만 조회할 수 있습니다."));
+
+        List<GroupMember> groupMembers = groupMemberRepository.findAllByGroupId(groupId);
+        return Members.from(groupMembers);
     }
 }

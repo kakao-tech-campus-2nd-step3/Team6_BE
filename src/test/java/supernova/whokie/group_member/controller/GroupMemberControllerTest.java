@@ -3,6 +3,8 @@ package supernova.whokie.group_member.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -163,5 +165,32 @@ public class GroupMemberControllerTest {
         List<GroupMember> groupMembers = groupMemberRepository.findAll();
 
         assertThat(groupMembers.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("그룹 멤버 조회 테스트")
+    void getGroupMembers_success() throws Exception {
+        String token = jwtProvider.createToken(1L, Role.USER);
+        given(jwtInterceptor.preHandle(any(), any(), any())).willReturn(true);
+
+
+        mockMvc.perform(get("/api/group/{group-id}/member", group.getId())
+                .header("Authorization", "Bearer " + token)
+                .requestAttr("userId", String.valueOf(1L))
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.members").isArray())
+            .andExpect(jsonPath("$.members[0].groupMemberId").value(leader.getId()))
+            .andExpect(jsonPath("$.members[0].userId").value(user1.getId()))
+            .andExpect(jsonPath("$.members[0].role").value(leader.getGroupRole().toString()))
+            .andExpect(jsonPath("$.members[0].userName").value(user1.getName()))
+            .andExpect(jsonPath("$.members[0].joinedAt").value(leader.getCreatedAt().toLocalDate().toString()))
+            .andExpect(jsonPath("$.members[1].groupMemberId").value(member.getId()))
+            .andExpect(jsonPath("$.members[1].userId").value(user2.getId()))
+            .andExpect(jsonPath("$.members[1].role").value(member.getGroupRole().toString()))
+            .andExpect(jsonPath("$.members[1].userName").value(user2.getName()))
+            .andExpect(jsonPath("$.members[1].joinedAt").value(member.getCreatedAt().toLocalDate().toString()))
+            .andExpect(status().isOk())
+            .andDo(print());
     }
 }
