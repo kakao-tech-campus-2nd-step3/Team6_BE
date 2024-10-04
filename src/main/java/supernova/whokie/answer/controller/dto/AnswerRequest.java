@@ -29,8 +29,13 @@ public class AnswerRequest {
     }
 
     public record Purchase(
+            @NotNull
             Long answerId
     ) {
-
+        public AnswerCommand.Purchase toCommand() {
+            return AnswerCommand.Purchase.builder()
+                    .answerId(this.answerId)
+                    .build();
+        }
     }
 }

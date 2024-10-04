@@ -10,8 +10,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.repository.GroupsRepository;
 import supernova.whokie.ranking.Ranking;
+import supernova.whokie.user.Gender;
+import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.repository.UsersRepository;
+import supernova.whokie.user.infrastructure.repository.UsersRepository;
 
 import java.util.List;
 
@@ -30,18 +32,18 @@ class RankingRepositoryTest {
     @PersistenceContext
     private EntityManager entityManager;
 
-    //@Test
+    @Test
     @DisplayName("userId로 랭킹 조회")
     void findByUsers_IdOrderByCountDesc() {
         // given
-        Users user = Users.builder().id(1L).build();
+        Users user = Users.builder().id(1L).name("host").email("host").point(1).age(1).kakaoId(1L).gender(Gender.F).imageUrl("image").role(Role.USER).build();
         usersRepository.save(user);
-        Groups group = Groups.builder().id(1L).groupName("group").build();
+        Groups group = Groups.builder().id(1L).groupName("group").description("test").groupImageUrl("image").build();
         groupsRepository.save(group);
-        Ranking ranking1 = Ranking.builder().id(1L).users(user).count(100).groups(group).build();
-        Ranking ranking2 = Ranking.builder().id(2L).users(user).count(70).groups(group).build();
-        Ranking ranking3 = Ranking.builder().id(3L).users(user).count(90).groups(group).build();
-        Ranking ranking4 = Ranking.builder().id(4L).users(user).count(80).groups(group).build();
+        Ranking ranking1 = Ranking.builder().id(1L).question("q1").users(user).count(100).groups(group).build();
+        Ranking ranking2 = Ranking.builder().id(2L).question("q2").users(user).count(70).groups(group).build();
+        Ranking ranking3 = Ranking.builder().id(3L).question("q3").users(user).count(90).groups(group).build();
+        Ranking ranking4 = Ranking.builder().id(4L).question("q4").users(user).count(80).groups(group).build();
         rankingRepository.saveAll(List.of(ranking1, ranking2, ranking3, ranking4));
         entityManager.flush();
         entityManager.clear();

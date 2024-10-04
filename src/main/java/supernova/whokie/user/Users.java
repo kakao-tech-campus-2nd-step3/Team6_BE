@@ -38,7 +38,6 @@ public class Users extends BaseTimeEntity {
     @NotNull
     private Gender gender;
 
-    @NotNull
     private String imageUrl;
 
     @Enumerated(EnumType.STRING)
@@ -47,5 +46,11 @@ public class Users extends BaseTimeEntity {
 
     public void increasePoint(int point) {
         this.point += point;
+    public boolean hasNotEnoughPoint(int point){
+        return this.point < point;
+    }
+
+    public void decreasePoint(int point) {
+        this.point -= point;
     }
 }

@@ -17,7 +17,7 @@ import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.repository.UserRepository;
+import supernova.whokie.user.infrastructure.repository.UserRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
