@@ -1,5 +1,6 @@
 package supernova.whokie.user.controller;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,9 @@ public class UserController {
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<GlobalResponse> registerUser(@RequestParam("code") String code) {
+    public ResponseEntity<GlobalResponse> registerUser(
+            @RequestParam("code") @NotNull String code
+    ) {
         String token = userService.register(code);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -39,13 +42,17 @@ public class UserController {
     }
 
     @GetMapping("/mypage")
-    public ResponseEntity<UserResponse.Info> getUserInfo(@Authenticate Long userId) {
+    public ResponseEntity<UserResponse.Info> getUserInfo(
+            @Authenticate Long userId
+    ) {
         UserModel.Info response = userService.getUserInfo(userId);
         return ResponseEntity.ok().body(UserResponse.Info.from(response));
     }
 
     @GetMapping("/point")
-    public ResponseEntity<UserResponse.Point> getUserPoint(@Authenticate Long userId) {
+    public ResponseEntity<UserResponse.Point> getUserPoint(
+            @Authenticate Long userId
+    ) {
         UserModel.Point response = userService.getPoint(userId);
         return ResponseEntity.ok().body(UserResponse.Point.from(response));
     }

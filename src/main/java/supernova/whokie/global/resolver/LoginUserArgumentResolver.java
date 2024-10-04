@@ -22,8 +22,8 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         String userId = (String) request.getAttribute("userId");
 
-        if (userId == null) {
-            throw new AuthenticationException("로그인 후 이용해주세요.");
+        if(userId == null) {
+            throw new AuthenticationException("로그인 후 이용해 주세요.");
         }
         return Long.parseLong(userId);
     }

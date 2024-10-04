@@ -1,6 +1,8 @@
 package supernova.whokie.answer.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -25,7 +27,7 @@ public class AnswerController {
 
     @PostMapping("/common")
     public GlobalResponse common(
-            @Valid @RequestBody AnswerRequest.Common request,
+            @RequestBody @Valid AnswerRequest.Common request,
             @Authenticate Long userId
     ) {
         answerService.answerToCommonQuestion(userId, request.toCommand());
@@ -34,7 +36,7 @@ public class AnswerController {
 
     @PostMapping("/group")
     public GlobalResponse group(
-            @RequestBody AnswerRequest.Group request
+            @RequestBody @Valid AnswerRequest.Group request
     ) {
         return GlobalResponse.builder().message("dummy").build();
     }
@@ -57,7 +59,7 @@ public class AnswerController {
 
     @GetMapping("/hint/{answer-id}")
     public AnswerResponse.Hints getHints(
-            @PathVariable("answer-id") String answerId,
+            @PathVariable("answer-id") @NotNull @Min(1) String answerId,
             @Authenticate Long userId
     ) {
         List<AnswerModel.Hint> allHints = answerService.getHints(userId, answerId);
@@ -66,7 +68,7 @@ public class AnswerController {
 
     @PostMapping("/hint")
     public GlobalResponse purchaseHint(
-            @Valid @RequestBody AnswerRequest.Purchase request,
+            @RequestBody @Valid AnswerRequest.Purchase request
             @Authenticate Long userId
     ) {
         answerService.purchaseHint(userId, request.toCommand());

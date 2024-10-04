@@ -1,5 +1,7 @@
 package supernova.whokie.group_member.controller.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import supernova.whokie.group_member.service.dto.GroupMemberCommand;

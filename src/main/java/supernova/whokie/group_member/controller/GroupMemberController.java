@@ -1,6 +1,8 @@
 package supernova.whokie.group_member.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import supernova.whokie.global.annotation.Authenticate;
@@ -24,7 +26,7 @@ public class GroupMemberController {
 
     @PatchMapping("leader")
     public GlobalResponse updateGroupLeader(
-            @Valid @RequestBody GroupMemberRequest.Modify request,
+            @RequestBody @Valid GroupMemberRequest.Modify request,
             @Authenticate Long userId
     ) {
         groupMemberService.delegateLeader(userId, request.toCommand());
@@ -33,7 +35,7 @@ public class GroupMemberController {
 
     @PostMapping("/expel")
     public GlobalResponse expelGroupMember(
-            @Valid @RequestBody GroupMemberRequest.Expel request,
+            @RequestBody @Valid GroupMemberRequest.Expel request,
             @Authenticate Long userId
     ) {
         groupMemberService.expelMember(userId, request.toCommand());
@@ -42,7 +44,7 @@ public class GroupMemberController {
 
     @GetMapping("/{group-id}/member")
     public GroupMemberResponse.Members getGroupMemberList(
-            @PathVariable("group-id") Long groupId,
+            @PathVariable("group-id") @NotNull @Min(1) String groupId,
             @Authenticate Long userId
     ) {
         GroupMemberModel.Members model = groupMemberService.getGroupMembers(userId, groupId);
