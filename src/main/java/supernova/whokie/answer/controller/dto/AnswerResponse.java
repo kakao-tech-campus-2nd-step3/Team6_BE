@@ -43,8 +43,18 @@ public class AnswerResponse {
 
     @Builder
     public record Hints(
-            List<Hint> hints
+            List<AnswerResponse.Hint> hints
     ) {
+        public static AnswerResponse.Hints from(List<AnswerModel.Hint> hintList) {
+            return Hints.builder()
+                    .hints(hintList.stream().map(
+                            hint -> Hint.builder()
+                                    .hintNum(hint.hintNum())
+                                    .valid(hint.valid())
+                                    .content(hint.content())
+                                    .build()
+                    ).toList()).build();
+        }
 
     }
 

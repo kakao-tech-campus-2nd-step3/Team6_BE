@@ -13,7 +13,7 @@ import supernova.whokie.ranking.Ranking;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.repository.UsersRepository;
+import supernova.whokie.user.infrastructure.repository.UsersRepository;
 
 import java.util.List;
 

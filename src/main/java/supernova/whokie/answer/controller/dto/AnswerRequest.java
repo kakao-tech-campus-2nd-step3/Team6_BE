@@ -36,6 +36,10 @@ public class AnswerRequest {
             @NotNull @Min(1)
             Long answerId
     ) {
-
+        public AnswerCommand.Purchase toCommand() {
+            return AnswerCommand.Purchase.builder()
+                    .answerId(this.answerId)
+                    .build();
+        }
     }
 }

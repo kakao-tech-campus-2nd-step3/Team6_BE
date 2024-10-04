@@ -59,22 +59,19 @@ public class AnswerController {
 
     @GetMapping("/hint/{answer-id}")
     public AnswerResponse.Hints getHints(
-            @PathVariable("answer-id") @NotNull @Min(1) String answerId
+            @PathVariable("answer-id") @NotNull @Min(1) String answerId,
+            @Authenticate Long userId
     ) {
-        return AnswerResponse.Hints.builder()
-                .hints(
-                        List.of(
-                                new AnswerResponse.Hint(1, true, "F"),
-                                new AnswerResponse.Hint(1, true, "22"),
-                                new AnswerResponse.Hint(1, true, null)
-                        )
-                ).build();
+        List<AnswerModel.Hint> allHints = answerService.getHints(userId, answerId);
+        return AnswerResponse.Hints.from(allHints);
     }
 
     @PostMapping("/hint")
     public GlobalResponse purchaseHint(
             @RequestBody @Valid AnswerRequest.Purchase request
+            @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("message").build();
+        answerService.purchaseHint(userId, request.toCommand());
+        return GlobalResponse.builder().message("힌트를 성공적으로 구매하였습니다!").build();
     }
 }
