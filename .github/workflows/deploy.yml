@@ -67,4 +67,7 @@ jobs:
               -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
               -e CLIENT_ID=${{ secrets.CLIENT_ID }} \
               -e REDIRECT_URI=${{ secrets.REDIRECT_URI }} \
+              -e DB_URL=${{ secrets.DB_URL }} \
+              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
               ${{ secrets.DOCKER_REPO }}

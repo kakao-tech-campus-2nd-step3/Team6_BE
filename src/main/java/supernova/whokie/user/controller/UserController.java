@@ -38,7 +38,7 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .header("Authorization", token)
-            .body(GlobalResponse.builder().message("로그인이 완료되었습니다.").build());
+            .body(GlobalResponse.builder().message(token).build());
     }
 
     @GetMapping("/mypage")
