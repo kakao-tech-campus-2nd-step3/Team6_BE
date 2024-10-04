@@ -26,8 +26,8 @@ public class GroupMemberController {
 
     @PatchMapping("leader")
     public GlobalResponse updateGroupLeader(
-            @RequestBody @Valid GroupMemberRequest.Modify request,
-            @Authenticate Long userId
+        @RequestBody @Valid GroupMemberRequest.Modify request,
+        @Authenticate Long userId
     ) {
         groupMemberService.delegateLeader(userId, request.toCommand());
         return GlobalResponse.builder().message("그룹장 위임에 성공하였습니다.").build();
@@ -35,8 +35,8 @@ public class GroupMemberController {
 
     @PostMapping("/expel")
     public GlobalResponse expelGroupMember(
-            @RequestBody @Valid GroupMemberRequest.Expel request,
-            @Authenticate Long userId
+        @RequestBody @Valid GroupMemberRequest.Expel request,
+        @Authenticate Long userId
     ) {
         groupMemberService.expelMember(userId, request.toCommand());
         return GlobalResponse.builder().message("그룹 멤버 강퇴에 성공하였습니다.").build();
@@ -44,8 +44,8 @@ public class GroupMemberController {
 
     @GetMapping("/{group-id}/member")
     public GroupMemberResponse.Members getGroupMemberList(
-            @PathVariable("group-id") @NotNull @Min(1) String groupId,
-            @Authenticate Long userId
+        @PathVariable("group-id") @NotNull @Min(1) Long groupId,
+        @Authenticate Long userId
     ) {
         GroupMemberModel.Members model = groupMemberService.getGroupMembers(userId, groupId);
         return GroupMemberResponse.Members.from(model);

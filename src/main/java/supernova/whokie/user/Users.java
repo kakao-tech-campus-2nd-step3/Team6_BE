@@ -46,7 +46,9 @@ public class Users extends BaseTimeEntity {
 
     public void increasePoint(int point) {
         this.point += point;
-    public boolean hasNotEnoughPoint(int point){
+    }
+
+    public boolean hasNotEnoughPoint(int point) {
         return this.point < point;
     }
 
