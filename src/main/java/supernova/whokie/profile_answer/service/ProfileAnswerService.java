@@ -9,12 +9,11 @@ import supernova.whokie.global.exception.ForbiddenException;
 import supernova.whokie.profile_answer.ProfileAnswer;
 import supernova.whokie.profile_answer.infrastructure.repository.ProfileAnswerRepository;
 import supernova.whokie.profile_answer.service.dto.ProfileAnswerCommand;
-import supernova.whokie.profile_answer.service.dto.ProfileAnswerCommand.Create;
 import supernova.whokie.profile_answer.service.dto.ProfileAnswerModel;
 import supernova.whokie.profile_question.ProfileQuestion;
 import supernova.whokie.profile_question.infrastructure.repository.ProfileQuestionRepository;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.repository.UsersRepository;
+import supernova.whokie.user.infrastructure.repository.UsersRepository;
 
 @Service
 @RequiredArgsConstructor

@@ -11,7 +11,7 @@ import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.repository.UserRepository;
+import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
 import java.lang.reflect.Field;

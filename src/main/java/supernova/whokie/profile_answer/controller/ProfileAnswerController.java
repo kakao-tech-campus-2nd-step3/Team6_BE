@@ -1,6 +1,8 @@
 package supernova.whokie.profile_answer.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +13,6 @@ import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.profile_answer.controller.dto.ProfileAnswerRequest;
-import supernova.whokie.profile_answer.controller.dto.ProfileAnswerRequest.Answer;
 import supernova.whokie.profile_answer.controller.dto.ProfileAnswerResponse;
 import supernova.whokie.profile_answer.service.ProfileAnswerService;
 import supernova.whokie.profile_answer.service.dto.ProfileAnswerModel;
@@ -44,7 +45,7 @@ public class ProfileAnswerController {
     @DeleteMapping("/api/profile/answer/{profile-answer-id}")
     public GlobalResponse deleteProfileAnswer(
         @Authenticate Long userId,
-        @PathVariable("profile-answer-id") Long profileAnswerId
+        @PathVariable("profile-answer-id") @NotNull @Min(1) Long profileAnswerId
     ) {
         profileAnswerService.deleteProfileAnswer(userId, profileAnswerId);
         return GlobalResponse.builder().message("message").build();

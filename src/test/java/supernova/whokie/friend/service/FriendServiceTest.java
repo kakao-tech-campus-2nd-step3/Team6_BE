@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
@@ -21,7 +22,7 @@ import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.repository.UserRepository;
+import supernova.whokie.user.infrastructure.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,12 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@TestPropertySource(properties = {
+    "spring.profiles.active=default",
+    "jwt.secret=abcd"
+})
 class FriendServiceTest {
+
     @Autowired
     private FriendService friendService;
     @Autowired
@@ -60,12 +66,16 @@ class FriendServiceTest {
         List<KakaoDto.Profile> profiles = List.of(profile1, profile2, profile3);
         KakaoDto.Friends kakaodto = new KakaoDto.Friends(null, profiles);
         given(apiCaller.getKakaoFriends(any()))
-                .willReturn(kakaodto);
+            .willReturn(kakaodto);
 
-        Users host = Users.builder().id(userId).name("name").email("email1").point(0).age(1).kakaoId(1L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        Users user1 = Users.builder().id(2L).name("name").email("email2").point(0).age(1).kakaoId(profile1.id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        Users user2 = Users.builder().id(3L).name("name").email("email3").point(0).age(1).kakaoId(profile2.id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        Users user3 = Users.builder().id(4L).name("name").email("email4").point(0).age(1).kakaoId(profile3.id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users host = Users.builder().id(userId).name("name").email("email1").point(0).age(1)
+            .kakaoId(1L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user1 = Users.builder().id(2L).name("name").email("email2").point(0).age(1)
+            .kakaoId(profile1.id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user2 = Users.builder().id(3L).name("name").email("email3").point(0).age(1)
+            .kakaoId(profile2.id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user3 = Users.builder().id(4L).name("name").email("email4").point(0).age(1)
+            .kakaoId(profile3.id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
         userRepository.saveAll(List.of(host, user1, user2, user3));
 
         Friend friend = new Friend(1L, host, user3);
@@ -85,15 +95,19 @@ class FriendServiceTest {
     void saveFriendsTest() {
         // given
         Long hostId = 1L;
-        Users host = Users.builder().id(hostId).name("name").email("email1").point(0).age(1).kakaoId(1L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        Users user1 = Users.builder().id(2L).name("name").email("email2").point(0).age(1).kakaoId(2L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        Users user2 = Users.builder().id(3L).name("name").email("email3").point(0).age(1).kakaoId(3L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        Users user3 = Users.builder().id(4L).name("name").email("email4").point(0).age(1).kakaoId(4L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users host = Users.builder().id(hostId).name("name").email("email1").point(0).age(1)
+            .kakaoId(1L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user1 = Users.builder().id(2L).name("name").email("email2").point(0).age(1)
+            .kakaoId(2L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user2 = Users.builder().id(3L).name("name").email("email3").point(0).age(1)
+            .kakaoId(3L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user3 = Users.builder().id(4L).name("name").email("email4").point(0).age(1)
+            .kakaoId(4L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
         userRepository.saveAll(List.of(host, user1, user2, user3));
 
         FriendCommand.Update command = FriendCommand.Update.builder()
-                .friendIds(List.of(user1.getId(), user2.getId(), user3.getId()))
-                .build();
+            .friendIds(List.of(user1.getId(), user2.getId(), user3.getId()))
+            .build();
 
         // when
         friendService.saveFriends(hostId, command, new ArrayList<>());
@@ -108,10 +122,14 @@ class FriendServiceTest {
     @DisplayName("누락된 Friend 삭제")
     void deleteFriendsTest() {
         Long hostId = 1L;
-        Users host = Users.builder().id(hostId).name("name").email("email1").point(0).age(1).kakaoId(1L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        Users user1 = Users.builder().id(2L).name("name").email("email2").point(0).age(1).kakaoId(2L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        Users user2 = Users.builder().id(3L).name("name").email("email3").point(0).age(1).kakaoId(3L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        Users user3 = Users.builder().id(4L).name("name").email("email4").point(0).age(1).kakaoId(4L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users host = Users.builder().id(hostId).name("name").email("email1").point(0).age(1)
+            .kakaoId(1L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user1 = Users.builder().id(2L).name("name").email("email2").point(0).age(1)
+            .kakaoId(2L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user2 = Users.builder().id(3L).name("name").email("email3").point(0).age(1)
+            .kakaoId(3L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
+        Users user3 = Users.builder().id(4L).name("name").email("email4").point(0).age(1)
+            .kakaoId(4L).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
         userRepository.saveAll(List.of(host, user1, user2, user3));
         Friend friend1 = new Friend(1L, host, user1);
         Friend friend2 = new Friend(2L, host, user2);
@@ -119,8 +137,8 @@ class FriendServiceTest {
         friendRepository.saveAll(List.of(friend1, friend2, friend3));
 
         FriendCommand.Update command = FriendCommand.Update.builder()
-                .friendIds(List.of(user1.getId(), user2.getId()))
-                .build();
+            .friendIds(List.of(user1.getId(), user2.getId()))
+            .build();
 
         entityManager.flush();
         entityManager.clear();
@@ -173,7 +191,8 @@ class FriendServiceTest {
         List<Friend> existingFriends = List.of(friend1, friend2);
 
         // when
-        List<Long> actual = friendService.filteringDeleteFriendUserIds(friendUserIds, existingFriends);
+        List<Long> actual = friendService.filteringDeleteFriendUserIds(friendUserIds,
+            existingFriends);
 
         // then
         assertThat(actual).hasSize(1);
