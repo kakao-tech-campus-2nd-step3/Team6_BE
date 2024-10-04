@@ -22,7 +22,7 @@ public class FriendRequest {
     }
 
     public record Id(
-            @Min(1)
+            @NotNull @Min(1)
             Long id
     ) {
 

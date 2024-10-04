@@ -1,5 +1,7 @@
 package supernova.whokie.point_record.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +28,7 @@ public class PointRecordController {
 
     @PostMapping("/purchase")
     public GlobalResponse purchasePoint(
-            @RequestBody PointRecordRequest.Purchase request
+            @RequestBody @Valid PointRecordRequest.Purchase request
     ) {
         return GlobalResponse.builder().message("message").build();
     }
@@ -36,7 +38,7 @@ public class PointRecordController {
             @Authenticate Long userId,
             @RequestParam(name = "start-date", defaultValue = "1900-01-01") LocalDate startDate,
             @RequestParam(name = "end-date", defaultValue = "2100-01-01") LocalDate endDate,
-            @RequestParam(name = "option") PointRecordOption option,
+            @RequestParam(name = "option") @NotNull PointRecordOption option,
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         PointRecordCommand.Record command = new PointRecordCommand.Record(startDate, endDate, option);
@@ -48,7 +50,7 @@ public class PointRecordController {
 
     @PatchMapping("/earn")
     public GlobalResponse earnPoint(
-            @RequestBody PointRecordRequest.Earn request
+            @RequestBody @Valid PointRecordRequest.Earn request
     ) {
         return GlobalResponse.builder().message("message").build();
     }
