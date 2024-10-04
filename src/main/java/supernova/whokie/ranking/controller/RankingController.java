@@ -19,7 +19,7 @@ public class RankingController {
 
     @GetMapping("/{user-Id}")
     public RankingResponse.Ranks getProfileRanking(
-            @NotNull @Min(1) @PathVariable("user-Id") Long userId
+            @PathVariable("user-Id") @NotNull @Min(1) Long userId
     ) {
         return RankingResponse.Ranks.from(rankingService.getUserRanking(userId));
     }

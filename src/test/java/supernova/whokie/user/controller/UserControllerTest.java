@@ -15,7 +15,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.auth.JwtInterceptor;
@@ -23,7 +25,7 @@ import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.repository.UserRepository;
+import supernova.whokie.user.infrastructure.repository.UserRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -86,7 +88,11 @@ class UserControllerTest {
     //@Test
     @DisplayName("유저 포인트 조회")
     void getUserPoint() throws Exception {
+        String token = jwtProvider.createToken(user.getId(), user.getRole());
+        given(jwtInterceptor.preHandle(any(), any(), any())).willReturn(true);
+
         mockMvc.perform(get("/api/user/point")
+                .header("Authorization", "Bearer " + token)
                 .requestAttr("userId", String.valueOf(user.getId()))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())

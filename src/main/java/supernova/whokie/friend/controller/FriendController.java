@@ -21,7 +21,7 @@ public class FriendController {
     @PostMapping("")
     public GlobalResponse updateFriend(
             @Authenticate Long userId,
-            @Valid @RequestBody FriendRequest.Add request
+            @RequestBody @Valid FriendRequest.Add request
     ) {
         friendService.updateFriends(userId, request.toCommand());
         return GlobalResponse.builder().message("친구 목록 갱신 성공").build();
