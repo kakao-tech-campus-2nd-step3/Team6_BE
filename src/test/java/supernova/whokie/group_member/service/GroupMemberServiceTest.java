@@ -9,6 +9,7 @@ import static org.mockito.Mockito.verify;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -116,7 +117,6 @@ public class GroupMemberServiceTest {
         assertThat(leader.getGroupRole()).isEqualTo(GroupRole.MEMBER);
         assertThat(member.getGroupRole()).isEqualTo(GroupRole.LEADER);
     }
-
     @Test
     @DisplayName("그룹 내 멤버 강퇴")
     void expelMember() {

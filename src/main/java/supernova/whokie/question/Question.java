@@ -1,6 +1,7 @@
 package supernova.whokie.question;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,13 +21,16 @@ public class Question extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String content;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private QuestionStatus questionStatus;
 
     private Long groupId; // group id
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private Users writer;

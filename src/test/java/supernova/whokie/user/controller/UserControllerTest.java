@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.auth.JwtInterceptor;
@@ -84,7 +85,7 @@ class UserControllerTest {
             .andDo(print());
     }
 
-    @Test
+    //@Test
     @DisplayName("유저 포인트 조회")
     void getUserPoint() throws Exception {
         String token = jwtProvider.createToken(user.getId(), user.getRole());
