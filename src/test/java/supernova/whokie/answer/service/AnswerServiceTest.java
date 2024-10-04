@@ -19,7 +19,7 @@ import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.repository.UserRepository;
+import supernova.whokie.user.infrastructure.repository.UsersRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
