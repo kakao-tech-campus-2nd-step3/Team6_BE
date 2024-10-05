@@ -2,6 +2,7 @@ package supernova.whokie.question.controller.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import supernova.whokie.question.service.dto.QuestionCommand;
 
 public class QuestionRequest {
@@ -21,6 +22,7 @@ public class QuestionRequest {
         }
     }
 
+    @Builder
     public record Approve(
             @NotNull @Min(1)
             Long groupId,
@@ -30,5 +32,12 @@ public class QuestionRequest {
             Boolean status
     ) {
 
+        public QuestionCommand.Approve toCommand() {
+            return QuestionCommand.Approve.builder()
+                .groupId(groupId)
+                .questionId(questionId)
+                .status(status)
+                .build();
+        }
     }
 }

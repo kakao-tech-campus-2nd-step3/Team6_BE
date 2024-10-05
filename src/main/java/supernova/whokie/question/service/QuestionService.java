@@ -106,4 +106,17 @@ public class QuestionService {
             throw new IllegalStateException("승인되지 않은 멤버입니다.");
         }
     }
+
+    @Transactional
+    public void approveQuestion(Long userId, QuestionCommand.Approve command) {
+        GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, command.groupId())
+            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+        groupMember.validateLeader();
+
+        Question question = questionRepository.findByQuestionIdAndGroupId(command.questionId(),
+                command.groupId())
+            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 질문이 존재하지 않습니다."));
+
+        question.changeStatus(command.status());
+    }
 }
