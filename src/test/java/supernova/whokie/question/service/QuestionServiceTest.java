@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import supernova.whokie.answer.controller.dto.AnswerRequest.Group;
 import supernova.whokie.friend.Friend;
@@ -27,6 +28,7 @@ import supernova.whokie.user.infrastructure.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -41,6 +43,7 @@ import static org.mockito.Mockito.when;
         "spring.profiles.active=default",
         "jwt.secret=abcd"
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class QuestionServiceTest {
 
     @MockBean
@@ -179,4 +182,34 @@ class QuestionServiceTest {
         verify(questionRepository).save(any(Question.class));
     }
 
+    @Test
+    @DisplayName("그룹 질문 승인 테스트")
+    void approveQuestion() {
+        // given
+        Users user = Users.builder()
+            .name("testUser")
+            .build();
+
+        GroupMember leader = GroupMember.builder()
+            .user(user)
+            .groupRole(GroupRole.LEADER)
+            .groupStatus(GroupStatus.APPROVED)
+            .build();
+
+        Question question = Question.builder()
+            .groupId(1L)
+            .questionStatus(QuestionStatus.READY).build();
+
+        QuestionCommand.Approve approveCommand = new QuestionCommand.Approve(1L, 1L, true);
+
+        given(groupMemberRepository.findByUserIdAndGroupId(anyLong(), anyLong())).willReturn(Optional.of(leader));
+        given(questionRepository.findByQuestionIdAndGroupId(anyLong(), anyLong())).willReturn(Optional.of(question));
+
+        // when
+        questionService.approveQuestion(1L, approveCommand);
+
+        // then
+        verify(questionRepository).findByQuestionIdAndGroupId(anyLong(), anyLong());
+        assertThat(question.getQuestionStatus()).isEqualTo(QuestionStatus.APPROVED);
+    }
 }
