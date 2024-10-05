@@ -17,6 +17,9 @@ ENV CLIENT_ID=${CLIENT_ID} \
     DB_USERNAME=${DB_USERNAME} \
     DB_PASSWORD=${DB_PASSWORD}
 
+# dev로 실행
+ENV SPRING_PROFILES_ACTIVE=dev
+
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} app.jar
 

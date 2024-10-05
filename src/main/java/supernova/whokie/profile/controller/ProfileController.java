@@ -1,5 +1,7 @@
 package supernova.whokie.profile.controller;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +12,6 @@ import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.profile.controller.dto.ProfileResponse;
 import supernova.whokie.profile.service.ProfileService;
 import supernova.whokie.profile.service.dto.ProfileModel;
-import supernova.whokie.profile.service.dto.ProfileModel.Info;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,13 +22,13 @@ public class ProfileController {
 
     @GetMapping("/{user-id}")
     public ResponseEntity<ProfileResponse.Info> getProfileInfo(
-            @PathVariable("user-id") Long userId
+            @PathVariable("user-id") @NotNull @Min(1) Long userId
     ) {
         ProfileModel.Info response = profileService.getProfile(userId);
         return ResponseEntity.ok().body(ProfileResponse.Info.from(response));
     }
 
-    @GetMapping("/increase")
+    @GetMapping("/visited")
     public GlobalResponse increaseVisited() {
         return GlobalResponse.builder().message("message").build();
     }
