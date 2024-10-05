@@ -15,6 +15,7 @@ import supernova.whokie.answer.service.dto.AnswerCommand;
 import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.point_record.PointRecord;
@@ -43,20 +44,6 @@ public class AnswerService {
     private final PointRecordRepository pointRecordRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    @Value("${answer-point}")
-    private int answerPoint;
-    @Value("${default-hint-count}")
-    private int defaultHintCount;
-    @Value("${point-earn-message}")
-    private String pointEarnMessage;
-    @Value("${max-hint-count}")
-    private int maxHintCount;
-    @Value("${first-hint-purchase-point}")
-    private int firstHintPurchasePoint;
-    @Value("${second-hint-purchase-point}")
-    private int secondHintPurchasePoint;
-    @Value("${third-hint-purchase-point}")
-    private int thirdHintPurchasePoint;
 
     @Transactional(readOnly = true)
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId) {
@@ -82,13 +69,13 @@ public class AnswerService {
         Users picked = userRepository.findById(command.pickedId())
             .orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
 
-        Answer answer = command.toEntity(question, user, picked, defaultHintCount);
+        Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
         answerRepository.save(answer);
 
-        user.increasePoint(answerPoint);
+        user.increasePoint(Constants.ANSWER_POINT);
         eventPublisher.publishEvent(
-            PointRecordEventDto.Earn.toDto(userId, answerPoint, 0, PointRecordOption.CHARGED,
-                pointEarnMessage));
+            PointRecordEventDto.Earn.toDto(userId, Constants.ANSWER_POINT, 0, PointRecordOption.CHARGED,
+                Constants.POINT_EARN_MESSAGE));
 
     }
 
@@ -127,16 +114,16 @@ public class AnswerService {
     private void decreaseUserPoint(Users user, Answer answer) {
         switch (answer.getHintCount()) {
             case 1:
-                checkUserHasNotEnoughPoint(user, firstHintPurchasePoint);
-                user.decreasePoint(firstHintPurchasePoint);
+                checkUserHasNotEnoughPoint(user, Constants.FIRST_HINT_PURCHASE_POINT);
+                user.decreasePoint(Constants.FIRST_HINT_PURCHASE_POINT);
                 break;
             case 2:
-                checkUserHasNotEnoughPoint(user, secondHintPurchasePoint);
-                user.decreasePoint(secondHintPurchasePoint);
+                checkUserHasNotEnoughPoint(user, Constants.SECOND_HINT_PURCHASE_POINT);
+                user.decreasePoint(Constants.SECOND_HINT_PURCHASE_POINT);
                 break;
             case 3:
-                checkUserHasNotEnoughPoint(user, thirdHintPurchasePoint);
-                user.decreasePoint(thirdHintPurchasePoint);
+                checkUserHasNotEnoughPoint(user, Constants.THIRD_HINT_PURCHASE_POINT);
+                user.decreasePoint(Constants.THIRD_HINT_PURCHASE_POINT);
                 break;
         }
     }
@@ -159,7 +146,7 @@ public class AnswerService {
 
         List<AnswerModel.Hint> allHints = new ArrayList<>();
 
-        for (int i = 1; i <= maxHintCount; i++) {
+        for (int i = 1; i <= Constants.MAX_HINT_COUNT; i++) {
             boolean valid = (i <= answer.getHintCount());
             allHints.add(AnswerModel.Hint.from(answer.getPicker(), i, valid));
         }

@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.global.constants.Constants;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
 import supernova.whokie.question.repository.QuestionRepository;
@@ -53,8 +54,6 @@ class AnswerIntegrationTest {
     @Autowired
     private AnswerRepository answerRepository;
 
-    @Value("${answer-point}")
-    private int answerPoint;
 
     @BeforeEach
     void setUp() {
@@ -156,7 +155,7 @@ class AnswerIntegrationTest {
             .andExpect(jsonPath("$.message").value("답변 완료"));
         Users userAfterAnswer = userRepository.findById(userId).orElseThrow();
         int finalPoint = userAfterAnswer.getPoint();
-        assertThat(finalPoint).isEqualTo(initialPoint + answerPoint);
+        assertThat(finalPoint).isEqualTo(initialPoint + Constants.ANSWER_POINT);
     }
 
     //@Test
