@@ -16,5 +16,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("SELECT q FROM Question q WHERE q.questionStatus = 'APPROVED' AND q.groupId = :groupId ORDER BY function('RAND')")
     List<Question> findRandomGroupQuestions(@Param("groupId") Long groupId, Pageable pageable);
 
-    Optional<Question> findByQuestionIdAndGroupId(Long questionId, Long groupId);
+    Optional<Question> findByIdAndGroupId(Long questionId, Long groupId);
 }

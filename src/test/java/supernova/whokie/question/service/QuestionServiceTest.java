@@ -8,7 +8,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import supernova.whokie.answer.controller.dto.AnswerRequest.Group;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.group_member.GroupMember;
@@ -203,13 +202,13 @@ class QuestionServiceTest {
         QuestionCommand.Approve approveCommand = new QuestionCommand.Approve(1L, 1L, true);
 
         given(groupMemberRepository.findByUserIdAndGroupId(anyLong(), anyLong())).willReturn(Optional.of(leader));
-        given(questionRepository.findByQuestionIdAndGroupId(anyLong(), anyLong())).willReturn(Optional.of(question));
+        given(questionRepository.findByIdAndGroupId(anyLong(), anyLong())).willReturn(Optional.of(question));
 
         // when
         questionService.approveQuestion(1L, approveCommand);
 
         // then
-        verify(questionRepository).findByQuestionIdAndGroupId(anyLong(), anyLong());
+        verify(questionRepository).findByIdAndGroupId(anyLong(), anyLong());
         assertThat(question.getQuestionStatus()).isEqualTo(QuestionStatus.APPROVED);
     }
 }

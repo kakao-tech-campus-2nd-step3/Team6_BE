@@ -14,17 +14,14 @@ import supernova.whokie.group_member.infrastructure.repository.GroupMemberReposi
 import supernova.whokie.group_member.service.dto.GroupMemberModel;
 import supernova.whokie.group_member.service.dto.GroupMemberModel.Option;
 import supernova.whokie.question.Question;
-import supernova.whokie.question.QuestionStatus;
 import supernova.whokie.question.service.dto.QuestionCommand;
 import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
 import java.util.List;
-import supernova.whokie.user.service.dto.UserModel.PickedInfo;
 
 @Service
 @RequiredArgsConstructor
@@ -113,7 +110,7 @@ public class QuestionService {
             .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
         groupMember.validateLeader();
 
-        Question question = questionRepository.findByQuestionIdAndGroupId(command.questionId(),
+        Question question = questionRepository.findByIdAndGroupId(command.questionId(),
                 command.groupId())
             .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 질문이 존재하지 않습니다."));
 

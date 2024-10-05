@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import supernova.whokie.answer.controller.dto.AnswerRequest.Group;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.repository.GroupsRepository;
 import supernova.whokie.group_member.GroupMember;
@@ -26,7 +27,9 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -134,6 +137,24 @@ class QuestionIntegrationTest {
                 .groupStatus(GroupStatus.APPROVED)
                 .build());
         }
+
+        groupMemberRepository.save(GroupMember.builder()
+            .user(userRepository.save(
+                Users.builder()
+                    .name("Test User")
+                    .email("test" + 17 + "@example.com")
+                    .point(0)
+                    .age(20)
+                    .kakaoId(1234567890L)
+                    .gender(Gender.M)
+                    .imageUrl("default_image_url.jpg")
+                    .role(Role.USER)
+                    .build()
+            ))
+            .group(group)
+            .groupRole(GroupRole.LEADER)
+            .groupStatus(GroupStatus.APPROVED)
+            .build());
     }
 
 
@@ -191,6 +212,26 @@ class QuestionIntegrationTest {
                 .requestAttr("userId", "7"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.message").value("질문이 성공적으로 생성되었습니다."))
+            .andDo(print());
+    }
+
+    @Test
+    @DisplayName("그룹 질문 승인 테스트")
+    void approveGroupQuestion() throws Exception {
+        String requestJson = """
+            {
+                "groupId": 1,
+                "questionId": 1,
+                "status" : true
+            }
+        """;
+
+        mockMvc.perform(patch("/api/group/question/status")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .requestAttr("userId", String.valueOf(17)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.message").value("그룹 질문 승인에 성공하였습니다."))
             .andDo(print());
     }
 }
