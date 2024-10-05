@@ -27,6 +27,8 @@ import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -171,5 +173,24 @@ class QuestionIntegrationTest {
                 String responseContent = result.getResponse().getContentAsString();
                 System.out.println("questions 내용: " + responseContent);
             });
+    }
+
+    @Test
+    @DisplayName("그룹 질문 생성 테스트")
+    void createGroupQuestion() throws Exception {
+        String requestJson = """
+            {
+                "groupId": 1,
+                "content": "Test question"
+            }
+        """;
+
+        mockMvc.perform(post("/api/group/question")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                .requestAttr("userId", "7"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.message").value("질문이 성공적으로 생성되었습니다."))
+            .andDo(print());
     }
 }

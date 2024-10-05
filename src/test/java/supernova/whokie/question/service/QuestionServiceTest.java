@@ -11,9 +11,12 @@ import supernova.whokie.answer.controller.dto.AnswerRequest.Group;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.group_member.GroupMember;
+import supernova.whokie.group_member.GroupRole;
+import supernova.whokie.group_member.GroupStatus;
 import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
+import supernova.whokie.question.service.dto.QuestionCommand;
 import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.repository.QuestionRepository;
@@ -28,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -147,4 +152,31 @@ class QuestionServiceTest {
         assertEquals(10, groupQuestions.questions().size());
         assertEquals(5, groupQuestions.questions().get(0).users().size());
     }
+
+    @Test
+    @DisplayName("그룹 질문 생성 테스트")
+    void createQuestion() {
+        // given
+        Users user = Users.builder()
+            .name("testUser")
+            .build();
+
+        GroupMember groupMember = GroupMember.builder()
+            .user(user)
+            .groupRole(GroupRole.MEMBER)
+            .groupStatus(GroupStatus.APPROVED)
+            .build();
+
+        QuestionCommand.Create command = new QuestionCommand.Create(1L, "Test question");
+
+        given(groupMemberRepository.findByUserIdAndGroupId(any(Long.class), any(Long.class)))
+            .willReturn(Optional.of(groupMember));
+
+        // when
+        questionService.createQuestion(1L, command);
+
+        // then
+        verify(questionRepository).save(any(Question.class));
+    }
+
 }

@@ -90,6 +90,7 @@ public class QuestionService {
             .toList();
     }
 
+    @Transactional
     public void createQuestion(Long userId, QuestionCommand.Create command) {
         GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, command.groupId())
             .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
