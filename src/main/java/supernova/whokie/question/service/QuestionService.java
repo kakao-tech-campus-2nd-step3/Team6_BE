@@ -72,7 +72,7 @@ public class QuestionService {
             .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
 
         Pageable pageable = PageRequest.of(0, questionLimit);
-        List<Question> randomQuestions = questionRepository.findRandomQuestions(pageable);
+        List<Question> randomQuestions = questionRepository.findRandomGroupQuestions(groupId, pageable);
 
         return randomQuestions.stream()
             .map(question -> QuestionModel.GroupQuestion.from(question, getGroupMemberList(userId, groupId)))
