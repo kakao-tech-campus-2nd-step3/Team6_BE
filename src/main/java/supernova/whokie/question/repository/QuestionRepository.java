@@ -8,6 +8,6 @@ import supernova.whokie.question.Question;
 import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-    @Query("SELECT q FROM Question q ORDER BY function('RAND')")
+    @Query("SELECT q FROM Question q WHERE q.questionStatus = 'APPROVED' ORDER BY function('RAND')")
     List<Question> findRandomQuestions(Pageable pageable);
 }
