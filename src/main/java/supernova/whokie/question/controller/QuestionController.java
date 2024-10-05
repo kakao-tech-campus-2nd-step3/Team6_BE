@@ -5,27 +5,19 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
-import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.question.controller.dto.QuestionRequest;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.service.QuestionService;
+import supernova.whokie.question.service.dto.QuestionModel;
 
-import java.awt.print.Pageable;
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -60,6 +52,7 @@ public class QuestionController {
 
     @GetMapping("/group/{group-id}/question")
     public PagingResponse<QuestionResponse.Info> getGroupQuestionPaging(
+            @Authenticate Long userId,
             @PathVariable("group-id") @NotNull @Min(1) String groupId,
             @RequestParam("status") @NotNull Boolean status,
             @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable
