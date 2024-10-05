@@ -14,6 +14,8 @@ import supernova.whokie.group_member.infrastructure.repository.GroupMemberReposi
 import supernova.whokie.group_member.service.dto.GroupMemberModel;
 import supernova.whokie.group_member.service.dto.GroupMemberModel.Option;
 import supernova.whokie.question.Question;
+import supernova.whokie.question.QuestionStatus;
+import supernova.whokie.question.service.dto.QuestionCommand;
 import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
@@ -86,5 +88,21 @@ public class QuestionService {
         return randomGroupMembers.stream()
             .map(Option::from)
             .toList();
+    }
+
+    public void createQuestion(Long userId, QuestionCommand.Create command) {
+        GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, command.groupId())
+            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+        validateApprovalStatus(groupMember);
+
+        Question question = command.toEntity(groupMember.getUser());
+
+        questionRepository.save(question);
+    }
+
+    public void validateApprovalStatus(GroupMember groupMember) {
+        if (!groupMember.isApproved()) {
+            throw new IllegalStateException("승인되지 않은 멤버입니다.");
+        }
     }
 }
