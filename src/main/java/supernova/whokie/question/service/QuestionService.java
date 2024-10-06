@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.repository.GroupsRepository;
@@ -28,11 +29,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QuestionService {
 
-    @Value("${friend-limit}")
-    private int friendLimit;
-
-    @Value("${question-limit}")
-    private int questionLimit;
 
     private final QuestionRepository questionRepository;
     private final FriendRepository friendRepository;
@@ -90,7 +86,7 @@ public class QuestionService {
 
 
     private List<QuestionModel.CommonQuestion> getCommonQuestionList(Users user) {
-        Pageable pageable = PageRequest.of(0, questionLimit);
+        Pageable pageable = PageRequest.of(0, Constants.QUESTION_LIMIT);
 
         List<Question> randomQuestions = questionRepository.findRandomQuestions(pageable);
 
@@ -100,7 +96,7 @@ public class QuestionService {
     }
 
     private List<UserModel.PickedInfo> getFriendList(Users user) {
-        Pageable pageable = PageRequest.of(0, friendLimit);
+        Pageable pageable = PageRequest.of(0, Constants.FRIEND_LIMIT);
         List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), pageable);
 
         return randomFriends.stream()

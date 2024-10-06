@@ -8,6 +8,8 @@ public final class Constants {
     public static final int FIRST_HINT_PURCHASE_POINT = 10;
     public static final int SECOND_HINT_PURCHASE_POINT = 20;
     public static final int THIRD_HINT_PURCHASE_POINT = 30;
+    public static final int QUESTION_LIMIT = 10;
+    public static final int FRIEND_LIMIT = 5;
 
     private Constants() {}
 }
