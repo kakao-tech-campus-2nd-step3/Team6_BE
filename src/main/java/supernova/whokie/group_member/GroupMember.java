@@ -2,35 +2,58 @@ package supernova.whokie.group_member;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import supernova.whokie.global.BaseTimeEntity;
+import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.group.Groups;
 import supernova.whokie.user.Users;
 
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Getter
 @Entity
 public class GroupMember extends BaseTimeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private Users users;
+    @NotNull
+    private Users user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
-    private Groups groups;
+    @NotNull
+    private Groups group;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private GroupRole groupRole;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
     private GroupStatus groupStatus;
 
+    public boolean isLeader() {
+        return this.groupRole == GroupRole.LEADER;
+    }
+
+    public boolean isApproved() {
+        return this.groupStatus == GroupStatus.APPROVED;
+    }
+
+    public void changeRole() {
+        if (isLeader()) {
+            groupRole = GroupRole.MEMBER;
+        } else {
+            groupRole = GroupRole.LEADER;
+        }
+    }
 }

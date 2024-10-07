@@ -1,5 +1,8 @@
 package supernova.whokie.group.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -17,28 +20,29 @@ public class GroupController {
 
     @PostMapping("/")
     public GlobalResponse createGroup(
-        @RequestBody GroupRequest.Create request
+        @RequestBody @Valid GroupRequest.Create request
     ) {
         return GlobalResponse.builder().message("dummy").build();
     }
 
     @PostMapping("/join")
     public GlobalResponse joinGroup(
-        @RequestBody GroupRequest.Join request
+        @RequestBody @Valid GroupRequest.Join request
     ) {
         return GlobalResponse.builder().message("dummy").build();
     }
 
     @GetMapping("/{group-id}/invite")
     public String inviteGroup(
-        @RequestParam("user-id") Long userId,
-        @PathVariable("group-id") Long groupId) {
+        @RequestParam("user-id") @NotNull @Min(1) Long userId,
+        @PathVariable("group-id") @NotNull @Min(1) Long groupId
+    ) {
         return "dummy-url";
     }
 
     @PostMapping("/exit")
     public GlobalResponse exitGroup(
-        @RequestBody GroupRequest.Exit request
+        @RequestBody @Valid GroupRequest.Exit request
     ) {
         return GlobalResponse.builder().message("dummy").build();
     }
@@ -55,14 +59,14 @@ public class GroupController {
 
     @PatchMapping("modify")
     public GlobalResponse modifyGroup(
-            @RequestBody GroupRequest.Modify request
+            @RequestBody @Valid GroupRequest.Modify request
     ) {
         return GlobalResponse.builder().message("dummy").build();
     }
 
     @GetMapping("/{group-id}/info")
     public GroupResponse.Info getGroupInfo(
-            @PathVariable("group-id") Long groupId
+            @PathVariable("group-id") @NotNull @Min(1) Long groupId
     ) {
         return new GroupResponse.Info(groupId, "group1", "groupImageUrl", 12);
     }
