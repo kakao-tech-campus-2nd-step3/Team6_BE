@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.user.Users;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -34,6 +36,10 @@ public class Question extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private Users writer;
+
+    public boolean isCorrectGroupQuestion(Long groupId){
+        return Objects.equals(this.groupId, groupId);
+    }
 
 
 }
