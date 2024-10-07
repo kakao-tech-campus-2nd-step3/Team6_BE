@@ -81,15 +81,20 @@ public class AnswerService {
                 Constants.POINT_EARN_MESSAGE));
 
     }
+    @Transactional
     public void answerToGroupQuestion(Long userId, AnswerCommand.Group command){
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
+
         Question question = questionRepository.findById(command.questionId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 질문을 찾을 수 없습니다."));
+
         Users picked = userRepository.findById(command.pickedId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
+
         Groups group = groupsRepository.findById(command.groupId())
                 .orElseThrow(() -> new EntityNotFoundException("해당 그룹를 찾을 수 없습니다."));
+
 
         checkGroupQuestion(question, group);
 

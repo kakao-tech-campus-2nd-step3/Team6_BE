@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(InvalidEntityException.class)
-    public ResponseEntity<ProblemDetail> InvalidEntityException(ForbiddenException e) {
+    public ResponseEntity<ProblemDetail> InvalidEntityException(InvalidEntityException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(e.getStatus());
         problemDetail.setTitle(e.getTitle());
         problemDetail.setDetail(e.getMessage());
