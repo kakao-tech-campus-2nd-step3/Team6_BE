@@ -192,10 +192,11 @@ public class AnswerService {
         return !answer.getPicked().getId().equals(user.getId());
     }
 
-    private boolean checkGroupQuestion(Question question,Groups group){
-        if(question.isCorrectGroupQuestion(group.getId())){
-            return true;
+    private void checkGroupQuestion(Question question,Groups group){
+        if(question.isNotCorrectGroupQuestion(group.getId())){
+            System.out.println("질문 아이디 " + question.getId());
+            System.out.println("그룹 아이디 " + group.getId());
+            throw new InvalidEntityException("해당 질문은 해당 그룹의 질문이 아닙니다.");
         }
-        throw new InvalidEntityException("해당 질문은 해당 그룹의 질문이 아닙니다.");
     }
 }
