@@ -21,4 +21,13 @@ public class GroupCommand {
         }
     }
 
+    @Builder
+    public record Modify(
+        Long groupId,
+        String groupName,
+        String description
+    ) {
+
+    }
+
 }
