@@ -25,13 +25,6 @@ public class GroupRequest {
         }
     }
 
-    public record Join(
-        @NotNull @Min(1)
-        Long groupId
-    ) {
-
-    }
-
     public record Exit(
         @NotNull @Min(1)
         Long groupId
