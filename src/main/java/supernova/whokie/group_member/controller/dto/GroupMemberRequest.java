@@ -57,4 +57,16 @@ public class GroupMemberRequest {
                 .build();
         }
     }
+
+    public record Exit(
+        @NotNull @Min(1)
+        Long groupId
+    ) {
+
+        public GroupMemberCommand.Exit toCommand() {
+            return GroupMemberCommand.Exit.builder()
+                .groupId(groupId)
+                .build();
+        }
+    }
 }
