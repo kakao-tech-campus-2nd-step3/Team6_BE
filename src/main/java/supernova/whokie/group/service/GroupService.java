@@ -63,6 +63,7 @@ public class GroupService {
         group.modify(command.groupName(), command.description());
     }
 
+    @Transactional(readOnly = true)
     public InfoWithMemberCount getGroupInfo(Long groupId) {
 
         GroupInfoWithMemberCount groupInfo = groupRepository.findGroupInfoWithMemberCountByGroupId(
