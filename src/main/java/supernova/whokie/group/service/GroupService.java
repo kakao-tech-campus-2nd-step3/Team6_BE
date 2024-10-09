@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.exception.EntityNotFoundException;
+import supernova.whokie.global.exception.ForbiddenException;
+import supernova.whokie.group.Groups;
 import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.group.repository.dto.GroupInfoWithMemberCount;
 import supernova.whokie.group.service.dto.GroupCommand;
@@ -38,10 +40,34 @@ public class GroupService {
         groupMemberRepository.save(leader);
     }
 
+    @Transactional(readOnly = true)
     public Page<InfoWithMemberCount> getGroupPaging(Long userId, Pageable pageable) {
         Page<GroupInfoWithMemberCount> groupPage = groupRepository.findGroupsWithMemberCountByUserId(
             userId,
             pageable);
         return groupPage.map(InfoWithMemberCount::from);
+    }
+
+    @Transactional
+    public void modifyGroup(Long userId, GroupCommand.Modify command) {
+        GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId,
+                command.groupId())
+            .orElseThrow(() -> new EntityNotFoundException("그룹 멤버가 아닙니다."));
+
+        if (!groupMember.isLeader()) {
+            throw new ForbiddenException("그룹장만 그룹 정보를 수정할 수 있습니다.");
+        }
+        Groups group = groupRepository.findById(command.groupId())
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 그룹입니다."));
+
+        group.modify(command.groupName(), command.description());
+    }
+
+    public InfoWithMemberCount getGroupInfo(Long groupId) {
+
+        GroupInfoWithMemberCount groupInfo = groupRepository.findGroupInfoWithMemberCountByGroupId(
+                groupId)
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 그룹입니다."));
+        return InfoWithMemberCount.from(groupInfo);
     }
 }
