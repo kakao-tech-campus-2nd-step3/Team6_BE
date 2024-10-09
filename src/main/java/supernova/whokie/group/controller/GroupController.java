@@ -33,13 +33,6 @@ public class GroupController {
         return GlobalResponse.builder().message("그룹이 성공적으로 만들어졌습니다.").build();
     }
 
-    @PostMapping("/join")
-    public GlobalResponse joinGroup(
-        @RequestBody @Valid GroupRequest.Join request
-    ) {
-        return GlobalResponse.builder().message("dummy").build();
-    }
-
     @GetMapping("/{group-id}/invite")
     public String inviteGroup(
         @RequestParam("user-id") @NotNull @Min(1) Long userId,
