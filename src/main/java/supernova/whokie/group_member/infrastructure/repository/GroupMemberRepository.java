@@ -22,4 +22,6 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
         @Param("groupId") Long groupId, Pageable pageable);
 
     Boolean existsByUserIdAndGroupId(Long userId, Long groupId);
+
+    Long countByGroupId(Long groupId);
 }
