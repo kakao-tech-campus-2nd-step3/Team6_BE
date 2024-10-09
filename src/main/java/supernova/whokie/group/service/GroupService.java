@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.exception.EntityNotFoundException;
-import supernova.whokie.group.repository.GroupsRepository;
+import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.group.service.dto.GroupCommand;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
@@ -14,7 +14,7 @@ import supernova.whokie.user.infrastructure.repository.UserRepository;
 @RequiredArgsConstructor
 public class GroupService {
 
-    private final GroupsRepository groupsRepository;
+    private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final UserRepository userRepository;
 
@@ -25,7 +25,7 @@ public class GroupService {
     public void createGroup(GroupCommand.Create command, Long userId) {
 
         var group = command.toEntity();
-        groupsRepository.save(group);
+        groupRepository.save(group);
 
         var user = userRepository.findById(userId)
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
