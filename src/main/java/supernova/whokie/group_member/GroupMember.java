@@ -70,4 +70,13 @@ public class GroupMember extends BaseTimeEntity {
             throw new InvalidEntityException("승인되지 않은 멤버입니다.");
         }
     }
+
+    public static GroupMember CreateLeader(Users user, Groups group) {
+        return GroupMember.builder()
+            .user(user)
+            .group(group)
+            .groupRole(GroupRole.LEADER)
+            .groupStatus(GroupStatus.APPROVED)
+            .build();
+    }
 }
