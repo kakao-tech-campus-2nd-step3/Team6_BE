@@ -28,10 +28,19 @@ public class GroupRequest {
     public record Modify(
         @NotNull @Min(1)
         Long groupId,
-        @NotNull
+        @NotBlank
         String groupName,
+        @NotBlank
         String description
     ) {
+
+        public GroupCommand.Modify toCommand() {
+            return GroupCommand.Modify.builder()
+                .groupId(groupId)
+                .groupName(groupName)
+                .description(description)
+                .build();
+        }
 
     }
 }
