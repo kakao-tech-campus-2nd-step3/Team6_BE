@@ -66,7 +66,6 @@ public class GroupController {
     public GroupResponse.Info getGroupInfo(
         @PathVariable("group-id") @NotNull @Min(1) Long groupId
     ) {
-        System.out.println("groupId = " + groupId);
         GroupModel.InfoWithMemberCount groupModel = groupService.getGroupInfo(groupId);
         return GroupResponse.Info.from(groupModel);
     }
