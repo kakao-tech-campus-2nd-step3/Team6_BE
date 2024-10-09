@@ -1,11 +1,15 @@
 package supernova.whokie.group.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.repository.GroupRepository;
+import supernova.whokie.group.repository.dto.GroupInfoWithMemberCount;
 import supernova.whokie.group.service.dto.GroupCommand;
+import supernova.whokie.group.service.dto.GroupModel.InfoWithMemberCount;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
@@ -32,5 +36,12 @@ public class GroupService {
 
         GroupMember leader = GroupMember.CreateLeader(user, group);
         groupMemberRepository.save(leader);
+    }
+
+    public Page<InfoWithMemberCount> getGroupPaging(Long userId, Pageable pageable) {
+        Page<GroupInfoWithMemberCount> groupPage = groupRepository.findGroupsWithMemberCountByUserId(
+            userId,
+            pageable);
+        return groupPage.map(InfoWithMemberCount::from);
     }
 }
