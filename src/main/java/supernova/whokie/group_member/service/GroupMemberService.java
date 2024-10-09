@@ -88,4 +88,23 @@ public class GroupMemberService {
         GroupMember groupMember = command.toEntity(user, group);
         groupMemberRepository.save(groupMember);
     }
+
+    /**
+     * 1. 일반 멤버는 탈퇴 가능 2. 리더는 그룹에 속한 멤버가 본인 한명일 경우에 탈퇴 가능
+     */
+    @Transactional
+    public void exitGroup(GroupMemberCommand.Exit command, Long userId) {
+
+        GroupMember member = groupMemberRepository.findByUserIdAndGroupId(userId, command.groupId())
+            .orElseThrow(() -> new EntityNotFoundException("해당 그룹의 유저만 탈퇴할 수 있습니다."));
+
+        if (member.isLeader()) {
+            Long groupMemberSize = groupMemberRepository.countByGroupId(command.groupId());
+            if (groupMemberSize > 1) {
+                throw new ForbiddenException("그룹에 속한 멤버가 본인 한명일 경우에 탈퇴 가능합니다.");
+            }
+        }
+
+        groupMemberRepository.deleteByUserIdAndGroupId(userId, command.groupId());
+    }
 }
