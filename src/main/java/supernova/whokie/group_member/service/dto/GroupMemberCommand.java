@@ -40,4 +40,11 @@ public class GroupMemberCommand {
                 .build();
         }
     }
+
+    @Builder
+    public record Exit(
+        Long groupId
+    ) {
+
+    }
 }
