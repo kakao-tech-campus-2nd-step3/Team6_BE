@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +15,8 @@ import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.group.controller.dto.GroupRequest;
 import supernova.whokie.group.controller.dto.GroupResponse;
 
-import java.awt.print.Pageable;
-import java.util.List;
 import supernova.whokie.group.service.GroupService;
+import supernova.whokie.group.service.dto.GroupModel;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,12 +44,13 @@ public class GroupController {
 
     @GetMapping("/{group-id}")
     public PagingResponse<GroupResponse.Info> getGroupPaging(
+        @Authenticate Long userId,
         @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        return new PagingResponse<>(
-            List.of(new GroupResponse.Info(1L, "group1", "groupImageUrl", 12),
-                new GroupResponse.Info(2L, "group2", "groupImageUrl", 12)),
-            2, 0, 1, 1);
+        Page<GroupModel.InfoWithMemberCount> groupPage = groupService.getGroupPaging(userId,
+            pageable);
+        Page<GroupResponse.Info> groupResponse = groupPage.map(GroupResponse.Info::from);
+        return PagingResponse.from(groupResponse);
     }
 
     @PatchMapping("modify")
@@ -62,6 +64,6 @@ public class GroupController {
     public GroupResponse.Info getGroupInfo(
         @PathVariable("group-id") @NotNull @Min(1) Long groupId
     ) {
-        return new GroupResponse.Info(groupId, "group1", "groupImageUrl", 12);
+        return null;
     }
 }
