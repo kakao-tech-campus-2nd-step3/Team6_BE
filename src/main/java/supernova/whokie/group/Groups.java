@@ -29,4 +29,9 @@ public class Groups extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String groupImageUrl;
+
+    public void modify(String groupName, String description) {
+        this.groupName = groupName;
+        this.description = description;
+    }
 }
