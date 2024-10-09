@@ -7,15 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
-import supernova.whokie.group_member.GroupRole;
 import supernova.whokie.group_member.controller.dto.GroupMemberRequest;
 import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
 
-import java.time.LocalDate;
-import java.util.List;
 import supernova.whokie.group_member.service.GroupMemberService;
 import supernova.whokie.group_member.service.dto.GroupMemberModel;
-import supernova.whokie.group_member.service.dto.GroupMemberModel.Members;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,5 +45,14 @@ public class GroupMemberController {
     ) {
         GroupMemberModel.Members model = groupMemberService.getGroupMembers(userId, groupId);
         return GroupMemberResponse.Members.from(model);
+    }
+
+    @PostMapping("/join")
+    public GlobalResponse joinGroup(
+        @RequestBody @Valid GroupMemberRequest.Join request,
+        @Authenticate Long userId
+    ) {
+        groupMemberService.joinGroup(request.toCommand(), userId);
+        return GlobalResponse.builder().message("그룹 가입에 성공했습니다.").build();
     }
 }
