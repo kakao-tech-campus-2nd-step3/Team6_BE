@@ -41,13 +41,6 @@ public class GroupController {
         return "dummy-url";
     }
 
-    @PostMapping("/exit")
-    public GlobalResponse exitGroup(
-        @RequestBody @Valid GroupRequest.Exit request
-    ) {
-        return GlobalResponse.builder().message("dummy").build();
-    }
-
     @GetMapping("/{group-id}")
     public PagingResponse<GroupResponse.Info> getGroupPaging(
         @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
