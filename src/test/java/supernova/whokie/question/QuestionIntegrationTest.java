@@ -11,12 +11,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import supernova.whokie.answer.controller.dto.AnswerRequest.Group;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
-import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.Groups;
-import supernova.whokie.group.repository.GroupsRepository;
+import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.GroupRole;
 import supernova.whokie.group_member.GroupStatus;
@@ -38,12 +36,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
-        "spring.profiles.active=default",
-        "jwt.secret=abcd",
-        "spring.sql.init.mode=never"
+    "spring.profiles.active=default",
+    "jwt.secret=abcd",
+    "spring.sql.init.mode=never"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-
 class QuestionIntegrationTest {
 
     @Autowired
@@ -62,57 +59,55 @@ class QuestionIntegrationTest {
     private GroupMemberRepository groupMemberRepository;
 
     @Autowired
-    private GroupsRepository groupsRepository;
+    private GroupRepository groupRepository;
 
     @BeforeEach
     void setUp() {
 
         Users user = Users.builder()
-                .name("Test User")
-                .email("test@example.com")
-                .point(0)
-                .age(20)
-                .kakaoId(1234567890L)
-                .gender(Gender.M)
-                .imageUrl("default_image_url.jpg")
-                .role(Role.USER)
-                .build();
+            .name("Test User")
+            .email("test@example.com")
+            .point(0)
+            .age(20)
+            .kakaoId(1234567890L)
+            .gender(Gender.M)
+            .imageUrl("default_image_url.jpg")
+            .role(Role.USER)
+            .build();
         userRepository.save(user);
 
         for (int i = 1; i <= 5; i++) {
             Users friendUser = Users.builder()
-                    .name("Friend " + i)
-                    .email("friend" + i + "@example.com")
-                    .point(0)
-                    .age(20)
-                    .kakaoId(1234567890L + i)
-                    .gender(Gender.F)
-                    .imageUrl("default_image_url_friend_" + i + ".jpg")
-                    .role(Role.USER)
-                    .build();
+                .name("Friend " + i)
+                .email("friend" + i + "@example.com")
+                .point(0)
+                .age(20)
+                .kakaoId(1234567890L + i)
+                .gender(Gender.F)
+                .imageUrl("default_image_url_friend_" + i + ".jpg")
+                .role(Role.USER)
+                .build();
             userRepository.save(friendUser);
 
-
             Friend friend = Friend.builder()
-                    .hostUser(user)
-                    .friendUser(friendUser)
-                    .build();
+                .hostUser(user)
+                .friendUser(friendUser)
+                .build();
             friendRepository.save(friend);
         }
 
-
         for (int i = 1; i <= 10; i++) {
             Question question = Question.builder()
-                    .id((long) i)
-                    .content("Question " + i)
-                    .writer(user)
-                    .questionStatus(QuestionStatus.APPROVED)
-                    .groupId(1L)
-                    .build();
+                .id((long) i)
+                .content("Question " + i)
+                .writer(user)
+                .questionStatus(QuestionStatus.APPROVED)
+                .groupId(1L)
+                .build();
             questionRepository.save(question);
         }
 
-        Groups group = groupsRepository.save(Groups.builder()
+        Groups group = groupRepository.save(Groups.builder()
             .groupName("test")
             .description("test")
             .groupImageUrl("tset")
@@ -165,16 +160,16 @@ class QuestionIntegrationTest {
         request.setAttribute("userId", "1");
 
         mockMvc.perform(get("/api/common/question/random")
-                        .requestAttr("userId", "1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.questions").isArray())
-                .andExpect(jsonPath("$.questions.length()").value(10))
-                .andExpect(jsonPath("$.questions[0].users.length()").value(5))
-                .andDo(result -> {
-                    String responseContent = result.getResponse().getContentAsString();
-                    System.out.println("questions 내용: " + responseContent);
-                });
+                .requestAttr("userId", "1")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.questions").isArray())
+            .andExpect(jsonPath("$.questions.length()").value(10))
+            .andExpect(jsonPath("$.questions[0].users.length()").value(5))
+            .andDo(result -> {
+                String responseContent = result.getResponse().getContentAsString();
+                System.out.println("questions 내용: " + responseContent);
+            });
     }
 
     @Test
@@ -200,11 +195,11 @@ class QuestionIntegrationTest {
     @DisplayName("그룹 질문 생성 테스트")
     void createGroupQuestion() throws Exception {
         String requestJson = """
-            {
-                "groupId": 1,
-                "content": "Test question"
-            }
-        """;
+                {
+                    "groupId": 1,
+                    "content": "Test question"
+                }
+            """;
 
         mockMvc.perform(post("/api/group/question")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -219,12 +214,12 @@ class QuestionIntegrationTest {
     @DisplayName("그룹 질문 승인 테스트")
     void approveGroupQuestion() throws Exception {
         String requestJson = """
-            {
-                "groupId": 1,
-                "questionId": 1,
-                "status" : true
-            }
-        """;
+                {
+                    "groupId": 1,
+                    "questionId": 1,
+                    "status" : true
+                }
+            """;
 
         mockMvc.perform(patch("/api/group/question/status")
                 .contentType(MediaType.APPLICATION_JSON)
