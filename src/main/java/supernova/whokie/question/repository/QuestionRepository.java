@@ -1,5 +1,6 @@
 package supernova.whokie.question.repository;
 
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Query("SELECT q FROM Question q WHERE q.questionStatus = 'APPROVED' AND q.groupId = :groupId ORDER BY function('RAND')")
     List<Question> findRandomGroupQuestions(@Param("groupId") Long groupId, Pageable pageable);
+
+    Optional<Question> findByIdAndGroupId(Long questionId, Long groupId);
 }

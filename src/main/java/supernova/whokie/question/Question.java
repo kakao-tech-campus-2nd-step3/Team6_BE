@@ -35,5 +35,11 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id")
     private Users writer;
 
-
+    public void changeStatus(Boolean status) {
+        if (status) {
+            questionStatus = QuestionStatus.APPROVED;
+        } else {
+            questionStatus = QuestionStatus.REJECTED;
+        }
+    }
 }

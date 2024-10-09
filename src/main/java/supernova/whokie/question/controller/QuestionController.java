@@ -54,9 +54,11 @@ public class QuestionController {
 
     @PatchMapping("/group/question/status")
     public GlobalResponse approveGroupQuestion(
-            @RequestBody @Valid QuestionRequest.Approve request
+            @RequestBody @Valid QuestionRequest.Approve request,
+            @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("message").build();
+        questionService.approveQuestion(userId, request.toCommand());
+        return GlobalResponse.builder().message("그룹 질문 승인에 성공하였습니다.").build();
     }
 
     @GetMapping("/group/{group-id}/question")

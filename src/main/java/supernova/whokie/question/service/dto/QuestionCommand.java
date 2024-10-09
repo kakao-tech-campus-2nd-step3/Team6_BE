@@ -1,5 +1,7 @@
 package supernova.whokie.question.service.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
@@ -21,5 +23,14 @@ public class QuestionCommand {
                 .writer(user)
                 .build();
         }
+    }
+
+    @Builder
+    public record Approve(
+        Long groupId,
+        Long questionId,
+        Boolean status
+    ) {
+
     }
 }
