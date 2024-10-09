@@ -14,8 +14,8 @@ public interface GroupRepository extends JpaRepository<Groups, Long> {
             + "g.id, g.groupName, g.description, g.groupImageUrl, COUNT(m.id)) "
             + "FROM Groups g "
             + "JOIN GroupMember m ON g.id = m.group.id "
-            + "WHERE m.user.id = :userId "
-            + "GROUP BY g.id"
+            + "WHERE g.id IN (SELECT gm.group.id FROM GroupMember gm WHERE gm.user.id = :userId) "
+            + "GROUP BY g.id, g.groupName, g.description, g.groupImageUrl"
     )
     Page<GroupInfoWithMemberCount> findGroupsWithMemberCountByUserId(Long userId,
         Pageable pageable);
