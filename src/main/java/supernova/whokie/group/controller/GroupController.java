@@ -53,17 +53,21 @@ public class GroupController {
         return PagingResponse.from(groupResponse);
     }
 
-    @PatchMapping("modify")
+    @PatchMapping("/modify")
     public GlobalResponse modifyGroup(
+        @Authenticate Long userId,
         @RequestBody @Valid GroupRequest.Modify request
     ) {
-        return GlobalResponse.builder().message("dummy").build();
+        groupService.modifyGroup(userId, request.toCommand());
+        return GlobalResponse.builder().message("그룹 정보를 성공적으로 변경했습니다.").build();
     }
 
-    @GetMapping("/{group-id}/info")
+    @GetMapping("/info/{group-id}")
     public GroupResponse.Info getGroupInfo(
         @PathVariable("group-id") @NotNull @Min(1) Long groupId
     ) {
-        return null;
+        System.out.println("groupId = " + groupId);
+        GroupModel.InfoWithMemberCount groupModel = groupService.getGroupInfo(groupId);
+        return GroupResponse.Info.from(groupModel);
     }
 }
