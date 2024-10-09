@@ -7,12 +7,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.TestPropertySource;
+import supernova.whokie.answer.controller.dto.AnswerRequest.Group;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.group_member.GroupMember;
+import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
 import supernova.whokie.question.Question;
+import supernova.whokie.question.QuestionStatus;
 import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.repository.QuestionRepository;
+import supernova.whokie.question.service.dto.QuestionModel.GroupQuestion;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
@@ -41,6 +46,9 @@ class QuestionServiceTest {
 
     @MockBean
     private UserRepository userRepository;
+
+    @MockBean
+    private GroupMemberRepository groupMemberRepository;
 
     @Autowired
     private QuestionService questionService;
@@ -100,5 +108,43 @@ class QuestionServiceTest {
         assertEquals(10, commonQuestions.questions().size());
         assertEquals(5, commonQuestions.questions().get(0).users().size());
 
+    }
+
+    @Test
+    @DisplayName("랜덤 그룹 질문 조회 테스트")
+    void getGroupQuestionTest() {
+        // given
+        List<Question> dummyQuestions = List.of(
+            Question.builder().id(1L).content("Question 1").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+            Question.builder().id(2L).content("Question 2").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+            Question.builder().id(3L).content("Question 3").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+            Question.builder().id(4L).content("Question 4").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+            Question.builder().id(5L).content("Question 5").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+            Question.builder().id(6L).content("Question 6").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+            Question.builder().id(7L).content("Question 7").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+            Question.builder().id(8L).content("Question 8").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+            Question.builder().id(9L).content("Question 9").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+            Question.builder().id(10L).content("Question 10").questionStatus(QuestionStatus.APPROVED).groupId(1L).build()
+        );
+
+        List<GroupMember> dummyGroupMembers = List.of(
+            GroupMember.builder().id(1L).user(Users.builder().id(1L).build()).build(),
+            GroupMember.builder().id(2L).user(Users.builder().id(2L).build()).build(),
+            GroupMember.builder().id(3L).user(Users.builder().id(3L).build()).build(),
+            GroupMember.builder().id(4L).user(Users.builder().id(4L).build()).build(),
+            GroupMember.builder().id(5L).user(Users.builder().id(5L).build()).build()
+        );
+
+        // when
+        when(groupMemberRepository.findByUserIdAndGroupId(anyLong(), anyLong())).thenReturn(Optional.of(dummyGroupMembers.get(0)));
+        when(questionRepository.findRandomGroupQuestions(anyLong(), any(Pageable.class))).thenReturn(dummyQuestions);
+        when(groupMemberRepository.getRandomGroupMember(eq(1L), anyLong(), any(Pageable.class))).thenReturn(dummyGroupMembers);
+
+        List<GroupQuestion> groupQuestionList = questionService.getGroupQuestions(1L, 1L);
+        QuestionResponse.GroupQuestions groupQuestions = QuestionResponse.GroupQuestions.from(groupQuestionList);
+
+        // then
+        assertEquals(10, groupQuestions.questions().size());
+        assertEquals(5, groupQuestions.questions().get(0).users().size());
     }
 }

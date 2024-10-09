@@ -43,4 +43,22 @@ public class GroupMemberModel {
                 .build();
         }
     }
+
+    @Builder
+    public record Option(
+        Long groupMemberId,
+        Long userId,
+        String userName,
+        String imageUrl
+    ) {
+
+        public static Option from(GroupMember groupMember) {
+            return Option.builder()
+                .groupMemberId(groupMember.getId())
+                .userId(groupMember.getUser().getId())
+                .userName(groupMember.getUser().getName())
+                .imageUrl(groupMember.getUser().getImageUrl())
+                .build();
+        }
+    }
 }

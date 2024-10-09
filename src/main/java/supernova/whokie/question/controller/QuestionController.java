@@ -26,6 +26,7 @@ import supernova.whokie.question.service.QuestionService;
 import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.util.List;
+import supernova.whokie.question.service.dto.QuestionModel.GroupQuestion;
 
 @RestController
 @RequestMapping("/api")
@@ -35,12 +36,11 @@ public class QuestionController {
 
     @GetMapping("/group/{group-id}/question/random")
     public QuestionResponse.GroupQuestions getGroupQuestionList(
-            @PathVariable("group-id") @NotNull @Min(1) String groupId
+            @PathVariable("group-id") @NotNull @Min(1) Long groupId,
+            @Authenticate Long userId
             ) {
-        return new QuestionResponse.GroupQuestions(
-                List.of(new QuestionResponse.GroupQuestion(1L, "1번질문", List.of(new GroupMemberResponse.Option(1L, 1L, "user1", "imageUrl"), new GroupMemberResponse.Option(1L, 1L, "user1", "imageUrl"))),
-                        new QuestionResponse.GroupQuestion(1L, "1번질문", List.of(new GroupMemberResponse.Option(1L, 1L, "user1", "imageUrl"), new GroupMemberResponse.Option(1L, 1L, "user1", "imageUrl"))))
-        );
+        List<GroupQuestion> groupQuestions = questionService.getGroupQuestions(userId, groupId);
+        return QuestionResponse.GroupQuestions.from(groupQuestions);
     }
 
     @PostMapping("/group/question")
@@ -76,5 +76,4 @@ public class QuestionController {
         List<QuestionModel.CommonQuestion> commonQuestions = questionService.getCommonQuestion(userId);
         return QuestionResponse.CommonQuestions.from(commonQuestions);
     }
-
 }

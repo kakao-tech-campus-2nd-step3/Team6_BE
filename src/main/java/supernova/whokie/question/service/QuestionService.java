@@ -9,6 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.exception.EntityNotFoundException;
+import supernova.whokie.group_member.GroupMember;
+import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
+import supernova.whokie.group_member.service.dto.GroupMemberModel;
+import supernova.whokie.group_member.service.dto.GroupMemberModel.Option;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.question.repository.QuestionRepository;
@@ -18,6 +22,7 @@ import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
 import java.util.List;
+import supernova.whokie.user.service.dto.UserModel.PickedInfo;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +37,7 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
+    private final GroupMemberRepository groupMemberRepository;
 
     @Transactional(readOnly = true)
     public List<QuestionModel.CommonQuestion> getCommonQuestion(Long userId) {
@@ -61,4 +67,24 @@ public class QuestionService {
                 .toList();
     }
 
+    public List<QuestionModel.GroupQuestion> getGroupQuestions(Long userId, Long groupId) {
+        GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, groupId)
+            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+
+        Pageable pageable = PageRequest.of(0, questionLimit);
+        List<Question> randomQuestions = questionRepository.findRandomGroupQuestions(groupId, pageable);
+
+        return randomQuestions.stream()
+            .map(question -> QuestionModel.GroupQuestion.from(question, getGroupMemberList(userId, groupId)))
+            .toList();
+    }
+
+    private List<GroupMemberModel.Option> getGroupMemberList(Long userId, Long groupId) {
+        Pageable pageable = PageRequest.of(0, friendLimit);
+        List<GroupMember> randomGroupMembers = groupMemberRepository.getRandomGroupMember(userId, groupId, pageable);
+
+        return randomGroupMembers.stream()
+            .map(Option::from)
+            .toList();
+    }
 }
