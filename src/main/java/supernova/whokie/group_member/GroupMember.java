@@ -66,7 +66,7 @@ public class GroupMember extends BaseTimeEntity {
     }
 
     public void validateApprovalStatus() {
-        if (isApproved()) {
+        if (!isApproved()) {
             throw new InvalidEntityException("승인되지 않은 멤버입니다.");
         }
     }
