@@ -29,13 +29,11 @@ import supernova.whokie.global.auth.JwtInterceptor;
 import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.Groups;
-import supernova.whokie.group.repository.GroupsRepository;
+import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.GroupRole;
 import supernova.whokie.group_member.GroupStatus;
 import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
-import supernova.whokie.group_member.service.GroupMemberService;
-import supernova.whokie.group_member.service.dto.GroupMemberCommand;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
@@ -68,7 +66,7 @@ public class GroupMemberControllerTest {
     private UsersRepository usersRepository;
 
     @Autowired
-    private GroupsRepository groupsRepository;
+    private GroupRepository groupRepository;
 
     private Users user1;
     private Users user2;
@@ -104,7 +102,7 @@ public class GroupMemberControllerTest {
         pastLeaderId = user1.getId();
         newLeaderId = user2.getId();
 
-        group = groupsRepository.save(Groups.builder()
+        group = groupRepository.save(Groups.builder()
             .groupName("test")
             .description("test")
             .groupImageUrl("tset")
