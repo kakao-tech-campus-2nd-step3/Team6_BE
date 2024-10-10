@@ -18,6 +18,8 @@ import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.global.exception.EntityNotFoundException;
+import supernova.whokie.group.Groups;
+import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.point_record.PointRecord;
 import supernova.whokie.point_record.PointRecordOption;
 import supernova.whokie.point_record.event.PointRecordEventDto;
@@ -42,6 +44,7 @@ public class AnswerService {
     private final UsersRepository userRepository;
     private final QuestionRepository questionRepository;
     private final PointRecordRepository pointRecordRepository;
+    private final GroupRepository groupsRepository;
     private final ApplicationEventPublisher eventPublisher;
 
 
@@ -77,6 +80,31 @@ public class AnswerService {
             PointRecordEventDto.Earn.toDto(userId, Constants.ANSWER_POINT, 0, PointRecordOption.CHARGED,
                 Constants.POINT_EARN_MESSAGE));
 
+    }
+    @Transactional
+    public void answerToGroupQuestion(Long userId, AnswerCommand.Group command){
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
+
+        Question question = questionRepository.findById(command.questionId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 질문을 찾을 수 없습니다."));
+
+        Users picked = userRepository.findById(command.pickedId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 유저를 찾을 수 없습니다."));
+
+        Groups group = groupsRepository.findById(command.groupId())
+                .orElseThrow(() -> new EntityNotFoundException("해당 그룹를 찾을 수 없습니다."));
+
+
+        checkGroupQuestion(question, group);
+
+        Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
+        answerRepository.save(answer);
+
+        user.increasePoint(Constants.ANSWER_POINT);
+        eventPublisher.publishEvent(
+                PointRecordEventDto.Earn.toDto(userId, Constants.ANSWER_POINT, 0, PointRecordOption.CHARGED,
+                        Constants.POINT_EARN_MESSAGE)); //TODO amount에 대한 질문
     }
 
     public void recordEarnPoint(PointRecordEventDto.Earn event) {
@@ -162,5 +190,13 @@ public class AnswerService {
 
     private boolean isNotPicked(Answer answer, Users user) {
         return !answer.getPicked().getId().equals(user.getId());
+    }
+
+    private void checkGroupQuestion(Question question,Groups group){
+        if(question.isNotCorrectGroupQuestion(group.getId())){
+            System.out.println("질문 아이디 " + question.getId());
+            System.out.println("그룹 아이디 " + group.getId());
+            throw new InvalidEntityException("해당 질문은 해당 그룹의 질문이 아닙니다.");
+        }
     }
 }

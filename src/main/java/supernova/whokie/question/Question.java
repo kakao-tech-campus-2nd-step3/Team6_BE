@@ -35,6 +35,11 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id")
     private Users writer;
 
+    public boolean isNotCorrectGroupQuestion(Long groupId){
+        return this.groupId != groupId;
+    }
+
+
     public void changeStatus(Boolean status) {
         if (status) {
             questionStatus = QuestionStatus.APPROVED;
