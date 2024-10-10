@@ -47,4 +47,13 @@ public class Question extends BaseTimeEntity {
             questionStatus = QuestionStatus.REJECTED;
         }
     }
+
+    public static Question create(String content, QuestionStatus questionStatus, Long groupId, Users writer) {
+        return Question.builder()
+                .content(content)
+                .questionStatus(questionStatus)
+                .groupId(groupId)
+                .writer(writer)
+                .build();
+    }
 }

@@ -29,4 +29,11 @@ public class Friend {
     public Long getFriendUserId() {
         return friendUser.getId();
     }
+
+    public static Friend create(Users hostUser,Users friendUser) {
+        return Friend.builder()
+                .hostUser(hostUser)
+                .friendUser(friendUser)
+                .build();
+    }
 }

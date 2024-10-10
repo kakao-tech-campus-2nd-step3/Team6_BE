@@ -55,4 +55,17 @@ public class Users extends BaseTimeEntity {
     public void decreasePoint(int point) {
         this.point -= point;
     }
+
+    public static Users create(String name, String email, Integer point, Integer age, Long kakaoId, Gender gender, String imageUrl, Role role) {
+        return Users.builder()
+                .name(name)
+                .email(email)
+                .point(point)
+                .age(age)
+                .kakaoId(kakaoId)
+                .gender(gender)
+                .imageUrl(imageUrl)
+                .role(role)
+                .build();
+    }
 }

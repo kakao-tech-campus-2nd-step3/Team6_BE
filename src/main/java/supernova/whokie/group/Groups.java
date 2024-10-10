@@ -34,4 +34,12 @@ public class Groups extends BaseTimeEntity {
         this.groupName = groupName;
         this.description = description;
     }
+
+    public static Groups create(String groupName, String description, String groupImageUrl) {
+        return Groups.builder()
+                .groupName(groupName)
+                .description(description)
+                .groupImageUrl(groupImageUrl)
+                .build();
+    }
 }
