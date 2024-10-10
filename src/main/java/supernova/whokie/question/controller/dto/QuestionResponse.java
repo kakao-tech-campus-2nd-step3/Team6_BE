@@ -3,6 +3,7 @@ package supernova.whokie.question.controller.dto;
 import lombok.Builder;
 import org.springframework.data.domain.Page;
 import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
+import supernova.whokie.group_member.service.dto.GroupMemberModel;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.user.controller.dto.UserResponse;
@@ -18,6 +19,15 @@ public class QuestionResponse {
             List<GroupQuestion> questions
     ) {
 
+        public static GroupQuestions from(List<QuestionModel.GroupQuestion> model) {
+            return GroupQuestions.builder()
+                .questions(
+                    model.stream()
+                    .map(GroupQuestion::from)
+                    .toList()
+                )
+                .build();
+        }
     }
 
     @Builder
@@ -27,6 +37,17 @@ public class QuestionResponse {
             List<GroupMemberResponse.Option> users
     ) {
 
+        public static GroupQuestion from(QuestionModel.GroupQuestion model) {
+            return GroupQuestion.builder()
+                .questionId(model.questionId())
+                .content(model.content())
+                .users(
+                    model.groupMembers().stream()
+                    .map(GroupMemberResponse.Option::from)
+                    .toList()
+                )
+                .build();
+        }
     }
 
     @Builder

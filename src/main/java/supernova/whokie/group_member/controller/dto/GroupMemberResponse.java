@@ -7,6 +7,7 @@ import supernova.whokie.group_member.GroupRole;
 import java.time.LocalDate;
 import java.util.List;
 import supernova.whokie.group_member.service.dto.GroupMemberModel;
+import supernova.whokie.group_member.service.dto.GroupMemberModel.Option;
 
 public class GroupMemberResponse {
 
@@ -46,12 +47,21 @@ public class GroupMemberResponse {
         }
     }
 
+    @Builder
     public record Option(
-            Long groundMemberId,
+            Long groupMemberId,
             Long userId,
             String userName,
             String imageUrl
     ) {
 
+        public static GroupMemberResponse.Option from(GroupMemberModel.Option groupMember) {
+            return GroupMemberResponse.Option.builder()
+                .groupMemberId(groupMember.groupMemberId())
+                .userId(groupMember.userId())
+                .userName(groupMember.userName())
+                .imageUrl(groupMember.imageUrl())
+                .build();
+        }
     }
 }

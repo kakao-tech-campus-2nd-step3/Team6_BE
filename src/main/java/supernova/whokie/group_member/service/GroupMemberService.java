@@ -25,12 +25,12 @@ public class GroupMemberService {
         GroupMember leader = groupMemberRepository.findByUserIdAndGroupId(command.pastLeaderId(),
                 command.groupId())
             .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
-        validateLeader(leader);
+        leader.validateLeader();
 
         GroupMember newLeader = groupMemberRepository.findByUserIdAndGroupId(command.newLeaderId(),
                 command.groupId())
             .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
-        validateApprovalStatus(newLeader);
+        newLeader.validateApprovalStatus();
 
         changeLeader(leader, newLeader);
     }
@@ -38,18 +38,6 @@ public class GroupMemberService {
     public void validateCurrentLeader(Long userId, Long pastLeaderId) {
         if (!userId.equals(pastLeaderId)) {
             throw new ForbiddenException("해당 그룹 내의 리더가 아닙니다.");
-        }
-    }
-
-    public void validateLeader(GroupMember leader) {
-        if (!leader.isLeader()) {
-            throw new ForbiddenException("리더만 권한을 위임할 수 있습니다.");
-        }
-    }
-
-    public void validateApprovalStatus(GroupMember groupMember) {
-        if (!groupMember.isApproved()) {
-            throw new IllegalStateException("승인되지 않은 멤버입니다.");
         }
     }
 
@@ -63,7 +51,7 @@ public class GroupMemberService {
         GroupMember leader = groupMemberRepository.findByUserIdAndGroupId(userId,
                 command.groupId())
             .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
-        validateLeader(leader);
+        leader.validateLeader();
 
         GroupMember member = groupMemberRepository.findByUserIdAndGroupId(command.userId(),
                 command.groupId())
