@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,10 +25,8 @@ import supernova.whokie.question.controller.dto.QuestionRequest;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.service.QuestionService;
 
-import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.util.List;
-import supernova.whokie.question.service.dto.QuestionModel.GroupQuestion;
 
 @RestController
 @RequestMapping("/api")
@@ -38,8 +38,8 @@ public class QuestionController {
     public QuestionResponse.GroupQuestions getGroupQuestionList(
             @PathVariable("group-id") @NotNull @Min(1) Long groupId,
             @Authenticate Long userId
-            ) {
-        List<GroupQuestion> groupQuestions = questionService.getGroupQuestions(userId, groupId);
+    ) {
+        List<QuestionModel.GroupQuestion> groupQuestions = questionService.getGroupQuestions(userId, groupId);
         return QuestionResponse.GroupQuestions.from(groupQuestions);
     }
 
@@ -63,14 +63,14 @@ public class QuestionController {
 
     @GetMapping("/group/{group-id}/question")
     public PagingResponse<QuestionResponse.Info> getGroupQuestionPaging(
+            @Authenticate Long userId,
             @PathVariable("group-id") @NotNull @Min(1) String groupId,
             @RequestParam("status") @NotNull Boolean status,
             @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        return new PagingResponse<>(
-                List.of(new QuestionResponse.Info(1L, "질문1", 1L, true, "작성자1", LocalDate.now()),
-                        new QuestionResponse.Info(2L, "질문2", 1L, true, "작성자2", LocalDate.now())),
-                0, 10, 1, 1);
+        Page<QuestionModel.Info> groupQuestionInfoList = questionService.getGroupQuestionPaging(userId, groupId, status, pageable);
+        QuestionResponse.Infos result = QuestionResponse.Infos.from(groupQuestionInfoList);
+        return PagingResponse.from(result.infos());
     }
 
     @GetMapping("/common/question/random")
@@ -80,4 +80,5 @@ public class QuestionController {
         List<QuestionModel.CommonQuestion> commonQuestions = questionService.getCommonQuestion(userId);
         return QuestionResponse.CommonQuestions.from(commonQuestions);
     }
+
 }
