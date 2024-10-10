@@ -19,7 +19,7 @@ import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.Groups;
-import supernova.whokie.group.repository.GroupsRepository;
+import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.point_record.PointRecord;
 import supernova.whokie.point_record.PointRecordOption;
 import supernova.whokie.point_record.event.PointRecordEventDto;
@@ -44,7 +44,7 @@ public class AnswerService {
     private final UsersRepository userRepository;
     private final QuestionRepository questionRepository;
     private final PointRecordRepository pointRecordRepository;
-    private final GroupsRepository groupsRepository;
+    private final GroupRepository groupsRepository;
     private final ApplicationEventPublisher eventPublisher;
 
 

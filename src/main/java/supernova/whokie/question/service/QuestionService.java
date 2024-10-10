@@ -1,7 +1,6 @@
 package supernova.whokie.question.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -13,19 +12,17 @@ import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.Groups;
-import supernova.whokie.group.repository.GroupsRepository;
+import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
 import supernova.whokie.group_member.service.dto.GroupMemberModel;
 import supernova.whokie.group_member.service.dto.GroupMemberModel.Option;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
+import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.question.service.dto.QuestionCommand;
 import supernova.whokie.question.service.dto.QuestionModel;
-import supernova.whokie.question.repository.QuestionRepository;
-import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
@@ -40,7 +37,7 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
-    private final GroupsRepository groupsRepository;
+    private final GroupRepository groupsRepository;
     private final GroupMemberRepository groupMemberRepository;
 
     @Transactional(readOnly = true)

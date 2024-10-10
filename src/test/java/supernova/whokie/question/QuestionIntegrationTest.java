@@ -127,13 +127,6 @@ class QuestionIntegrationTest {
                     .build();
             questionRepository.save(question);
         }
-
-        Groups group = groupRepository.save(Groups.builder()
-            .groupName("test")
-            .description("test")
-            .groupImageUrl("tset")
-            .build());
-
         for (int i = 7; i <= 16; i++) {
             groupMemberRepository.save(GroupMember.builder()
                     .user(userRepository.save(
