@@ -26,6 +26,7 @@ import supernova.whokie.question.service.QuestionService;
 import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.util.List;
+import supernova.whokie.question.service.dto.QuestionModel.GroupQuestion;
 
 @RestController
 @RequestMapping("/api")
@@ -35,26 +36,29 @@ public class QuestionController {
 
     @GetMapping("/group/{group-id}/question/random")
     public QuestionResponse.GroupQuestions getGroupQuestionList(
-            @PathVariable("group-id") @NotNull @Min(1) String groupId
+            @PathVariable("group-id") @NotNull @Min(1) Long groupId,
+            @Authenticate Long userId
             ) {
-        return new QuestionResponse.GroupQuestions(
-                List.of(new QuestionResponse.GroupQuestion(1L, "1번질문", List.of(new GroupMemberResponse.Option(1L, 1L, "user1", "imageUrl"), new GroupMemberResponse.Option(1L, 1L, "user1", "imageUrl"))),
-                        new QuestionResponse.GroupQuestion(1L, "1번질문", List.of(new GroupMemberResponse.Option(1L, 1L, "user1", "imageUrl"), new GroupMemberResponse.Option(1L, 1L, "user1", "imageUrl"))))
-        );
+        List<GroupQuestion> groupQuestions = questionService.getGroupQuestions(userId, groupId);
+        return QuestionResponse.GroupQuestions.from(groupQuestions);
     }
 
     @PostMapping("/group/question")
     public GlobalResponse createGroupQuestion(
-            @RequestBody @Valid QuestionRequest.Create request
+            @RequestBody @Valid QuestionRequest.Create request,
+            @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("message").build();
+        questionService.createQuestion(userId, request.toCommand());
+        return GlobalResponse.builder().message("질문이 성공적으로 생성되었습니다.").build();
     }
 
     @PatchMapping("/group/question/status")
     public GlobalResponse approveGroupQuestion(
-            @RequestBody @Valid QuestionRequest.Approve request
+            @RequestBody @Valid QuestionRequest.Approve request,
+            @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("message").build();
+        questionService.approveQuestion(userId, request.toCommand());
+        return GlobalResponse.builder().message("그룹 질문 승인에 성공하였습니다.").build();
     }
 
     @GetMapping("/group/{group-id}/question")
@@ -76,5 +80,4 @@ public class QuestionController {
         List<QuestionModel.CommonQuestion> commonQuestions = questionService.getCommonQuestion(userId);
         return QuestionResponse.CommonQuestions.from(commonQuestions);
     }
-
 }

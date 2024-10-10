@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.user.Users;
 
-import java.util.Objects;
-
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -42,4 +40,11 @@ public class Question extends BaseTimeEntity {
     }
 
 
+    public void changeStatus(Boolean status) {
+        if (status) {
+            questionStatus = QuestionStatus.APPROVED;
+        } else {
+            questionStatus = QuestionStatus.REJECTED;
+        }
+    }
 }
