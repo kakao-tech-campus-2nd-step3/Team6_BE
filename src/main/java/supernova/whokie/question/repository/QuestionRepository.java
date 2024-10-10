@@ -13,6 +13,8 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query("SELECT q FROM Question q ORDER BY function('RAND')")
     List<Question> findRandomQuestions(Pageable pageable);
 
+    List<Question> findAllByGroupId(Long groupId);
+
     @Query("SELECT q FROM Question q WHERE q.questionStatus = 'APPROVED' AND q.groupId = :groupId ORDER BY function('RAND')")
     List<Question> findRandomGroupQuestions(@Param("groupId") Long groupId, Pageable pageable);
 
