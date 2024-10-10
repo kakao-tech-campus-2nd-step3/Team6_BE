@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -56,14 +55,13 @@ class AnswerIntegrationTest {
     @Autowired
     private AnswerRepository answerRepository;
     @Autowired
-    private GroupRepository groupsRepository;
+    private GroupRepository groupRepository;
 
     @BeforeEach
     void setUp() {
         Users user = createTestUser("Test User 1");
 
         createTestGroup("Test Group 1");
-
 
         createSomeFriendUsers(5);
 
@@ -249,7 +247,7 @@ class AnswerIntegrationTest {
 
     private void createTestGroup(String groupName) {
         Groups group = Groups.create(groupName, "Test Group", "default_image_url.jpg");
-        groupsRepository.save(group);
+        groupRepository.save(group);
     }
 
     private void createSomeFriendUsers(int friendCount) {

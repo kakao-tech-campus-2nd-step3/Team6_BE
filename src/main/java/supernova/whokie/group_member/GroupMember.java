@@ -43,6 +43,16 @@ public class GroupMember extends BaseTimeEntity {
     @NotNull
     private GroupStatus groupStatus;
 
+    public static GroupMember create(Users user, Groups group, GroupRole groupRole, GroupStatus groupStatus) {
+        return GroupMember.builder()
+                .user(user)
+                .group(group)
+                .groupRole(groupRole)
+                .groupStatus(groupStatus)
+                .build();
+
+    }
+
     public boolean isLeader() {
         return this.groupRole == GroupRole.LEADER;
     }
