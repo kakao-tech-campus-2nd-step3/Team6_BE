@@ -29,6 +29,13 @@ public class AnswerRequest {
             @NotNull @Min(1)
             Long pickedId
     ) {
+        public AnswerCommand.Group toCommand() {
+            return AnswerCommand.Group.builder()
+                    .questionId(this.questionId)
+                    .groupId(this.groupId)
+                    .pickedId(this.pickedId)
+                    .build();
+        }
 
     }
 

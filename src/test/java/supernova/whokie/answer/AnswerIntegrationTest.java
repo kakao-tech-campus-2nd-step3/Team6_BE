@@ -16,6 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.global.constants.Constants;
+import supernova.whokie.group.Groups;
+import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
 import supernova.whokie.question.repository.QuestionRepository;
@@ -52,6 +55,8 @@ class AnswerIntegrationTest {
     private QuestionRepository questionRepository;
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private GroupRepository groupsRepository;
 
     @Value("${answer-point}")
     private int answerPoint;
@@ -69,6 +74,13 @@ class AnswerIntegrationTest {
             .role(Role.USER)
             .build();
         userRepository.save(user);
+
+        Groups group = Groups.builder()
+            .groupName("Test Group 1")
+            .description("Test Group 1")
+            .groupImageUrl("default_image_url.jpg")
+            .build();
+        groupsRepository.save(group);
 
         for (int i = 1; i <= 5; i++) {
             Users friendUser = Users.builder()
@@ -99,6 +111,7 @@ class AnswerIntegrationTest {
                 .content("Test Question " + i)
                 .questionStatus(QuestionStatus.APPROVED)
                 .writer(user)
+                .groupId(1L)
                 .build();
             questionRepository.save(question);
 
@@ -156,7 +169,7 @@ class AnswerIntegrationTest {
             .andExpect(jsonPath("$.message").value("답변 완료"));
         Users userAfterAnswer = userRepository.findById(userId).orElseThrow();
         int finalPoint = userAfterAnswer.getPoint();
-        assertThat(finalPoint).isEqualTo(initialPoint + answerPoint);
+        assertThat(finalPoint).isEqualTo(initialPoint + Constants.ANSWER_POINT);
     }
 
     //@Test
@@ -243,5 +256,33 @@ class AnswerIntegrationTest {
         Users userAfterPurchase = userRepository.findById(userId).orElseThrow();
         int finalPoint = userAfterPurchase.getPoint();
         assertThat(finalPoint).isEqualTo(initialPoint - hintPurchasePoint);
+    }
+
+    @Test
+    @DisplayName("그룹 질문에 답변하기 테스트")
+    void answerToGroupQuestionTest() throws Exception {
+        Long userId = 1L;
+        Long questionId = 1L;
+        Long groupId = 1L;
+        Long pickedId = 2L;
+
+        String requestBody = String.format(
+            "{\"questionId\": %d, \"groupId\": %d, \"pickedId\": %d}",
+            questionId, groupId, pickedId
+        );
+        mockMvc.perform(post("/api/answer/group")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody)
+                .requestAttr("userId", "1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.message").value("그룹 질문 답변 완료"))
+            .andDo(result -> {
+                String responseContent = result.getResponse().getContentAsString();
+                System.out.println("그룹 질문 답변 내용: " + responseContent);
+            });
+
+        Users userAfterAnswer = userRepository.findById(userId).orElseThrow();
+        int finalPoint = userAfterAnswer.getPoint();
+        assertThat(finalPoint).isEqualTo(100 + Constants.ANSWER_POINT);
     }
 }

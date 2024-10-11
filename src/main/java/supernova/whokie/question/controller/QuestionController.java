@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +25,6 @@ import supernova.whokie.question.controller.dto.QuestionRequest;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.service.QuestionService;
 
-import java.awt.print.Pageable;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -35,38 +36,41 @@ public class QuestionController {
 
     @GetMapping("/group/{group-id}/question/random")
     public QuestionResponse.GroupQuestions getGroupQuestionList(
-            @PathVariable("group-id") @NotNull @Min(1) String groupId
-            ) {
-        return new QuestionResponse.GroupQuestions(
-                List.of(new QuestionResponse.GroupQuestion(1L, "1번질문", List.of(new GroupMemberResponse.Option(1L, 1L, "user1", "imageUrl"), new GroupMemberResponse.Option(1L, 1L, "user1", "imageUrl"))),
-                        new QuestionResponse.GroupQuestion(1L, "1번질문", List.of(new GroupMemberResponse.Option(1L, 1L, "user1", "imageUrl"), new GroupMemberResponse.Option(1L, 1L, "user1", "imageUrl"))))
-        );
+            @PathVariable("group-id") @NotNull @Min(1) Long groupId,
+            @Authenticate Long userId
+    ) {
+        List<QuestionModel.GroupQuestion> groupQuestions = questionService.getGroupQuestions(userId, groupId);
+        return QuestionResponse.GroupQuestions.from(groupQuestions);
     }
 
     @PostMapping("/group/question")
     public GlobalResponse createGroupQuestion(
-            @RequestBody @Valid QuestionRequest.Create request
+            @RequestBody @Valid QuestionRequest.Create request,
+            @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("message").build();
+        questionService.createQuestion(userId, request.toCommand());
+        return GlobalResponse.builder().message("질문이 성공적으로 생성되었습니다.").build();
     }
 
     @PatchMapping("/group/question/status")
     public GlobalResponse approveGroupQuestion(
-            @RequestBody @Valid QuestionRequest.Approve request
+            @RequestBody @Valid QuestionRequest.Approve request,
+            @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("message").build();
+        questionService.approveQuestion(userId, request.toCommand());
+        return GlobalResponse.builder().message("그룹 질문 승인에 성공하였습니다.").build();
     }
 
     @GetMapping("/group/{group-id}/question")
     public PagingResponse<QuestionResponse.Info> getGroupQuestionPaging(
+            @Authenticate Long userId,
             @PathVariable("group-id") @NotNull @Min(1) String groupId,
             @RequestParam("status") @NotNull Boolean status,
             @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        return new PagingResponse<>(
-                List.of(new QuestionResponse.Info(1L, "질문1", 1L, true, "작성자1", LocalDate.now()),
-                        new QuestionResponse.Info(2L, "질문2", 1L, true, "작성자2", LocalDate.now())),
-                0, 10, 1, 1);
+        Page<QuestionModel.Info> groupQuestionInfoList = questionService.getGroupQuestionPaging(userId, groupId, status, pageable);
+        QuestionResponse.Infos result = QuestionResponse.Infos.from(groupQuestionInfoList);
+        return PagingResponse.from(result.infos());
     }
 
     @GetMapping("/common/question/random")
