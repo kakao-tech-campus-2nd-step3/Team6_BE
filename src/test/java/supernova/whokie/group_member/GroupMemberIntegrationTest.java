@@ -1,4 +1,4 @@
-package supernova.whokie.group_member.controller;
+package supernova.whokie.group_member;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,9 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.repository.GroupRepository;
-import supernova.whokie.group_member.GroupMember;
-import supernova.whokie.group_member.GroupRole;
-import supernova.whokie.group_member.GroupStatus;
 import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
@@ -43,7 +40,7 @@ import supernova.whokie.user.infrastructure.repository.UsersRepository;
     "spring.sql.init.mode=never"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class GroupMemberControllerTest {
+public class GroupMemberIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
