@@ -1,5 +1,6 @@
 package supernova.whokie.redis.entity;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
@@ -12,8 +13,10 @@ public class KakaoAccessToken {
     @Id
     private Long userId;
 
+    @NotNull
     private String accessToken;
 
+    @NotNull
     @TimeToLive(unit = TimeUnit.SECONDS)
     private Long expiresIn;
 

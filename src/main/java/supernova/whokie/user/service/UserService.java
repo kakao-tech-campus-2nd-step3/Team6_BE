@@ -38,7 +38,7 @@ public class UserService {
         // 토큰 발급
         TokenInfoResponse tokenResponse = userApiCaller.getAccessToken(code);
         String accessToken = tokenResponse.accessToken();
-
+        System.out.println(tokenResponse.refreshToken());
         // 카카오 사용자 정보 요청
         UserInfoResponse userInfoResponse = userApiCaller.extractUserInfo(accessToken);
         KakaoAccount kakaoAccount = userInfoResponse.kakaoAccount();

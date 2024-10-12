@@ -8,6 +8,7 @@ import supernova.whokie.redis.entity.KakaoRefreshToken;
 import supernova.whokie.redis.repository.AccessTokenRepository;
 import supernova.whokie.redis.repository.RefreshTokenRepository;
 import supernova.whokie.user.infrastructure.apiCaller.UserApiCaller;
+import supernova.whokie.user.infrastructure.apiCaller.dto.RefreshedTokenInfoResponse;
 import supernova.whokie.user.infrastructure.apiCaller.dto.TokenInfoResponse;
 
 @Service
@@ -17,9 +18,9 @@ public class KakaoTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserApiCaller userApiCaller;
 
-    public void saveToken(Long memberId, TokenInfoResponse kakaoTokenDto) {
-        accessTokenRepository.save(new KakaoAccessToken(memberId, kakaoTokenDto.accessToken(), kakaoTokenDto.expiresIn()));
-        refreshTokenRepository.save(new KakaoRefreshToken(memberId, kakaoTokenDto.refreshToken(), kakaoTokenDto.refreshTokenExpiresIn()));
+    public void saveToken(Long userId, TokenInfoResponse kakaoTokenDto) {
+        accessTokenRepository.save(new KakaoAccessToken(userId, kakaoTokenDto.accessToken(), kakaoTokenDto.expiresIn()));
+        refreshTokenRepository.save(new KakaoRefreshToken(userId, kakaoTokenDto.refreshToken(), kakaoTokenDto.refreshTokenExpiresIn()));
     }
 
     public void deleteAccessToken(Long userId) {
@@ -36,8 +37,10 @@ public class KakaoTokenService {
                     String refreshToken = refreshTokenRepository.findById(userId)
                             .orElseThrow(() -> new AuthenticationException("로그인이 만료되었습니다."))
                             .getRefreshToken();
-                    TokenInfoResponse tokenDto = userApiCaller.refreshAccessToken(refreshToken);
-                    return new KakaoAccessToken(userId, tokenDto.accessToken(), tokenDto.expiresIn());
+                    RefreshedTokenInfoResponse tokenDto = userApiCaller.refreshAccessToken(refreshToken);
+                    KakaoAccessToken newAccessToken = new KakaoAccessToken(userId, tokenDto.accessToken(), tokenDto.expiresIn());
+                    accessTokenRepository.save(newAccessToken);
+                    return newAccessToken;
                 }).getAccessToken();
     }
 

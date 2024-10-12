@@ -12,6 +12,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import supernova.whokie.global.exception.AuthenticationException;
 import supernova.whokie.global.property.KakaoProperties;
+import supernova.whokie.user.infrastructure.apiCaller.dto.RefreshedTokenInfoResponse;
 import supernova.whokie.user.infrastructure.apiCaller.dto.TokenInfoResponse;
 import supernova.whokie.user.infrastructure.apiCaller.dto.UserInfoResponse;
 
@@ -59,7 +60,7 @@ public class UserApiCaller {
         }
     }
 
-    public TokenInfoResponse refreshAccessToken(String refreshToken) {
+    public RefreshedTokenInfoResponse refreshAccessToken(String refreshToken) {
         LinkedMultiValueMap<String, String> body = createRefreshBody(refreshToken);
 
         try {
@@ -69,7 +70,7 @@ public class UserApiCaller {
                     .body(body)
                     .exchange((request, response) -> {
                         if (response.getStatusCode().isSameCodeAs(HttpStatus.OK)) {
-                            return objectMapper.readValue(response.getBody(), TokenInfoResponse.class);
+                            return objectMapper.readValue(response.getBody(), RefreshedTokenInfoResponse.class);
                         }
                         throw new AuthenticationException("토큰 갱신에 실패하였습니다.");
                     });
@@ -91,9 +92,9 @@ public class UserApiCaller {
 
     private @NotNull LinkedMultiValueMap<String, String> createRefreshBody(String refreshToken) {
         var body = new LinkedMultiValueMap<String, String>();
-        body.add("grant_type", "refreshToken");
+        body.add("grant_type", "refresh_token");
         body.add("client_id", kakaoProperties.clientId());
-        body.add("refreshToken", refreshToken);
+        body.add("refresh_token", refreshToken);
         return body;
     }
 
