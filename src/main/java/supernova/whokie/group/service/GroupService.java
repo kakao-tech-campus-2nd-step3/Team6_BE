@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.global.exception.ForbiddenException;
 import supernova.whokie.group.Groups;
@@ -34,7 +35,7 @@ public class GroupService {
         groupRepository.save(group);
 
         var user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         GroupMember leader = GroupMember.CreateLeader(user, group);
         groupMemberRepository.save(leader);
@@ -52,13 +53,13 @@ public class GroupService {
     public void modifyGroup(Long userId, GroupCommand.Modify command) {
         GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId,
                 command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("그룹 멤버가 아닙니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
 
         if (!groupMember.isLeader()) {
-            throw new ForbiddenException("그룹장만 그룹 정보를 수정할 수 있습니다.");
+            throw new ForbiddenException(MessageConstants.NOT_GROUP_LEADER_MESSAGE);
         }
         Groups group = groupRepository.findById(command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 그룹입니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
 
         group.modify(command.groupName(), command.description());
     }
@@ -68,7 +69,7 @@ public class GroupService {
 
         GroupInfoWithMemberCount groupInfo = groupRepository.findGroupInfoWithMemberCountByGroupId(
                 groupId)
-            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 그룹입니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
         return InfoWithMemberCount.from(groupInfo);
     }
 }

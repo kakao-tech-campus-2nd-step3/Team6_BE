@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.global.exception.ForbiddenException;
 import supernova.whokie.group.Groups;
@@ -29,12 +30,12 @@ public class GroupMemberService {
 
         GroupMember leader = groupMemberRepository.findByUserIdAndGroupId(command.pastLeaderId(),
                 command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
         leader.validateLeader();
 
         GroupMember newLeader = groupMemberRepository.findByUserIdAndGroupId(command.newLeaderId(),
                 command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
         newLeader.validateApprovalStatus();
 
         changeLeader(leader, newLeader);
@@ -42,7 +43,7 @@ public class GroupMemberService {
 
     public void validateCurrentLeader(Long userId, Long pastLeaderId) {
         if (!userId.equals(pastLeaderId)) {
-            throw new ForbiddenException("해당 그룹 내의 리더가 아닙니다.");
+            throw new ForbiddenException(MessageConstants.NOT_GROUP_LEADER_MESSAGE);
         }
     }
 
@@ -55,12 +56,12 @@ public class GroupMemberService {
     public void expelMember(Long userId, GroupMemberCommand.Expel command) {
         GroupMember leader = groupMemberRepository.findByUserIdAndGroupId(userId,
                 command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
         leader.validateLeader();
 
         GroupMember member = groupMemberRepository.findByUserIdAndGroupId(command.userId(),
                 command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
 
         groupMemberRepository.deleteByUserIdAndGroupId(member.getId(), command.groupId());
     }
@@ -68,7 +69,7 @@ public class GroupMemberService {
     @Transactional(readOnly = true)
     public Members getGroupMembers(Long userId, Long groupId) {
         GroupMember member = groupMemberRepository.findByUserIdAndGroupId(userId, groupId)
-            .orElseThrow(() -> new EntityNotFoundException("해당 그룹의 유저만 조회할 수 있습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
 
         List<GroupMember> groupMembers = groupMemberRepository.findAllByGroupId(groupId);
         return Members.from(groupMembers);
@@ -77,13 +78,13 @@ public class GroupMemberService {
     @Transactional
     public void joinGroup(GroupMemberCommand.Join command, Long userId) {
         if (groupMemberRepository.existsByUserIdAndGroupId(userId, command.groupId())) {
-            throw new ForbiddenException("이미 가입한 그룹입니다.");
+            throw new ForbiddenException(MessageConstants.ALREADY_GROUP_MEMBER_MESSAGE);
         }
         Users user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("해당 유저가 존재하지 않습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         Groups group = groupRepository.findById(command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("해당 그룹이 존재하지 않습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
 
         GroupMember groupMember = command.toEntity(user, group);
         groupMemberRepository.save(groupMember);
@@ -96,7 +97,7 @@ public class GroupMemberService {
     public void exitGroup(GroupMemberCommand.Exit command, Long userId) {
 
         GroupMember member = groupMemberRepository.findByUserIdAndGroupId(userId, command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("해당 그룹의 유저만 탈퇴할 수 있습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
 
         if (member.isLeader()) {
             Long groupMemberSize = groupMemberRepository.countByGroupId(command.groupId());

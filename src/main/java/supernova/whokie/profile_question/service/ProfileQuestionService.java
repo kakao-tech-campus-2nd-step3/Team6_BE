@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.global.exception.ForbiddenException;
 import supernova.whokie.profile_answer.infrastructure.repository.ProfileAnswerRepository;
@@ -34,7 +35,7 @@ public class ProfileQuestionService {
     public void deleteProfileQuestion(Long userId, Long profileQuestionId) {
         ProfileQuestion profileQuestion = profileQuestionRepository.findByIdWithUser(
                 profileQuestionId)
-            .orElseThrow(() -> new EntityNotFoundException("해당하는 프로필 질문이 존재하지 않습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.PROFILE_QUESTION_NOT_FOUND_MESSAGE));
 
         if (!profileQuestion.isOwner(userId)) {
             throw new ForbiddenException("질문을 작성한 사람만 삭제할 수 있습니다.");
@@ -47,7 +48,7 @@ public class ProfileQuestionService {
     @Transactional
     public void createProfileQuestion(Long userId, Create command) {
         Users user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("해당하는 사용자가 존재하지 않습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         ProfileQuestion profileQuestion = command.toEntity(user);
         
