@@ -3,10 +3,11 @@ package supernova.whokie.user.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
@@ -19,11 +20,17 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@TestPropertySource(properties = {
+    "spring.profiles.active=default",
+    "jwt.secret=abcd"
+})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class UserServiceTest {
 
     @InjectMocks
@@ -36,38 +43,29 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = Users.builder()
-            .id(1L)
-            .name("test")
-            .email("test@gmail.com")
-            .point(1000)
-            .age(30)
-            .kakaoId(1L)
-            .gender(Gender.M)
-            .imageUrl("test")
-            .role(Role.USER)
-            .build();
+        user = createUser();
     }
 
     @Test
     @DisplayName("내 포인트 조회")
     void getPoint() {
         // given
-        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         // when
-        UserModel.Point point = userService.getPoint(1L);
+        UserModel.Point point = userService.getPoint(user.getId());
 
         // then
-        assertEquals(1000, point.amount());
-        then(userRepository).should().findById(1L);
+        assertAll(
+            () -> assertEquals(1000, point.amount()),
+            () -> then(userRepository).should().findById(user.getId())
+        );
     }
 
     @Test
     @DisplayName("내 정보 조회")
     void getUserInfo() throws Exception{
         // given
-        // 리플렉션을 사용해 createdAt 수동 설정
         Field createdAtField = BaseTimeEntity.class.getDeclaredField("createdAt");
         createdAtField.setAccessible(true);
         createdAtField.set(user, LocalDateTime.now());
@@ -75,15 +73,32 @@ class UserServiceTest {
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
 
         // when
-        UserModel.Info userInfo = userService.getUserInfo(1L);
+        UserModel.Info userInfo = userService.getUserInfo(user.getId());
 
         // then
-        assertThat(userInfo.name()).isEqualTo(user.getName());
-        assertThat(userInfo.email()).isEqualTo(user.getEmail());
-        assertThat(userInfo.age()).isEqualTo(user.getAge());
-        assertThat(userInfo.gender()).isEqualTo(user.getGender());
-        assertThat(userInfo.role()).isEqualTo(user.getRole());
+        assertAll(
+            () -> assertThat(userInfo.name()).isEqualTo(user.getName()),
+            () -> assertThat(userInfo.email()).isEqualTo(user.getEmail()),
+            () -> assertThat(userInfo.age()).isEqualTo(user.getAge()),
+            () -> assertThat(userInfo.gender()).isEqualTo(user.getGender()),
+            () -> assertThat(userInfo.role()).isEqualTo(user.getRole()),
+            () -> then(userRepository).should().findById(user.getId())
+        );
+    }
 
-        then(userRepository).should().findById(1L);
+    private Users createUser() {
+        Users user = Users.builder()
+            .id(1L)
+            .name("test")
+            .email("test@gmail.com")
+            .point(1000)
+            .age(22)
+            .kakaoId(1L)
+            .gender(Gender.M)
+            .role(Role.USER)
+            .build();
+
+        userRepository.save(user);
+        return user;
     }
 }

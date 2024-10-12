@@ -25,7 +25,7 @@ import supernova.whokie.user.infrastructure.repository.UserRepository;
     "jwt.secret=abcd"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class UserControllerTest {
+class UserIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

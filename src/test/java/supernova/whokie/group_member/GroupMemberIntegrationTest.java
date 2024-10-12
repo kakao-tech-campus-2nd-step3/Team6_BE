@@ -88,7 +88,7 @@ public class GroupMemberIntegrationTest {
         mockMvc.perform(patch("/api/group/leader")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
-                .requestAttr("userId", String.valueOf(1L)))
+                .requestAttr("userId", String.valueOf(user1.getId())))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.message").value("그룹장 위임에 성공하였습니다."))
             .andDo(print());
@@ -115,7 +115,7 @@ public class GroupMemberIntegrationTest {
         mockMvc.perform(post("/api/group/expel")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
-                .requestAttr("userId", String.valueOf(1L)))
+                .requestAttr("userId", String.valueOf(user1.getId())))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.message").value("그룹 멤버 강퇴에 성공하였습니다."))
             .andDo(print());
@@ -129,7 +129,7 @@ public class GroupMemberIntegrationTest {
     @DisplayName("그룹 멤버 조회 테스트")
     void getGroupMembers_success() throws Exception {
         mockMvc.perform(get("/api/group/{group-id}/member", group.getId())
-                .requestAttr("userId", String.valueOf(1L))
+                .requestAttr("userId", String.valueOf(user1.getId()))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.members").isArray())

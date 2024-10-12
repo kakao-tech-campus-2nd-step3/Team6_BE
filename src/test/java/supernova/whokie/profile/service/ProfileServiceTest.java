@@ -51,7 +51,7 @@ public class ProfileServiceTest {
         given(profileRepository.findByUsersId(user.getId())).willReturn(Optional.of(profile));
 
         // when
-        ProfileModel.Info result = profileService.getProfile(1L);
+        ProfileModel.Info result = profileService.getProfile(user.getId());
 
         // then
         assertAll(
