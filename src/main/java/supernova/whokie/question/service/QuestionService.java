@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.constants.Constants;
+import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.repository.GroupRepository;
@@ -43,7 +44,7 @@ public class QuestionService {
     @Transactional(readOnly = true)
     public List<QuestionModel.CommonQuestion> getCommonQuestion(Long userId) {
 
-        Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
+        Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         return getCommonQuestionList(user);
     }
@@ -54,9 +55,9 @@ public class QuestionService {
     public Page<QuestionModel.Info> getGroupQuestionPaging(Long userId, String groupId, Boolean status, Pageable pageable) {
         Long parsedGroupId = Long.parseLong(groupId);
         Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
         Groups group = groupsRepository.findById(parsedGroupId)
-                .orElseThrow(() -> new EntityNotFoundException("그룹이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
 
         List<Question> groupQuestions = questionRepository.findAllByGroupId(parsedGroupId);
 
@@ -111,7 +112,7 @@ public class QuestionService {
 
     public List<QuestionModel.GroupQuestion> getGroupQuestions(Long userId, Long groupId) {
         GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, groupId)
-            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
 
         Pageable pageable = PageRequest.of(0, Constants.QUESTION_LIMIT);
         List<Question> randomQuestions = questionRepository.findRandomGroupQuestions(groupId, pageable);
@@ -133,7 +134,7 @@ public class QuestionService {
     @Transactional
     public void createQuestion(Long userId, QuestionCommand.Create command) {
         GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
         validateApprovalStatus(groupMember);
 
         Question question = command.toEntity(groupMember.getUser());
@@ -143,19 +144,19 @@ public class QuestionService {
 
     public void validateApprovalStatus(GroupMember groupMember) {
         if (!groupMember.isApproved()) {
-            throw new IllegalStateException("승인되지 않은 멤버입니다.");
+            throw new IllegalStateException(MessageConstants.NOT_APPROVED_MEMBER_MESSAGE);
         }
     }
 
     @Transactional
     public void approveQuestion(Long userId, QuestionCommand.Approve command) {
         GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
         groupMember.validateLeader();
 
         Question question = questionRepository.findByIdAndGroupId(command.questionId(),
                 command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 질문이 존재하지 않습니다."));
+            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_QUESTION_NOT_FOUND_MESSAGE));
 
         question.changeStatus(command.status());
     }
