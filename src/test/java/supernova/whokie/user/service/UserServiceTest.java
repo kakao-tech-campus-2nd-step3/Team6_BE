@@ -87,7 +87,7 @@ class UserServiceTest {
     }
 
     private Users createUser() {
-        Users user = Users.builder()
+        return user = Users.builder()
             .id(1L)
             .name("test")
             .email("test@gmail.com")
@@ -97,8 +97,5 @@ class UserServiceTest {
             .gender(Gender.M)
             .role(Role.USER)
             .build();
-
-        userRepository.save(user);
-        return user;
     }
 }

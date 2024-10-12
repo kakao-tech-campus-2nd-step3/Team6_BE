@@ -1,5 +1,7 @@
 package supernova.whokie.question.service;
 
+import java.util.ArrayList;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.question.service.dto.QuestionModel.GroupQuestion;
+import supernova.whokie.user.Gender;
+import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
@@ -28,6 +32,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -60,114 +65,64 @@ class QuestionServiceTest {
     @Autowired
     private QuestionService questionService;
 
+    private Users user;
+    private List<Question> questions;
+
+    @BeforeEach
+    void setUp() {
+        user = createUser();
+    }
+
     @Test
     @DisplayName("질문과 친구 목록을 정상적으로 가져오는지 테스트")
     void getCommonQuestionTest() {
         // given
-        Users dummyUser = Users.builder().id(1L).build();
-
-        List<Question> dummyQuestions = List.of(
-                Question.builder().id(1L).content("Question 1").build(),
-                Question.builder().id(2L).content("Question 2").build(),
-                Question.builder().id(3L).content("Question 3").build(),
-                Question.builder().id(4L).content("Question 4").build(),
-                Question.builder().id(5L).content("Question 5").build(),
-                Question.builder().id(6L).content("Question 6").build(),
-                Question.builder().id(7L).content("Question 7").build(),
-                Question.builder().id(8L).content("Question 8").build(),
-                Question.builder().id(9L).content("Question 9").build(),
-                Question.builder().id(10L).content("Question 10").build()
-        );
-
-        List<Friend> dummyFriends = List.of(
-                Friend.builder()
-                        .hostUser(dummyUser)
-                        .friendUser(Users.builder().id(2L).name("Friend 1").imageUrl("url1").build())
-                        .build(),
-                Friend.builder()
-                        .hostUser(dummyUser)
-                        .friendUser(Users.builder().id(3L).name("Friend 2").imageUrl("url2").build())
-                        .build(),
-                Friend.builder()
-                        .hostUser(dummyUser)
-                        .friendUser(Users.builder().id(4L).name("Friend 3").imageUrl("url3").build())
-                        .build(),
-                Friend.builder()
-                        .hostUser(dummyUser)
-                        .friendUser(Users.builder().id(5L).name("Friend 4").imageUrl("url4").build())
-                        .build(),
-                Friend.builder()
-                        .hostUser(dummyUser)
-                        .friendUser(Users.builder().id(6L).name("Friend 5").imageUrl("url5").build())
-                        .build()
-        );
+        questions = createQuestions(10);
+        List<Friend> friends = createFriends(user, 5);
 
         // when
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(dummyUser));
-        when(questionRepository.findRandomQuestions(any(Pageable.class))).thenReturn(dummyQuestions);
-        when(friendRepository.findRandomFriendsByHostUser(eq(dummyUser.getId()), any(Pageable.class))).thenReturn(dummyFriends);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(questionRepository.findRandomQuestions(any(Pageable.class))).thenReturn(questions);
+        when(friendRepository.findRandomFriendsByHostUser(eq(user.getId()), any(Pageable.class))).thenReturn(friends);
 
-        List<QuestionModel.CommonQuestion> commonQuestionList = questionService.getCommonQuestion(dummyUser.getId());
+        List<QuestionModel.CommonQuestion> commonQuestionList = questionService.getCommonQuestion(user.getId());
         QuestionResponse.CommonQuestions commonQuestions = QuestionResponse.CommonQuestions.from(commonQuestionList);
 
 
         // then
-        assertEquals(10, commonQuestions.questions().size());
-        assertEquals(5, commonQuestions.questions().get(0).users().size());
-
+        assertAll(
+            () -> assertEquals(10, commonQuestions.questions().size()),
+            () -> assertEquals(5, commonQuestions.questions().get(0).users().size())
+        );
     }
 
     @Test
     @DisplayName("랜덤 그룹 질문 조회 테스트")
     void getGroupQuestionTest() {
         // given
-        List<Question> dummyQuestions = List.of(
-            Question.builder().id(1L).content("Question 1").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(2L).content("Question 2").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(3L).content("Question 3").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(4L).content("Question 4").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(5L).content("Question 5").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(6L).content("Question 6").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(7L).content("Question 7").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(8L).content("Question 8").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(9L).content("Question 9").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(10L).content("Question 10").questionStatus(QuestionStatus.APPROVED).groupId(1L).build()
-        );
-
-        List<GroupMember> dummyGroupMembers = List.of(
-            GroupMember.builder().id(1L).user(Users.builder().id(1L).build()).build(),
-            GroupMember.builder().id(2L).user(Users.builder().id(2L).build()).build(),
-            GroupMember.builder().id(3L).user(Users.builder().id(3L).build()).build(),
-            GroupMember.builder().id(4L).user(Users.builder().id(4L).build()).build(),
-            GroupMember.builder().id(5L).user(Users.builder().id(5L).build()).build()
-        );
+        questions = createQuestions(10);
+        List<GroupMember> groupMembers = createGroupMembers(5);
 
         // when
-        when(groupMemberRepository.findByUserIdAndGroupId(anyLong(), anyLong())).thenReturn(Optional.of(dummyGroupMembers.get(0)));
-        when(questionRepository.findRandomGroupQuestions(anyLong(), any(Pageable.class))).thenReturn(dummyQuestions);
-        when(groupMemberRepository.getRandomGroupMember(eq(1L), anyLong(), any(Pageable.class))).thenReturn(dummyGroupMembers);
+        when(groupMemberRepository.findByUserIdAndGroupId(anyLong(), anyLong())).thenReturn(Optional.of(groupMembers.get(0)));
+        when(questionRepository.findRandomGroupQuestions(anyLong(), any(Pageable.class))).thenReturn(questions);
+        when(groupMemberRepository.getRandomGroupMember(eq(1L), anyLong(), any(Pageable.class))).thenReturn(groupMembers);
 
         List<GroupQuestion> groupQuestionList = questionService.getGroupQuestions(1L, 1L);
         QuestionResponse.GroupQuestions groupQuestions = QuestionResponse.GroupQuestions.from(groupQuestionList);
 
         // then
-        assertEquals(10, groupQuestions.questions().size());
-        assertEquals(5, groupQuestions.questions().get(0).users().size());
+        assertAll(
+            () -> assertEquals(10, groupQuestions.questions().size()),
+            () -> assertEquals(5, groupQuestions.questions().get(0).users().size())
+        );
     }
 
     @Test
     @DisplayName("그룹 질문 생성 테스트")
-    void createQuestion() {
+    void createQuestionTest() {
         // given
-        Users user = Users.builder()
-            .name("testUser")
-            .build();
-
-        GroupMember groupMember = GroupMember.builder()
-            .user(user)
-            .groupRole(GroupRole.MEMBER)
-            .groupStatus(GroupStatus.APPROVED)
-            .build();
+        GroupMember groupMember = createGroupMember(GroupRole.MEMBER);
 
         QuestionCommand.Create command = new QuestionCommand.Create(1L, "Test question");
 
@@ -183,32 +138,94 @@ class QuestionServiceTest {
 
     @Test
     @DisplayName("그룹 질문 승인 테스트")
-    void approveQuestion() {
+    void approveQuestionTest() {
         // given
-        Users user = Users.builder()
-            .name("testUser")
-            .build();
+        GroupMember leader = createGroupMember(GroupRole.LEADER);
 
-        GroupMember leader = GroupMember.builder()
-            .user(user)
-            .groupRole(GroupRole.LEADER)
-            .groupStatus(GroupStatus.APPROVED)
-            .build();
+        Question question = createQuestion();
 
-        Question question = Question.builder()
-            .groupId(1L)
-            .questionStatus(QuestionStatus.READY).build();
+        QuestionCommand.Approve approveCommand = new QuestionCommand.Approve(1L, question.getId(),
+            true);
 
-        QuestionCommand.Approve approveCommand = new QuestionCommand.Approve(1L, 1L, true);
-
-        given(groupMemberRepository.findByUserIdAndGroupId(anyLong(), anyLong())).willReturn(Optional.of(leader));
-        given(questionRepository.findByIdAndGroupId(anyLong(), anyLong())).willReturn(Optional.of(question));
+        given(groupMemberRepository.findByUserIdAndGroupId(anyLong(), anyLong())).willReturn(
+            Optional.of(leader));
+        given(questionRepository.findByIdAndGroupId(anyLong(), anyLong())).willReturn(
+            Optional.of(question));
 
         // when
         questionService.approveQuestion(1L, approveCommand);
 
         // then
-        verify(questionRepository).findByIdAndGroupId(anyLong(), anyLong());
-        assertThat(question.getQuestionStatus()).isEqualTo(QuestionStatus.APPROVED);
+        assertAll(
+            () -> verify(questionRepository).findByIdAndGroupId(anyLong(), anyLong()),
+            () -> assertThat(question.getQuestionStatus()).isEqualTo(QuestionStatus.APPROVED)
+        );
+    }
+
+    private Users createUser() {
+        return Users.builder()
+            .id(1L)
+            .name("test")
+            .email("test@gmail.com")
+            .point(1500)
+            .age(22)
+            .kakaoId(1L)
+            .gender(Gender.M)
+            .role(Role.USER)
+            .build();
+    }
+
+    private List<Question> createQuestions(int count) {
+        List<Question> questions = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            questions.add(Question.builder()
+                .id((long) i)
+                .content("Question " + i)
+                .build());
+        }
+        return questions;
+    }
+
+    private List<Friend> createFriends(Users user, int count) {
+        List<Friend> friends = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            friends.add(Friend.builder()
+                .hostUser(user)
+                .friendUser(Users.builder()
+                    .id((long) (i + 1))
+                    .name("Friend " + i)
+                    .imageUrl("url" + i)
+                    .build())
+                .build());
+        }
+        return friends;
+    }
+
+    private List<GroupMember> createGroupMembers(int count) {
+        List<GroupMember> groupMembers = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            groupMembers.add(GroupMember.builder()
+                .id((long) i)
+                .user(Users.builder()
+                    .id((long) i)
+                    .build())
+                .build());
+        }
+        return groupMembers;
+    }
+
+    private GroupMember createGroupMember(GroupRole groupRole) {
+        return GroupMember.builder()
+            .user(user)
+            .groupRole(groupRole)
+            .groupStatus(GroupStatus.APPROVED)
+            .build();
+    }
+
+    private Question createQuestion() {
+        return Question.builder()
+            .id(1L)
+            .groupId(1L)
+            .questionStatus(QuestionStatus.READY).build();
     }
 }

@@ -79,15 +79,12 @@ public class ProfileServiceTest {
     }
 
     private Profile createProfile() {
-        Profile profile = Profile.builder()
+        return profile = Profile.builder()
             .users(user)
             .todayVisited(2)
             .totalVisited(12)
             .description("test")
             .backgroundImageUrl("test")
             .build();
-
-        profileRepository.save(profile);
-        return profile;
     }
 }
