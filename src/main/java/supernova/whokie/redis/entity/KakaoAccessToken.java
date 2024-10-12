@@ -10,15 +10,15 @@ import java.util.concurrent.TimeUnit;
 public class KakaoAccessToken {
 
     @Id
-    private Long memberId;
+    private Long userId;
 
     private String accessToken;
 
     @TimeToLive(unit = TimeUnit.SECONDS)
     private Long expiresIn;
 
-    public KakaoAccessToken(Long memberId, String accessToken, Long expiresIn) {
-        this.memberId = memberId;
+    public KakaoAccessToken(Long userId, String accessToken, Long expiresIn) {
+        this.userId = userId;
         this.accessToken = accessToken;
         this.expiresIn = expiresIn;
     }

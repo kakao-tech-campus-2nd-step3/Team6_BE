@@ -22,22 +22,22 @@ public class KakaoTokenService {
         refreshTokenRepository.save(new KakaoRefreshToken(memberId, kakaoTokenDto.refreshToken(), kakaoTokenDto.refreshTokenExpiresIn()));
     }
 
-    public void deleteAccessToken(Long memberId) {
-        accessTokenRepository.deleteById(memberId);
+    public void deleteAccessToken(Long userId) {
+        accessTokenRepository.deleteById(userId);
     }
 
     public void deleteRefreshToken(Long memberId) {
         refreshTokenRepository.deleteById(memberId);
     }
 
-    public String refreshIfAccessTokenExpired(Long memberId) {
-        return accessTokenRepository.findById(memberId)
+    public String refreshIfAccessTokenExpired(Long userId) {
+        return accessTokenRepository.findById(userId)
                 .orElseGet(() -> {
-                    String refreshToken = refreshTokenRepository.findById(memberId)
+                    String refreshToken = refreshTokenRepository.findById(userId)
                             .orElseThrow(() -> new AuthenticationException("로그인이 만료되었습니다."))
                             .getRefreshToken();
                     TokenInfoResponse tokenDto = userApiCaller.refreshAccessToken(refreshToken);
-                    return new KakaoAccessToken(memberId, tokenDto.accessToken(), tokenDto.expiresIn());
+                    return new KakaoAccessToken(userId, tokenDto.accessToken(), tokenDto.expiresIn());
                 }).getAccessToken();
     }
 

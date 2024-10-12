@@ -9,15 +9,15 @@ import java.util.concurrent.TimeUnit;
 @RedisHash("kakaoRefresh")
 public class KakaoRefreshToken {
     @Id
-    private Long memberId;
+    private Long userId;
 
     private String refreshToken;
 
     @TimeToLive(unit = TimeUnit.SECONDS)
     private Long expiresIn;
 
-    public KakaoRefreshToken(Long memberId, String refreshToken, Long expiresIn) {
-        this.memberId = memberId;
+    public KakaoRefreshToken(Long userId, String refreshToken, Long expiresIn) {
+        this.userId = userId;
         this.refreshToken = refreshToken;
         this.expiresIn = expiresIn;
     }
