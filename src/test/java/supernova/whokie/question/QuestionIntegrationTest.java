@@ -85,60 +85,6 @@ class QuestionIntegrationTest {
         creatGroupMemberByRole(group, GroupRole.LEADER, 17);
     }
 
-    private void creatGroupMemberByRole(Groups group, GroupRole role,int i) {
-        Users user = createTestUser("Test Group User","test@test.com" + i);
-        GroupMember groupMember = GroupMember.create(user, group, role, GroupStatus.APPROVED);
-        groupMemberRepository.save(groupMember);
-    }
-
-    private void createQuestionByStatus(int i, Users user, QuestionStatus status) {
-        Question question = Question.create("Question " + i, status, 1L, user);
-        questionRepository.save(question);
-    }
-
-    private void createSomeFriendUsers(int friendCount) {
-        for (int i = 1; i <= friendCount; i++) {
-            Users friendUser = Users.create(
-                    "Friend " + i,
-                    "friend" + i + "@example.com",
-                    100,
-                    20,
-                    1234567890L + i,
-                    Gender.M,
-                    "default_image_url.jpg",
-                    Role.USER);
-
-            userRepository.save(friendUser);
-        }
-    }
-
-    private void createFriendRelation(Users user,int friendCount) {
-        for (int i = 1; i <= friendCount; i++) {
-            Users friendUser = userRepository.findById((long) i).orElseThrow();
-            Friend friend = Friend.create(user,friendUser);
-            friendRepository.save(friend);
-        }
-    }
-
-    private Groups createTestGroup(String groupName) {
-        Groups group = Groups.create(groupName, "Test Group", "default_image_url.jpg");
-        groupRepository.save(group);
-        return group;
-    }
-
-    private Users createTestUser(String userName, String email) {
-        Users user = Users.create(
-                userName,
-                email,
-                100,
-                20,
-                1234567890L,
-                Gender.M,
-                "default_image_url.jpg",
-                Role.USER);
-        userRepository.save(user);
-        return user;
-    }
 
 
     @Test
@@ -261,5 +207,62 @@ class QuestionIntegrationTest {
                     System.out.println("REJECTED 상태의 질문 목록: " + responseContent);
                 });
     }
+
+
+    private void creatGroupMemberByRole(Groups group, GroupRole role,int i) {
+        Users user = createTestUser("Test Group User","test@test.com" + i);
+        GroupMember groupMember = GroupMember.create(user, group, role, GroupStatus.APPROVED);
+        groupMemberRepository.save(groupMember);
+    }
+
+    private void createQuestionByStatus(int i, Users user, QuestionStatus status) {
+        Question question = Question.create("Question " + i, status, 1L, user);
+        questionRepository.save(question);
+    }
+
+    private void createSomeFriendUsers(int friendCount) {
+        for (int i = 1; i <= friendCount; i++) {
+            Users friendUser = Users.create(
+                    "Friend " + i,
+                    "friend" + i + "@example.com",
+                    100,
+                    20,
+                    1234567890L + i,
+                    Gender.M,
+                    "default_image_url.jpg",
+                    Role.USER);
+
+            userRepository.save(friendUser);
+        }
+    }
+
+    private void createFriendRelation(Users user,int friendCount) {
+        for (int i = 1; i <= friendCount; i++) {
+            Users friendUser = userRepository.findById((long) i).orElseThrow();
+            Friend friend = Friend.create(user,friendUser);
+            friendRepository.save(friend);
+        }
+    }
+
+    private Groups createTestGroup(String groupName) {
+        Groups group = Groups.create(groupName, "Test Group", "default_image_url.jpg");
+        groupRepository.save(group);
+        return group;
+    }
+
+    private Users createTestUser(String userName, String email) {
+        Users user = Users.create(
+                userName,
+                email,
+                100,
+                20,
+                1234567890L,
+                Gender.M,
+                "default_image_url.jpg",
+                Role.USER);
+        userRepository.save(user);
+        return user;
+    }
+
 
 }
