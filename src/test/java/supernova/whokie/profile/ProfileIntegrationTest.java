@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import supernova.whokie.profile.infrastructure.ProfileRepository;
@@ -28,6 +29,7 @@ import supernova.whokie.user.infrastructure.repository.UserRepository;
     "spring.profiles.active=default",
     "jwt.secret=abcd"
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ProfileIntegrationTest {
 
     @Autowired
