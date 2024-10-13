@@ -1,5 +1,6 @@
 package supernova.whokie.question.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,5 +23,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     Optional<Question> findByIdAndGroupId(Long questionId, Long groupId);
 
     @Query("SELECT q FROM Question q WHERE q.questionStatus = :status AND q.groupId = :groupId")
-    List<Question> findAllByStatus(@Param("groupId") Long groupId, @Param("status") QuestionStatus status);
+    Page<Question> findAllByStatus(@Param("groupId") Long groupId, @Param("status") QuestionStatus status, Pageable pageable);
+
 }

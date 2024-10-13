@@ -178,7 +178,7 @@ class QuestionIntegrationTest {
         request.setAttribute("userId", "1");
 
         mockMvc.perform(get("/api/group/1/question")
-                        .param("status", "true") // APPROVED 상태
+                        .param("status", "APPROVED") // APPROVED 상태
                         .requestAttr("userId", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -200,7 +200,7 @@ class QuestionIntegrationTest {
         request.setAttribute("userId", "1");
 
         mockMvc.perform(get("/api/group/1/question")
-                        .param("status", "false") // REJECTED 상태
+                        .param("status", "REJECTED") // REJECTED 상태
                         .requestAttr("userId", "1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

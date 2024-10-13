@@ -48,27 +48,16 @@ public class QuestionService {
     }
 
     @Transactional(readOnly = true)
-    public Page<QuestionModel.Info> getGroupQuestionPaging(Long userId, String groupId, Boolean status, Pageable pageable) {
+    public Page<QuestionModel.Info> getGroupQuestionPaging(Long userId, String groupId, QuestionStatus status, Pageable pageable) {
         Long parsedGroupId = Long.parseLong(groupId);
 
         groupMemberRepository.findByUserIdAndGroupId(userId, parsedGroupId).orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
 
-        return getGroupQuestionsByStatus(status, parsedGroupId, pageable);
+        Page<Question> groupQuestionPage = questionRepository.findAllByStatus(parsedGroupId, status, pageable);
+
+        return groupQuestionPage.map(question -> QuestionModel.Info.from(question, status));
     }
 
-    private Page<QuestionModel.Info> getGroupQuestionsByStatus(Boolean status, Long groupId, Pageable pageable) {
-
-        QuestionStatus questionStatus = getQuestionStatusByRequestStatus(status);
-
-        List<Question> groupQuestionList = questionRepository.findAllByStatus(groupId, questionStatus);
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), groupQuestionList.size());
-        List<QuestionModel.Info> result = groupQuestionList.subList(start, end).stream()
-                .map(question -> QuestionModel.Info.from(question, status))
-                .toList();
-
-        return new PageImpl<>(result, pageable, groupQuestionList.size());
-    }
 
     private List<QuestionModel.CommonQuestion> getCommonQuestionList(Users user) {
         Pageable pageable = PageRequest.of(0, Constants.QUESTION_LIMIT);
