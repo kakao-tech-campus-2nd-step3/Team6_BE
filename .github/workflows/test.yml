@@ -39,8 +39,8 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Gradle build를 수행합니다.
-        env:
-          SPRING_PROFILES_ACTIVE: dev
+#        env:
+#          SPRING_PROFILES_ACTIVE: dev
         run: ./gradlew clean build -Dspring.profiles.active=dev
 
 
