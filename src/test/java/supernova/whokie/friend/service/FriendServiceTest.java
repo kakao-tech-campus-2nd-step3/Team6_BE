@@ -19,6 +19,7 @@ import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.friend.service.dto.FriendCommand;
 import supernova.whokie.friend.service.dto.FriendModel;
 import supernova.whokie.global.auth.JwtProvider;
+import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
@@ -30,6 +31,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
@@ -50,6 +52,8 @@ class FriendServiceTest {
     @MockBean
     private FriendKakaoApiCaller apiCaller;
     @MockBean
+    private KakaoTokenService kakaoTokenService;
+    @MockBean
     private JwtProvider jwtProvider;
     @PersistenceContext
     EntityManager entityManager;
@@ -60,12 +64,15 @@ class FriendServiceTest {
     void getKakaoFriendsTest() {
         // given
         Long userId = 1L;
+        String accessToken = "accessToken";
         KakaoDto.Profile profile1 = new KakaoDto.Profile(2L, "uuid1", false, "nickname1", "image1");
         KakaoDto.Profile profile2 = new KakaoDto.Profile(3L, "uuid2", false, "nickname2", "image2");
         KakaoDto.Profile profile3 = new KakaoDto.Profile(4L, "uuid3", false, "nickname3", "image3");
         List<KakaoDto.Profile> profiles = List.of(profile1, profile2, profile3);
         KakaoDto.Friends kakaodto = new KakaoDto.Friends(null, profiles);
-        given(apiCaller.getKakaoFriends(any()))
+        given(kakaoTokenService.refreshIfAccessTokenExpired(any()))
+                .willReturn(accessToken);
+        given(apiCaller.getKakaoFriends(eq(accessToken)))
             .willReturn(kakaodto);
 
         Users host = Users.builder().id(userId).name("name").email("email1").point(0).age(1)
