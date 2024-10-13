@@ -8,10 +8,12 @@ import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.profile.Profile;
 import supernova.whokie.profile.infrastructure.ProfileRepository;
+import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.apiCaller.dto.KakaoAccount;
+import supernova.whokie.user.infrastructure.apiCaller.dto.TokenInfoResponse;
 import supernova.whokie.user.infrastructure.apiCaller.dto.UserInfoResponse;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.infrastructure.apiCaller.UserApiCaller;
@@ -25,6 +27,7 @@ public class UserService {
     private final ProfileRepository profileRepository;
     private final JwtProvider jwtProvider;
     private final UserApiCaller userApiCaller;
+    private final KakaoTokenService kakaoTokenService;
 
     public String getCodeUrl() {
         return userApiCaller.createCodeUrl();
@@ -32,9 +35,15 @@ public class UserService {
 
     @Transactional
     public String register(String code) {
-        UserInfoResponse userInfoResponse = userApiCaller.extractUserInfo(code);
+        // 토큰 발급
+        TokenInfoResponse tokenResponse = userApiCaller.getAccessToken(code);
+        String accessToken = tokenResponse.accessToken();
+        System.out.println(tokenResponse.refreshToken());
+        // 카카오 사용자 정보 요청
+        UserInfoResponse userInfoResponse = userApiCaller.extractUserInfo(accessToken);
         KakaoAccount kakaoAccount = userInfoResponse.kakaoAccount();
 
+        // Users 저장 및 중복 체크
         Users user = userRepository.findByEmail(kakaoAccount.email())
             .orElseGet(() -> {
                 Users newUser = userRepository.save(
@@ -61,8 +70,10 @@ public class UserService {
                 return newUser;
             });
 
-        String token = jwtProvider.createToken(user.getId(), user.getRole());
-        return token;
+        // kakao token 저장
+        kakaoTokenService.saveToken(user.getId(), tokenResponse);
+
+        return jwtProvider.createToken(user.getId(), user.getRole());
     }
 
     public UserModel.Info getUserInfo(Long userId) {
