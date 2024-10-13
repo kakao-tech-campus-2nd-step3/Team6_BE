@@ -128,7 +128,4 @@ public class QuestionService {
 
         question.changeStatus(command.status());
     }
-    private static QuestionStatus getQuestionStatusByRequestStatus(Boolean status) {
-        return status ? QuestionStatus.APPROVED : QuestionStatus.REJECTED;
-    }
 }
