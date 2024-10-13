@@ -59,19 +59,97 @@ class AnswerIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        Users user = createTestUser("Test User 1");
+        Users user = createUser(0);
 
-        createTestGroup("Test Group 1");
+        createGroup(0);
 
-        createSomeFriendUsers(5);
 
-        createFriendRelation(user, 5);
+        for (int i = 1; i <= 5; i++) {
+            createFreindUser(i);
+        }
 
-        createQuestion(user);
+        for (int i = 1; i <= 5; i++) {
+            setFriendRelation(i, user);
+        }
+
+        for (int i = 1; i <= 5; i++) {
+            Question question = createQuestion(i, user);
+
+            // 답변 설정
+            createAnswer(question, user);
+        }
 
     }
 
+    private void createAnswer(Question question, Users user) {
+        Answer answer = Answer.builder()
+                .question(question)
+                .picker(userRepository.findById(2L).orElseThrow())
+                .picked(user)
+                .hintCount(2)
+                .build();
+        ReflectionTestUtils.setField(answer, "createdAt", LocalDateTime.of(2024, 9, 19, 0, 0));
+        answerRepository.save(answer);
+    }
 
+    private Question createQuestion(int i, Users user) {
+        Question question = Question.builder()
+                .content("Test Question " + i)
+                .questionStatus(QuestionStatus.APPROVED)
+                .writer(user)
+                .groupId(1L)
+                .build();
+        questionRepository.save(question);
+        return question;
+    }
+
+    private void setFriendRelation(int index, Users user) {
+        Users friendUser = userRepository.findById((long) index).orElseThrow();
+        Friend friend = Friend.builder()
+                .hostUser(user)
+                .friendUser(friendUser)
+                .build();
+        friendRepository.save(friend);
+    }
+
+    private void createFreindUser(int index) {
+        Users friendUser = Users.builder()
+                .name("Friend " + index)
+                .email("friend" + index + "@example.com")
+                .point(100)
+                .age(20)
+                .kakaoId(1234567890L + index)
+                .gender(Gender.F)
+                .imageUrl("default_image_url_friend_" + index + ".jpg")
+                .role(Role.USER)
+                .build();
+
+        userRepository.save(friendUser);
+    }
+
+    private void createGroup(int index) {
+        Groups group = Groups.builder()
+                .groupName("Test Group " + index)
+                .description("Test Group " + index)
+                .groupImageUrl("default_image_url.jpg")
+                .build();
+        groupRepository.save(group);
+    }
+
+    private Users createUser(int index) {
+        Users user = Users.builder()
+                .name("Test User "+ index)
+                .email("test@example.com")
+                .point(100)
+                .age(20)
+                .kakaoId(1234567890L)
+                .gender(Gender.M)
+                .imageUrl("default_image_url.jpg")
+                .role(Role.USER)
+                .build();
+        userRepository.save(user);
+        return user;
+    }
 
 
     @Test
@@ -231,62 +309,4 @@ class AnswerIntegrationTest {
         assertThat(finalPoint).isEqualTo(100 + Constants.ANSWER_POINT);
     }
 
-    private Users createTestUser(String userName) {
-        Users user = Users.create(
-                userName,
-                "test@example.com",
-                100,
-                20,
-                1234567890L,
-                Gender.M,
-                "default_image_url.jpg",
-                Role.USER);
-        userRepository.save(user);
-        return user;
-    }
-
-    private void createTestGroup(String groupName) {
-        Groups group = Groups.create(groupName, "Test Group", "default_image_url.jpg");
-        groupRepository.save(group);
-    }
-
-    private void createSomeFriendUsers(int friendCount) {
-        for (int i = 1; i <= friendCount; i++) {
-            Users friendUser = Users.create(
-                    "Friend " + i,
-                    "friend" + i + "@example.com",
-                    100,
-                    20,
-                    1234567890L + i,
-                    Gender.M,
-                    "default_image_url.jpg",
-                    Role.USER);
-
-            userRepository.save(friendUser);
-        }
-    }
-
-    private void createQuestion(Users user) {
-        for (int i = 1; i <= 5; i++) {
-            Question question = Question.create("Test Question " + i, QuestionStatus.APPROVED, 1L, user);
-            questionRepository.save(question);
-
-            // 답변 설정
-            createAnswer(user, question);
-        }
-    }
-
-    private void createAnswer(Users user, Question question) {
-        Answer answer = Answer.create(question, userRepository.findById(2L).orElseThrow(), user, 2);
-        ReflectionTestUtils.setField(answer, "createdAt", LocalDateTime.of(2024, 9, 19, 0, 0));
-        answerRepository.save(answer);
-    }
-
-    private void createFriendRelation(Users user,int friendCount) {
-        for (int i = 1; i <= friendCount; i++) {
-            Users friendUser = userRepository.findById((long) i).orElseThrow();
-            Friend friend = Friend.create(user,friendUser);
-            friendRepository.save(friend);
-        }
-    }
 }
