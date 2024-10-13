@@ -9,7 +9,7 @@ import redis.embedded.RedisServerBuilder;
 
 import java.io.IOException;
 
-@Profile("default")
+@Profile({"dev", "default"})
 @TestConfiguration
 public class EmbeddedRedisConfig {
     private static final int REDIS_PORT = 6379;

@@ -30,11 +30,6 @@ jobs:
           java-version: '21'
           distribution: 'adopt'
 
-      - name: Start Redis
-        uses: supercharge/redis-github-action@1.1.0
-        with:
-          redis-version: 6
-
       - name: Gradle 명령 실행을 위한 권한을 부여합니다
         run: chmod +x ./gradlew
 
