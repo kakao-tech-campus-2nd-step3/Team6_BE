@@ -54,18 +54,6 @@ public class Users extends BaseTimeEntity {
     @NotNull
     private Role role;
 
-    public static Users create(String name, String email, Integer point, Integer age, Long kakaoId, Gender gender, String imageUrl, Role role) {
-        return Users.builder()
-                .name(name)
-                .email(email)
-                .point(point)
-                .age(age)
-                .kakaoId(kakaoId)
-                .gender(gender)
-                .imageUrl(imageUrl)
-                .role(role)
-                .build();
-    }
 
     public void increasePoint(int point) {
         this.point += point;

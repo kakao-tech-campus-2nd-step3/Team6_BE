@@ -43,14 +43,6 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id")
     private Users writer;
 
-    public static Question create(String content, QuestionStatus questionStatus, Long groupId, Users writer) {
-        return Question.builder()
-                .content(content)
-                .questionStatus(questionStatus)
-                .groupId(groupId)
-                .writer(writer)
-                .build();
-    }
 
     public boolean isNotCorrectGroupQuestion(Long groupId) {
         return this.groupId != groupId;
