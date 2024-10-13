@@ -52,18 +52,18 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        user = Users.builder()
-            .name("test")
-            .email("test@gmail.com")
-            .point(100)
-            .age(25)
-            .kakaoId(1L)
-            .gender(Gender.M)
-            .imageUrl("imageUrl")
-            .role(Role.USER)
-            .build();
-
-        userRepository.save(user);
+        user = createUser(1, 100, 25);
+    }
+    private Users createUser(int index, int point, int age) {
+        return userRepository.save(Users.builder()
+                .name("test" + index)
+                .email("test" + index + "@gmail.com")
+                .point(point)
+                .age(age)
+                .kakaoId(1L)
+                .gender(Gender.M)
+                .role(Role.USER)
+                .build());
     }
 
     @Test
@@ -77,10 +77,10 @@ class UserControllerTest {
                 .requestAttr("userId", String.valueOf(user.getId()))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.email").value("test@gmail.com"))
+            .andExpect(jsonPath("$.email").value("test1@gmail.com"))
             .andExpect(jsonPath("$.gender").value("M"))
             .andExpect(jsonPath("$.age").value(25))
-            .andExpect(jsonPath("$.name").value("test"))
+            .andExpect(jsonPath("$.name").value("test1"))
             .andExpect(jsonPath("$.role").value("USER"))
             .andDo(print());
     }
