@@ -20,6 +20,7 @@ public class EmbeddedRedisConfig {
         redisServer = new RedisServerBuilder()
                 .port(redisPort)
                 .setting("maxheap 16mb")
+                .setting("loglevel verbose")
                 .build();
         redisServer.start();
     }
