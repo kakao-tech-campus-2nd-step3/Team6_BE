@@ -41,7 +41,7 @@ jobs:
       - name: Gradle build를 수행합니다.
         run: |
           export SPRING_PROFILES_ACTIVE=dev
-          ./gradlew clean build
+          ./gradlew clean build -Dspring.profiles.active=dev
 
 
       - name: 테스트 결과를 PR에 코멘트로 등록합니다
