@@ -19,13 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
-import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
-import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.question.controller.dto.QuestionRequest;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.service.QuestionService;
+import supernova.whokie.question.service.dto.QuestionModel;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController

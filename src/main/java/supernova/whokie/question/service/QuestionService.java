@@ -27,7 +27,6 @@ import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -40,6 +39,10 @@ public class QuestionService {
     private final UserRepository userRepository;
     private final GroupRepository groupsRepository;
     private final GroupMemberRepository groupMemberRepository;
+
+    private static QuestionStatus getQuestionStatusByRequestStatus(Boolean status) {
+        return status ? QuestionStatus.APPROVED : QuestionStatus.REJECTED;
+    }
 
     @Transactional(readOnly = true)
     public List<QuestionModel.CommonQuestion> getCommonQuestion(Long userId) {
@@ -60,7 +63,7 @@ public class QuestionService {
         return getGroupQuestionsByStatus(status, parsedGroupId, pageable);
     }
 
-    private Page<QuestionModel.Info> getGroupQuestionsByStatus(Boolean status, Long groupId,  Pageable pageable) {
+    private Page<QuestionModel.Info> getGroupQuestionsByStatus(Boolean status, Long groupId, Pageable pageable) {
 
         QuestionStatus questionStatus = getQuestionStatusByRequestStatus(status);
 
@@ -73,11 +76,6 @@ public class QuestionService {
 
         return new PageImpl<>(result, pageable, groupQuestionList.size());
     }
-
-    private static QuestionStatus getQuestionStatusByRequestStatus(Boolean status) {
-        return status ? QuestionStatus.APPROVED : QuestionStatus.REJECTED;
-    }
-
 
     private List<QuestionModel.CommonQuestion> getCommonQuestionList(Users user) {
         Pageable pageable = PageRequest.of(0, Constants.QUESTION_LIMIT);
@@ -100,14 +98,14 @@ public class QuestionService {
 
     public List<QuestionModel.GroupQuestion> getGroupQuestions(Long userId, Long groupId) {
         GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, groupId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
 
         Pageable pageable = PageRequest.of(0, Constants.QUESTION_LIMIT);
         List<Question> randomQuestions = questionRepository.findRandomGroupQuestions(groupId, pageable);
 
         return randomQuestions.stream()
-            .map(question -> QuestionModel.GroupQuestion.from(question, getGroupMemberList(userId, groupId)))
-            .toList();
+                .map(question -> QuestionModel.GroupQuestion.from(question, getGroupMemberList(userId, groupId)))
+                .toList();
     }
 
     private List<GroupMemberModel.Option> getGroupMemberList(Long userId, Long groupId) {
@@ -115,14 +113,14 @@ public class QuestionService {
         List<GroupMember> randomGroupMembers = groupMemberRepository.getRandomGroupMember(userId, groupId, pageable);
 
         return randomGroupMembers.stream()
-            .map(Option::from)
-            .toList();
+                .map(Option::from)
+                .toList();
     }
 
     @Transactional
     public void createQuestion(Long userId, QuestionCommand.Create command) {
         GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
         validateApprovalStatus(groupMember);
 
         Question question = command.toEntity(groupMember.getUser());
@@ -139,12 +137,12 @@ public class QuestionService {
     @Transactional
     public void approveQuestion(Long userId, QuestionCommand.Approve command) {
         GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
         groupMember.validateLeader();
 
         Question question = questionRepository.findByIdAndGroupId(command.questionId(),
-                command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_QUESTION_NOT_FOUND_MESSAGE));
+                        command.groupId())
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_QUESTION_NOT_FOUND_MESSAGE));
 
         question.changeStatus(command.status());
     }
