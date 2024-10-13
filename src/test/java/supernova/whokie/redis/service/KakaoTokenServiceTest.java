@@ -1,16 +1,15 @@
 package supernova.whokie.redis.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import supernova.config.EmbeddedRedisConfig;
 import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.exception.AuthenticationException;
 import supernova.whokie.redis.entity.KakaoAccessToken;
@@ -26,12 +25,14 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
+
+@EnabledIfEnvironmentVariable(named = "SPRING_PROFILES_ACTIVE", matches = "dev")
 @DataRedisTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = KakaoTokenService.class))
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Import({EmbeddedRedisConfig.class})
 @TestPropertySource(properties = {
         "spring.profiles.active=default",
-        "jwt.secret=abcd"
+        "jwt.secret=abcd",
+        "redis.host=localhost",
+        "redis.port=6379"
 })
 class KakaoTokenServiceTest {
     @Autowired
@@ -44,6 +45,12 @@ class KakaoTokenServiceTest {
     private JwtProvider jwtProvider;
     @MockBean
     private UserApiCaller userApiCaller;
+
+    @AfterEach
+    void cleanRedis() {
+        accessTokenRepository.deleteAll();
+        refreshTokenRepository.deleteAll();
+    }
 
     @Test
     @DisplayName("카카오 토큰 저장 테스트")
