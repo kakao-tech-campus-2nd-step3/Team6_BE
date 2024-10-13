@@ -64,7 +64,7 @@ public class QuestionService {
         return getGroupQuestionsByStatus(status, groupQuestions, pageable);
     }
 
-    private static Page<QuestionModel.Info> getGroupQuestionsByStatus(Boolean status, List<Question> groupQuestions, Pageable pageable) {
+    private Page<QuestionModel.Info> getGroupQuestionsByStatus(Boolean status, List<Question> groupQuestions, Pageable pageable) {
         List<Question> filteredQuestions;
 
 
