@@ -79,51 +79,23 @@ public class GroupMemberControllerTest {
 
     @BeforeEach
     void setUp() {
-        user1 = usersRepository.save(Users.builder()
-            .name("test1")
-            .email("test1@gmail.com")
-            .point(1500)
-            .age(22)
-            .kakaoId(1L)
-            .gender(Gender.M)
-            .role(Role.USER)
-            .build());
+        user1 = createUser(1, 1500, 22);
 
-        user2 = usersRepository.save(Users.builder()
-            .name("test2")
-            .email("test2@gmail.com")
-            .point(1000)
-            .age(25)
-            .kakaoId(1L)
-            .gender(Gender.F)
-            .role(Role.USER)
-            .build());
+        user2 = createUser(2, 1000, 25);
 
         pastLeaderId = user1.getId();
         newLeaderId = user2.getId();
 
-        group = groupRepository.save(Groups.builder()
-            .groupName("test")
-            .description("test")
-            .groupImageUrl("tset")
-            .build());
+        group = createGroup(1);
 
         groupId = group.getId();
 
-        leader = groupMemberRepository.save(GroupMember.builder()
-            .user(user1)
-            .group(group)
-            .groupRole(GroupRole.LEADER)
-            .groupStatus(GroupStatus.APPROVED)
-            .build());
+        leader = createGroupMember(user1, group, GroupRole.LEADER);
 
-        member = groupMemberRepository.save(GroupMember.builder()
-            .user(user2)
-            .group(group)
-            .groupRole(GroupRole.MEMBER)
-            .groupStatus(GroupStatus.APPROVED)
-            .build());
+        member = createGroupMember(user2, group, GroupRole.MEMBER);
     }
+
+
 
     @Test
     @DisplayName("그룹장 위임 테스트")
@@ -202,5 +174,34 @@ public class GroupMemberControllerTest {
                 member.getCreatedAt().toLocalDate().toString()))
             .andExpect(status().isOk())
             .andDo(print());
+    }
+
+    private GroupMember createGroupMember(Users user, Groups group, GroupRole role) {
+        return groupMemberRepository.save(GroupMember.builder()
+                .user(user)
+                .group(group)
+                .groupRole(role)
+                .groupStatus(GroupStatus.APPROVED)
+                .build());
+    }
+
+    private Groups createGroup(int index) {
+        return groupRepository.save(Groups.builder()
+                .groupName("test " + index)
+                .description("test" + index)
+                .groupImageUrl("tset" + index)
+                .build());
+    }
+
+    private Users createUser(int index, int point, int age) {
+        return usersRepository.save(Users.builder()
+                .name("test" + index)
+                .email("test" + index + "@gmail.com")
+                .point(point)
+                .age(age)
+                .kakaoId(1L)
+                .gender(Gender.M)
+                .role(Role.USER)
+                .build());
     }
 }

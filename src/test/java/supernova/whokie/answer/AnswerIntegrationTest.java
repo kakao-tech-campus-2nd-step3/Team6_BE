@@ -92,9 +92,9 @@ class AnswerIntegrationTest {
         answerRepository.save(answer);
     }
 
-    private Question createQuestion(int i, Users user) {
+    private Question createQuestion(int index, Users user) {
         Question question = Question.builder()
-                .content("Test Question " + i)
+                .content("Test Question " + index)
                 .questionStatus(QuestionStatus.APPROVED)
                 .writer(user)
                 .groupId(1L)
