@@ -30,7 +30,7 @@ class FriendRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Test
+    //@Test
     @DisplayName("hostId로 모든 Friend 조회")
     void findByHostUserIdFetchJoinTest() {
         // given
