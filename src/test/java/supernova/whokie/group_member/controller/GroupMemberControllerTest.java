@@ -43,7 +43,6 @@ import supernova.whokie.user.infrastructure.repository.UsersRepository;
 @AutoConfigureMockMvc
 @Transactional
 @TestPropertySource(properties = {
-    "spring.profiles.active=default",
     "jwt.secret=abcd",
     "spring.sql.init.mode=never"
 })

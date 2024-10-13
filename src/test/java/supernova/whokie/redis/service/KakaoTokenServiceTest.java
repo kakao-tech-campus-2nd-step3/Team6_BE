@@ -30,7 +30,6 @@ import static org.mockito.BDDMockito.given;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Import(EmbeddedRedisConfig.class)
 @TestPropertySource(properties = {
-        "spring.profiles.active=default",
         "jwt.secret=abcd"
 })
 class KakaoTokenServiceTest {
