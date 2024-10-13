@@ -62,7 +62,7 @@ class QuestionIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        Users user = createUser(0);
+        Users user = createUser(1);
 
         for (int i = 1; i <= 5; i++) {
             Users friendUser = createFriendUser(i);
@@ -70,7 +70,11 @@ class QuestionIntegrationTest {
             setFriendRelation(user, friendUser);
         }
 
-        Groups group = createGroup(0);
+        Groups group = createGroup(1);
+
+
+        createGroupMember(user, group);
+
 
         //승인된 그룹질문
         for (int i = 1; i <= 10; i++) {
@@ -87,6 +91,8 @@ class QuestionIntegrationTest {
         createGroupMemberByGroupRole(17, group, GroupRole.LEADER);
 
     }
+
+
 
     @Test
     @DisplayName("질문과 친구 목록을 정상적으로 가져오는지 테스트")
@@ -286,6 +292,14 @@ class QuestionIntegrationTest {
                 .build();
         userRepository.save(user);
         return user;
+    }
+    private void createGroupMember(Users user, Groups group) {
+        groupMemberRepository.save(GroupMember.builder()
+                .user(user)
+                .group(group)
+                .groupStatus(GroupStatus.APPROVED)
+                .groupRole(GroupRole.LEADER)
+                .build());
     }
 
 

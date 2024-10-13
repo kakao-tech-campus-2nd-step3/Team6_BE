@@ -37,7 +37,6 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
-    private final GroupRepository groupsRepository;
     private final GroupMemberRepository groupMemberRepository;
 
     @Transactional(readOnly = true)
@@ -51,10 +50,8 @@ public class QuestionService {
     @Transactional(readOnly = true)
     public Page<QuestionModel.Info> getGroupQuestionPaging(Long userId, String groupId, Boolean status, Pageable pageable) {
         Long parsedGroupId = Long.parseLong(groupId);
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
-        Groups group = groupsRepository.findById(parsedGroupId)
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
+
+        groupMemberRepository.findByUserIdAndGroupId(userId, parsedGroupId).orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
 
         return getGroupQuestionsByStatus(status, parsedGroupId, pageable);
     }
