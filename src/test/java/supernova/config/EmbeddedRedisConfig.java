@@ -19,8 +19,7 @@ public class EmbeddedRedisConfig {
     public void startRedis() throws IOException {
         redisServer = new RedisServerBuilder()
                 .port(redisPort)
-                .setting("maxheap 16mb")
-                .setting("loglevel verbose")
+                .setting("maxheap 128mb")
                 .build();
         redisServer.start();
     }
