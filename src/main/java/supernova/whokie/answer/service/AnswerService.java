@@ -46,12 +46,6 @@ public class AnswerService {
     private final GroupRepository groupsRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    private static void checkUserHasNotEnoughPoint(Users user, int hintPurchasePoint) {
-        if (user.hasNotEnoughPoint(hintPurchasePoint)) {
-            throw new InvalidEntityException(MessageConstants.NOT_ENOUGH_POINT_MESSAGE);
-        }
-    }
-
     @Transactional(readOnly = true)
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId) {
         Users user = userRepository.findById(userId)
@@ -196,6 +190,12 @@ public class AnswerService {
             System.out.println("질문 아이디 " + question.getId());
             System.out.println("그룹 아이디 " + group.getId());
             throw new InvalidEntityException(MessageConstants.GROUP_NOT_FOUND_MESSAGE);
+        }
+    }
+
+    private static void checkUserHasNotEnoughPoint(Users user, int hintPurchasePoint) {
+        if (user.hasNotEnoughPoint(hintPurchasePoint)) {
+            throw new InvalidEntityException(MessageConstants.NOT_ENOUGH_POINT_MESSAGE);
         }
     }
 }
