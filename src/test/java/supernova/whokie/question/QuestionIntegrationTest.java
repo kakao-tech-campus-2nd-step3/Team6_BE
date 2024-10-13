@@ -61,31 +61,31 @@ class QuestionIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        Users user = createUser(0);
 
-        Users user = createTestUser("Test User","test@test.com");
+        for (int i = 1; i <= 5; i++) {
+            Users friendUser = createFriendUser(i);
 
-        createSomeFriendUsers(5);
+            setFriendRelation(user, friendUser);
+        }
 
-        createFriendRelation(user, 5);
-
-        Groups group = createTestGroup("Test Group 1");
+        Groups group = createGroup(0);
 
         //승인된 그룹질문
         for (int i = 1; i <= 10; i++) {
-            createQuestionByStatus(i, user, QuestionStatus.APPROVED);
+            createQuestion(i, user, QuestionStatus.APPROVED);
         }
         //거절된 그룹질문
         for (int i =11; i <= 20; i++) {
-            createQuestionByStatus(i, user, QuestionStatus.REJECTED);
+            createQuestion(i, user, QuestionStatus.REJECTED);
         }
         for (int i = 7; i <= 16; i++) {
-            creatGroupMemberByRole(group, GroupRole.MEMBER, i);
+            createGroupMemberByGroupRole(i, group, GroupRole.MEMBER);
         }
 
-        creatGroupMemberByRole(group, GroupRole.LEADER, 17);
+        createGroupMemberByGroupRole(17, group, GroupRole.LEADER);
+
     }
-
-
 
     @Test
     @DisplayName("질문과 친구 목록을 정상적으로 가져오는지 테스트")
@@ -208,61 +208,86 @@ class QuestionIntegrationTest {
                 });
     }
 
-
-    private void creatGroupMemberByRole(Groups group, GroupRole role,int i) {
-        Users user = createTestUser("Test Group User","test@test.com" + i);
-        GroupMember groupMember = GroupMember.create(user, group, role, GroupStatus.APPROVED);
-        groupMemberRepository.save(groupMember);
+    private void createGroupMemberByGroupRole(int index, Groups group, GroupRole leader) {
+        groupMemberRepository.save(GroupMember.builder()
+                .user(userRepository.save(
+                        Users.builder()
+                                .name("Test User")
+                                .email("test" + index + "@example.com")
+                                .point(0)
+                                .age(20)
+                                .kakaoId(1234567890L)
+                                .gender(Gender.M)
+                                .imageUrl("default_image_url.jpg")
+                                .role(Role.USER)
+                                .build()
+                ))
+                .group(group)
+                .groupRole(leader)
+                .groupStatus(GroupStatus.APPROVED)
+                .build());
     }
 
-    private void createQuestionByStatus(int i, Users user, QuestionStatus status) {
-        Question question = Question.create("Question " + i, status, 1L, user);
+    private void createQuestion(int index, Users user, QuestionStatus approved) {
+        Question question = Question.builder()
+                .id((long) index)
+                .content("Question " + index)
+                .writer(user)
+                .groupId(1L)
+                .questionStatus(approved)
+                .build();
         questionRepository.save(question);
     }
 
-    private void createSomeFriendUsers(int friendCount) {
-        for (int i = 1; i <= friendCount; i++) {
-            Users friendUser = Users.create(
-                    "Friend " + i,
-                    "friend" + i + "@example.com",
-                    100,
-                    20,
-                    1234567890L + i,
-                    Gender.M,
-                    "default_image_url.jpg",
-                    Role.USER);
-
-            userRepository.save(friendUser);
-        }
-    }
-
-    private void createFriendRelation(Users user,int friendCount) {
-        for (int i = 1; i <= friendCount; i++) {
-            Users friendUser = userRepository.findById((long) i).orElseThrow();
-            Friend friend = Friend.create(user,friendUser);
-            friendRepository.save(friend);
-        }
-    }
-
-    private Groups createTestGroup(String groupName) {
-        Groups group = Groups.create(groupName, "Test Group", "default_image_url.jpg");
+    private Groups createGroup(int index) {
+        Groups group = Groups.builder()
+                .groupName("test group " + index)
+                .groupImageUrl("test imageUrl")
+                .description("test group desc")
+                .build();
         groupRepository.save(group);
         return group;
     }
 
-    private Users createTestUser(String userName, String email) {
-        Users user = Users.create(
-                userName,
-                email,
-                100,
-                20,
-                1234567890L,
-                Gender.M,
-                "default_image_url.jpg",
-                Role.USER);
+    private void setFriendRelation(Users user, Users friendUser) {
+        Friend friend = Friend.builder()
+                .hostUser(user)
+                .friendUser(friendUser)
+                .build();
+        friendRepository.save(friend);
+    }
+
+    private Users createFriendUser(int index) {
+        Users friendUser = Users.builder()
+                .name("Friend " + index)
+                .email("friend" + index + "@example.com")
+                .point(0)
+                .age(20)
+                .kakaoId(1234567890L + index)
+                .gender(Gender.F)
+                .imageUrl("default_image_url_friend_" + index + ".jpg")
+                .role(Role.USER)
+                .build();
+        userRepository.save(friendUser);
+        return friendUser;
+    }
+
+    private Users createUser(int index) {
+        Users user = Users.builder()
+                .name("Test User " + index)
+                .email("test@example.com")
+                .point(0)
+                .age(20)
+                .kakaoId(1234567890L)
+                .gender(Gender.M)
+                .imageUrl("default_image_url.jpg")
+                .role(Role.USER)
+                .build();
         userRepository.save(user);
         return user;
     }
+
+
 
 
 }
