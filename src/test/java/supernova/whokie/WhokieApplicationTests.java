@@ -6,8 +6,8 @@ import org.springframework.test.context.TestPropertySource;
 
 @SpringBootTest
 @TestPropertySource(properties = {
-    "spring.profiles.active=default",
-    "jwt.secret=abcd"
+        "spring.profiles.active=default",
+        "jwt.secret=abcd"
 })
 class WhokieApplicationTests {
 

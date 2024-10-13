@@ -14,13 +14,13 @@ import supernova.whokie.profile_answer.service.dto.ProfileAnswerModel;
 import supernova.whokie.profile_question.ProfileQuestion;
 import supernova.whokie.profile_question.infrastructure.repository.ProfileQuestionRepository;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.infrastructure.repository.UsersRepository;
+import supernova.whokie.user.infrastructure.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
 public class ProfileAnswerService {
 
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
     private final ProfileQuestionRepository profileQuestionRepository;
     private final ProfileAnswerRepository profileAnswerRepository;
 
@@ -31,7 +31,7 @@ public class ProfileAnswerService {
     }
 
     public void createProfileAnswer(Long answeredUserId, ProfileAnswerCommand.Create command) {
-        Users answeredUser = usersRepository.findById(answeredUserId)
+        Users answeredUser = userRepository.findById(answeredUserId)
             .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         ProfileQuestion profileQuestion = profileQuestionRepository.findById(

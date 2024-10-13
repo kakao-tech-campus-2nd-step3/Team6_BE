@@ -16,17 +16,16 @@ import supernova.whokie.ranking.service.dto.RankingModel;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-
-import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @TestPropertySource(properties = {
-    "spring.profiles.active=default",
-    "jwt.secret=abcd"
+        "spring.profiles.active=default",
+        "jwt.secret=abcd"
 })
 class RankingServiceTest {
 
@@ -45,7 +44,7 @@ class RankingServiceTest {
         Ranking ranking3 = Ranking.builder().count(80).groups(group).build();
         List<Ranking> entities = List.of(ranking1, ranking2, ranking3);
         given(rankingRepository.findTop3ByUsers_IdOrderByCountDesc(any()))
-            .willReturn(entities);
+                .willReturn(entities);
 
         // when
         List<RankingModel.Rank> actual = rankingService.getUserRanking(1L);

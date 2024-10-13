@@ -1,10 +1,5 @@
 package supernova.whokie.profile.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +13,12 @@ import supernova.whokie.profile.service.dto.ProfileModel;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 public class ProfileServiceTest {
@@ -34,24 +35,24 @@ public class ProfileServiceTest {
     @BeforeEach
     void setUp() {
         user = Users.builder()
-            .id(1L)
-            .name("test")
-            .email("test@gmail.com")
-            .point(100)
-            .age(25)
-            .kakaoId(1L)
-            .gender(Gender.M)
-            .role(Role.USER)
-            .build();
+                .id(1L)
+                .name("test")
+                .email("test@gmail.com")
+                .point(100)
+                .age(25)
+                .kakaoId(1L)
+                .gender(Gender.M)
+                .role(Role.USER)
+                .build();
 
         profile = Profile.builder()
-            .id(1L)
-            .users(user)
-            .todayVisited(2)
-            .totalVisited(12)
-            .description("test")
-            .backgroundImageUrl("test")
-            .build();
+                .id(1L)
+                .users(user)
+                .todayVisited(2)
+                .totalVisited(12)
+                .description("test")
+                .backgroundImageUrl("test")
+                .build();
     }
 
     @Test

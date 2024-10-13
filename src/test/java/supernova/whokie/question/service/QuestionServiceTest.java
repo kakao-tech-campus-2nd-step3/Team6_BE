@@ -16,10 +16,10 @@ import supernova.whokie.group_member.GroupStatus;
 import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
-import supernova.whokie.question.service.dto.QuestionCommand;
-import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.repository.QuestionRepository;
+import supernova.whokie.question.service.dto.QuestionCommand;
+import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.question.service.dto.QuestionModel.GroupQuestion;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
@@ -122,24 +122,24 @@ class QuestionServiceTest {
     void getGroupQuestionTest() {
         // given
         List<Question> dummyQuestions = List.of(
-            Question.builder().id(1L).content("Question 1").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(2L).content("Question 2").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(3L).content("Question 3").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(4L).content("Question 4").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(5L).content("Question 5").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(6L).content("Question 6").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(7L).content("Question 7").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(8L).content("Question 8").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(9L).content("Question 9").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
-            Question.builder().id(10L).content("Question 10").questionStatus(QuestionStatus.APPROVED).groupId(1L).build()
+                Question.builder().id(1L).content("Question 1").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+                Question.builder().id(2L).content("Question 2").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+                Question.builder().id(3L).content("Question 3").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+                Question.builder().id(4L).content("Question 4").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+                Question.builder().id(5L).content("Question 5").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+                Question.builder().id(6L).content("Question 6").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+                Question.builder().id(7L).content("Question 7").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+                Question.builder().id(8L).content("Question 8").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+                Question.builder().id(9L).content("Question 9").questionStatus(QuestionStatus.APPROVED).groupId(1L).build(),
+                Question.builder().id(10L).content("Question 10").questionStatus(QuestionStatus.APPROVED).groupId(1L).build()
         );
 
         List<GroupMember> dummyGroupMembers = List.of(
-            GroupMember.builder().id(1L).user(Users.builder().id(1L).build()).build(),
-            GroupMember.builder().id(2L).user(Users.builder().id(2L).build()).build(),
-            GroupMember.builder().id(3L).user(Users.builder().id(3L).build()).build(),
-            GroupMember.builder().id(4L).user(Users.builder().id(4L).build()).build(),
-            GroupMember.builder().id(5L).user(Users.builder().id(5L).build()).build()
+                GroupMember.builder().id(1L).user(Users.builder().id(1L).build()).build(),
+                GroupMember.builder().id(2L).user(Users.builder().id(2L).build()).build(),
+                GroupMember.builder().id(3L).user(Users.builder().id(3L).build()).build(),
+                GroupMember.builder().id(4L).user(Users.builder().id(4L).build()).build(),
+                GroupMember.builder().id(5L).user(Users.builder().id(5L).build()).build()
         );
 
         // when
@@ -160,19 +160,19 @@ class QuestionServiceTest {
     void createQuestion() {
         // given
         Users user = Users.builder()
-            .name("testUser")
-            .build();
+                .name("testUser")
+                .build();
 
         GroupMember groupMember = GroupMember.builder()
-            .user(user)
-            .groupRole(GroupRole.MEMBER)
-            .groupStatus(GroupStatus.APPROVED)
-            .build();
+                .user(user)
+                .groupRole(GroupRole.MEMBER)
+                .groupStatus(GroupStatus.APPROVED)
+                .build();
 
         QuestionCommand.Create command = new QuestionCommand.Create(1L, "Test question");
 
         given(groupMemberRepository.findByUserIdAndGroupId(any(Long.class), any(Long.class)))
-            .willReturn(Optional.of(groupMember));
+                .willReturn(Optional.of(groupMember));
 
         // when
         questionService.createQuestion(1L, command);
@@ -186,18 +186,18 @@ class QuestionServiceTest {
     void approveQuestion() {
         // given
         Users user = Users.builder()
-            .name("testUser")
-            .build();
+                .name("testUser")
+                .build();
 
         GroupMember leader = GroupMember.builder()
-            .user(user)
-            .groupRole(GroupRole.LEADER)
-            .groupStatus(GroupStatus.APPROVED)
-            .build();
+                .user(user)
+                .groupRole(GroupRole.LEADER)
+                .groupStatus(GroupStatus.APPROVED)
+                .build();
 
         Question question = Question.builder()
-            .groupId(1L)
-            .questionStatus(QuestionStatus.READY).build();
+                .groupId(1L)
+                .questionStatus(QuestionStatus.READY).build();
 
         QuestionCommand.Approve approveCommand = new QuestionCommand.Approve(1L, 1L, true);
 

@@ -26,27 +26,25 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
-    @InjectMocks
-    private UserService userService;
-
     @Mock
     UserRepository userRepository;
-
+    @InjectMocks
+    private UserService userService;
     private Users user;
 
     @BeforeEach
     void setUp() {
         user = Users.builder()
-            .id(1L)
-            .name("test")
-            .email("test@gmail.com")
-            .point(1000)
-            .age(30)
-            .kakaoId(1L)
-            .gender(Gender.M)
-            .imageUrl("test")
-            .role(Role.USER)
-            .build();
+                .id(1L)
+                .name("test")
+                .email("test@gmail.com")
+                .point(1000)
+                .age(30)
+                .kakaoId(1L)
+                .gender(Gender.M)
+                .imageUrl("test")
+                .role(Role.USER)
+                .build();
     }
 
     @Test
@@ -65,7 +63,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("내 정보 조회")
-    void getUserInfo() throws Exception{
+    void getUserInfo() throws Exception {
         // given
         // 리플렉션을 사용해 createdAt 수동 설정
         Field createdAtField = BaseTimeEntity.class.getDeclaredField("createdAt");

@@ -1,37 +1,33 @@
-package supernova.whokie.profile.controller;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+package supernova.whokie.profile;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import supernova.whokie.global.auth.JwtProvider;
-import supernova.whokie.profile.Profile;
 import supernova.whokie.profile.infrastructure.ProfileRepository;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
-    "spring.profiles.active=default",
-    "jwt.secret=abcd"
+        "spring.profiles.active=default",
+        "jwt.secret=abcd"
 })
-public class ProfileControllerTest {
+public class ProfileIntegrationTest {
 
     @Autowired
     private ProfileRepository profileRepository;
@@ -50,26 +46,27 @@ public class ProfileControllerTest {
 
     @BeforeEach
     void setUp() {
-        user =  createUser(1, 100, 25);
+        user = createUser(1, 100, 25);
 
         profile = createProfile(user);
     }
+
     //@Test
     @DisplayName("프로필 조회")
     void getProfileInfo() throws Exception {
         mockMvc.perform(get("/api/profile/{user-id}", user.getId())
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.name").value("test"))
-            .andExpect(jsonPath("$.description").value("test"))
-            .andExpect(jsonPath("$.todayVisited").value(2))
-            .andExpect(jsonPath("$.totalVisited").value(12))
-            .andExpect(jsonPath("$.backgroundImageUrl").value("test"))
-            .andDo(print());
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("test"))
+                .andExpect(jsonPath("$.description").value("test"))
+                .andExpect(jsonPath("$.todayVisited").value(2))
+                .andExpect(jsonPath("$.totalVisited").value(12))
+                .andExpect(jsonPath("$.backgroundImageUrl").value("test"))
+                .andDo(print());
     }
 
     private Profile createProfile(Users user) {
-        return profileRepository.save( Profile.builder()
+        return profileRepository.save(Profile.builder()
                 .users(user)
                 .todayVisited(2)
                 .totalVisited(12)

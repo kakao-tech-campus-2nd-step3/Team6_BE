@@ -1,16 +1,5 @@
 package supernova.whokie.group_member.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.verify;
-
-import java.lang.reflect.Field;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +18,16 @@ import supernova.whokie.group_member.service.dto.GroupMemberModel;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
+
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class GroupMemberServiceTest {
@@ -52,51 +51,51 @@ public class GroupMemberServiceTest {
     @BeforeEach
     void setUp() {
         user1 = Users.builder()
-            .id(1L)
-            .name("test")
-            .email("test@gmail.com")
-            .point(1000)
-            .age(30)
-            .kakaoId(1L)
-            .gender(Gender.M)
-            .imageUrl("test")
-            .role(Role.USER)
-            .build();
+                .id(1L)
+                .name("test")
+                .email("test@gmail.com")
+                .point(1000)
+                .age(30)
+                .kakaoId(1L)
+                .gender(Gender.M)
+                .imageUrl("test")
+                .role(Role.USER)
+                .build();
 
         user2 = Users.builder()
-            .id(2L)
-            .name("test")
-            .email("test@gmail.com")
-            .point(1000)
-            .age(30)
-            .kakaoId(1L)
-            .gender(Gender.M)
-            .imageUrl("test")
-            .role(Role.USER)
-            .build();
+                .id(2L)
+                .name("test")
+                .email("test@gmail.com")
+                .point(1000)
+                .age(30)
+                .kakaoId(1L)
+                .gender(Gender.M)
+                .imageUrl("test")
+                .role(Role.USER)
+                .build();
 
         group = Groups.builder()
-            .id(groupId)
-            .groupName("test")
-            .description("test")
-            .groupImageUrl("test")
-            .build();
+                .id(groupId)
+                .groupName("test")
+                .description("test")
+                .groupImageUrl("test")
+                .build();
 
         leader = GroupMember.builder()
-            .id(pastLeaderId)
-            .user(user1)
-            .group(group)
-            .groupRole(GroupRole.LEADER)
-            .groupStatus(GroupStatus.APPROVED)
-            .build();
+                .id(pastLeaderId)
+                .user(user1)
+                .group(group)
+                .groupRole(GroupRole.LEADER)
+                .groupStatus(GroupStatus.APPROVED)
+                .build();
 
         member = GroupMember.builder()
-            .id(newLeaderId)
-            .user(user2)
-            .group(group)
-            .groupRole(GroupRole.MEMBER)
-            .groupStatus(GroupStatus.APPROVED)
-            .build();
+                .id(newLeaderId)
+                .user(user2)
+                .group(group)
+                .groupRole(GroupRole.MEMBER)
+                .groupStatus(GroupStatus.APPROVED)
+                .build();
     }
 
     @Test
@@ -105,10 +104,10 @@ public class GroupMemberServiceTest {
         // given
         GroupMemberCommand.Modify command = new GroupMemberCommand.Modify(groupId, pastLeaderId, newLeaderId);
         given(groupMemberRepository.findByUserIdAndGroupId(pastLeaderId, groupId))
-            .willReturn(Optional.of(leader));
+                .willReturn(Optional.of(leader));
 
         given(groupMemberRepository.findByUserIdAndGroupId(newLeaderId, groupId))
-            .willReturn(Optional.of(member));
+                .willReturn(Optional.of(member));
 
         // when
         groupMemberService.delegateLeader(userId, command);
@@ -117,16 +116,17 @@ public class GroupMemberServiceTest {
         assertThat(leader.getGroupRole()).isEqualTo(GroupRole.MEMBER);
         assertThat(member.getGroupRole()).isEqualTo(GroupRole.LEADER);
     }
+
     @Test
     @DisplayName("그룹 내 멤버 강퇴")
     void expelMember() {
         // given
         GroupMemberCommand.Expel command = new GroupMemberCommand.Expel(groupId, member.getId());
         given(groupMemberRepository.findByUserIdAndGroupId(leader.getId(), groupId))
-            .willReturn(Optional.of(leader));
+                .willReturn(Optional.of(leader));
 
         given(groupMemberRepository.findByUserIdAndGroupId(member.getId(), groupId))
-            .willReturn(Optional.of(member));
+                .willReturn(Optional.of(member));
 
         doNothing().when(groupMemberRepository).deleteByUserIdAndGroupId(member.getId(), command.groupId());
 
@@ -142,10 +142,10 @@ public class GroupMemberServiceTest {
     void getGroupMembers() throws Exception {
         // given
         given(groupMemberRepository.findByUserIdAndGroupId(userId, groupId))
-            .willReturn(Optional.of(member));
+                .willReturn(Optional.of(member));
 
         given(groupMemberRepository.findAllByGroupId(groupId))
-            .willReturn(List.of(leader, member));
+                .willReturn(List.of(leader, member));
 
         Field createdAtField = BaseTimeEntity.class.getDeclaredField("createdAt");
         createdAtField.setAccessible(true);

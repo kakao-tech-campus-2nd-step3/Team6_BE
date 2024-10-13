@@ -1,11 +1,4 @@
-package supernova.whokie.user.controller;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+package supernova.whokie.user;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,26 +8,28 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.auth.JwtInterceptor;
 import supernova.whokie.global.auth.JwtProvider;
-import supernova.whokie.user.Gender;
-import supernova.whokie.user.Role;
-import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 @TestPropertySource(properties = {
-    "spring.profiles.active=default",
-    "jwt.secret=abcd"
+        "spring.profiles.active=default",
+        "jwt.secret=abcd"
 })
-class UserControllerTest {
+class UserIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,6 +49,7 @@ class UserControllerTest {
     void setUp() {
         user = createUser(1, 100, 25);
     }
+
     private Users createUser(int index, int point, int age) {
         return userRepository.save(Users.builder()
                 .name("test" + index)
@@ -73,16 +69,16 @@ class UserControllerTest {
         given(jwtInterceptor.preHandle(any(), any(), any())).willReturn(true);
 
         mockMvc.perform(get("/api/user/mypage")
-                .header("Authorization", "Bearer " + token)
-                .requestAttr("userId", String.valueOf(user.getId()))
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.email").value("test1@gmail.com"))
-            .andExpect(jsonPath("$.gender").value("M"))
-            .andExpect(jsonPath("$.age").value(25))
-            .andExpect(jsonPath("$.name").value("test1"))
-            .andExpect(jsonPath("$.role").value("USER"))
-            .andDo(print());
+                        .header("Authorization", "Bearer " + token)
+                        .requestAttr("userId", String.valueOf(user.getId()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("test1@gmail.com"))
+                .andExpect(jsonPath("$.gender").value("M"))
+                .andExpect(jsonPath("$.age").value(25))
+                .andExpect(jsonPath("$.name").value("test1"))
+                .andExpect(jsonPath("$.role").value("USER"))
+                .andDo(print());
     }
 
     //@Test
@@ -92,11 +88,11 @@ class UserControllerTest {
         given(jwtInterceptor.preHandle(any(), any(), any())).willReturn(true);
 
         mockMvc.perform(get("/api/user/point")
-                .header("Authorization", "Bearer " + token)
-                .requestAttr("userId", String.valueOf(user.getId()))
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.amount").value(100))
-            .andDo(print());
+                        .header("Authorization", "Bearer " + token)
+                        .requestAttr("userId", String.valueOf(user.getId()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.amount").value(100))
+                .andDo(print());
     }
 }

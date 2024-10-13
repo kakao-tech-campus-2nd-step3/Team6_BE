@@ -28,7 +28,7 @@ import supernova.whokie.point_record.infrastructure.repository.PointRecordReposi
 import supernova.whokie.question.Question;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.infrastructure.repository.UsersRepository;
+import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class AnswerService {
 
     private final AnswerRepository answerRepository;
     private final FriendRepository friendRepository;
-    private final UsersRepository userRepository;
+    private final UserRepository userRepository;
     private final QuestionRepository questionRepository;
     private final PointRecordRepository pointRecordRepository;
     private final GroupRepository groupsRepository;

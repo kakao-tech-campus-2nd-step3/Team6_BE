@@ -25,7 +25,9 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "spring.sql.init.mode=never"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-
 class QuestionIntegrationTest {
 
     @Autowired
@@ -76,7 +77,7 @@ class QuestionIntegrationTest {
             createQuestion(i, user, QuestionStatus.APPROVED);
         }
         //거절된 그룹질문
-        for (int i =11; i <= 20; i++) {
+        for (int i = 11; i <= 20; i++) {
             createQuestion(i, user, QuestionStatus.REJECTED);
         }
         for (int i = 7; i <= 16; i++) {
@@ -113,55 +114,55 @@ class QuestionIntegrationTest {
         request.setAttribute("userId", "7");
 
         mockMvc.perform(get("/api/group/{group-id}/question/random", 1L)
-                .requestAttr("userId", "7")
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.questions").isArray())
-            .andExpect(jsonPath("$.questions.length()").value(10))
-            .andExpect(jsonPath("$.questions[0].users.length()").value(5))
-            .andDo(result -> {
-                String responseContent = result.getResponse().getContentAsString();
-                System.out.println("questions 내용: " + responseContent);
-            });
+                        .requestAttr("userId", "7")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.questions").isArray())
+                .andExpect(jsonPath("$.questions.length()").value(10))
+                .andExpect(jsonPath("$.questions[0].users.length()").value(5))
+                .andDo(result -> {
+                    String responseContent = result.getResponse().getContentAsString();
+                    System.out.println("questions 내용: " + responseContent);
+                });
     }
 
     @Test
     @DisplayName("그룹 질문 생성 테스트")
     void createGroupQuestion() throws Exception {
         String requestJson = """
-            {
-                "groupId": 1,
-                "content": "Test question"
-            }
-        """;
+                    {
+                        "groupId": 1,
+                        "content": "Test question"
+                    }
+                """;
 
         mockMvc.perform(post("/api/group/question")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
-                .requestAttr("userId", "7"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.message").value("질문이 성공적으로 생성되었습니다."))
-            .andDo(print());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
+                        .requestAttr("userId", "7"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("질문이 성공적으로 생성되었습니다."))
+                .andDo(print());
     }
 
     @Test
     @DisplayName("그룹 질문 승인 테스트")
     void approveGroupQuestion() throws Exception {
         String requestJson = """
-            {
-                "groupId": 1,
-                "questionId": 1,
-                "status" : true
-            }
-        """;
+                    {
+                        "groupId": 1,
+                        "questionId": 1,
+                        "status" : true
+                    }
+                """;
 
         mockMvc.perform(patch("/api/group/question/status")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)
-                .requestAttr("userId", String.valueOf(17)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.message").value("그룹 질문 승인에 성공하였습니다."))
-            .andDo(print());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
+                        .requestAttr("userId", String.valueOf(17)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("그룹 질문 승인에 성공하였습니다."))
+                .andDo(print());
     }
 
     @Test
@@ -286,8 +287,6 @@ class QuestionIntegrationTest {
         userRepository.save(user);
         return user;
     }
-
-
 
 
 }
