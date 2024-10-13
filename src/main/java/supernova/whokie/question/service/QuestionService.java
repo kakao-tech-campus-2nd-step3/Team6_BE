@@ -49,8 +49,6 @@ public class QuestionService {
         return getCommonQuestionList(user);
     }
 
-
-
     @Transactional(readOnly = true)
     public Page<QuestionModel.Info> getGroupQuestionPaging(Long userId, String groupId, Boolean status, Pageable pageable) {
         Long parsedGroupId = Long.parseLong(groupId);
@@ -59,35 +57,25 @@ public class QuestionService {
         Groups group = groupsRepository.findById(parsedGroupId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
 
-        List<Question> groupQuestions = questionRepository.findAllByGroupId(parsedGroupId);
-
-        return getGroupQuestionsByStatus(status, groupQuestions, pageable);
+        return getGroupQuestionsByStatus(status, parsedGroupId, pageable);
     }
 
-    private Page<QuestionModel.Info> getGroupQuestionsByStatus(Boolean status, List<Question> groupQuestions, Pageable pageable) {
-        List<Question> filteredQuestions;
+    private Page<QuestionModel.Info> getGroupQuestionsByStatus(Boolean status, Long groupId,  Pageable pageable) {
 
+        QuestionStatus questionStatus = getQuestionStatusByRequestStatus(status);
 
-        if (Boolean.TRUE.equals(status)) {
-            filteredQuestions = groupQuestions.stream()
-                    .filter(question -> question.getQuestionStatus().equals(QuestionStatus.APPROVED))
-                    .toList();
-        } else if (Boolean.FALSE.equals(status)) {
-            filteredQuestions = groupQuestions.stream()
-                    .filter(question -> question.getQuestionStatus().equals(QuestionStatus.REJECTED))
-                    .toList();
-        } else {
-            filteredQuestions = new ArrayList<>();
-        }
-
-
+        List<Question> groupQuestionList = questionRepository.findAllByStatus(groupId, questionStatus);
         int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), filteredQuestions.size());
-        List<QuestionModel.Info> result = filteredQuestions.subList(start, end).stream()
+        int end = Math.min(start + pageable.getPageSize(), groupQuestionList.size());
+        List<QuestionModel.Info> result = groupQuestionList.subList(start, end).stream()
                 .map(question -> QuestionModel.Info.from(question, status))
                 .toList();
 
-        return new PageImpl<>(result, pageable, filteredQuestions.size());
+        return new PageImpl<>(result, pageable, groupQuestionList.size());
+    }
+
+    private static QuestionStatus getQuestionStatusByRequestStatus(Boolean status) {
+        return status ? QuestionStatus.APPROVED : QuestionStatus.REJECTED;
     }
 
 
