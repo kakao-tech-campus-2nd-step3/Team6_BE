@@ -6,7 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import supernova.whokie.global.entity.BaseTimeEntity;
 
 @Entity
@@ -30,16 +34,16 @@ public class Groups extends BaseTimeEntity {
     @Column(nullable = false)
     private String groupImageUrl;
 
-    public void modify(String groupName, String description) {
-        this.groupName = groupName;
-        this.description = description;
-    }
-
     public static Groups create(String groupName, String description, String groupImageUrl) {
         return Groups.builder()
                 .groupName(groupName)
                 .description(description)
                 .groupImageUrl(groupImageUrl)
                 .build();
+    }
+
+    public void modify(String groupName, String description) {
+        this.groupName = groupName;
+        this.description = description;
     }
 }

@@ -10,7 +10,7 @@ public class FriendCommand {
 
     @Builder
     public record Update(
-        List<Long> friendIds
+            List<Long> friendIds
     ) {
         public List<Friend> toEntity(Users host, List<Users> friendUsers) {
             return friendUsers.stream()

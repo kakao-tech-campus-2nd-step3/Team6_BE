@@ -1,7 +1,15 @@
 package supernova.whokie.group_member;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -53,6 +61,15 @@ public class GroupMember extends BaseTimeEntity {
 
     }
 
+    public static GroupMember CreateLeader(Users user, Groups group) {
+        return GroupMember.builder()
+                .user(user)
+                .group(group)
+                .groupRole(GroupRole.LEADER)
+                .groupStatus(GroupStatus.APPROVED)
+                .build();
+    }
+
     public boolean isLeader() {
         return this.groupRole == GroupRole.LEADER;
     }
@@ -79,14 +96,5 @@ public class GroupMember extends BaseTimeEntity {
         if (!isApproved()) {
             throw new InvalidEntityException("승인되지 않은 멤버입니다.");
         }
-    }
-
-    public static GroupMember CreateLeader(Users user, Groups group) {
-        return GroupMember.builder()
-            .user(user)
-            .group(group)
-            .groupRole(GroupRole.LEADER)
-            .groupStatus(GroupStatus.APPROVED)
-            .build();
     }
 }

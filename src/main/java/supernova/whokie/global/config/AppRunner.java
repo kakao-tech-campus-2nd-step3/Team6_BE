@@ -1,10 +1,11 @@
 package supernova.whokie.global.config;
 
-import java.util.Arrays;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 @Component
 public class AppRunner implements ApplicationRunner {
@@ -21,7 +22,7 @@ public class AppRunner implements ApplicationRunner {
         System.out.println("Active profiles : " + Arrays.toString(environment.getActiveProfiles()));
         System.out.println("db url : " + environment.getProperty("spring.datasource.url"));
         System.out.println(
-            "db username : " + environment.getProperty("spring.datasource.username"));
+                "db username : " + environment.getProperty("spring.datasource.username"));
         System.out.println("secret key : " + environment.getProperty("jwt.secret"));
 
     }

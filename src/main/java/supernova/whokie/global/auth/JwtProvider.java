@@ -7,29 +7,30 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
-import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import supernova.whokie.user.Role;
 
+import java.util.Date;
+
 @Component
 public class JwtProvider {
 
+    private final long validityInMilliseconds = 60 * 60 * 1000;
     @Value("${jwt.secret}")
     private String secretKey;
-    private final long validityInMilliseconds = 60 * 60 * 1000;
 
     public String createToken(Long id, Role role) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()
-            .setSubject(String.valueOf(id))
-            .claim("role", role.name())
-            .setIssuedAt(now)
-            .setExpiration(validity)
-            .signWith(SignatureAlgorithm.HS256, secretKey)
-            .compact();
+                .setSubject(String.valueOf(id))
+                .claim("role", role.name())
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
     }
 
     public Claims getClaim(String token) {

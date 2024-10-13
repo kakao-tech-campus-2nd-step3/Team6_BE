@@ -1,64 +1,65 @@
 package supernova.whokie.group_member.service.dto;
 
-import java.time.LocalDate;
-import java.util.List;
 import lombok.Builder;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.GroupRole;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class GroupMemberModel {
 
     @Builder
     public record Member(
-        Long groupMemberId,
-        Long userId,
-        String userName,
-        LocalDate joinedAt,
-        GroupRole role
+            Long groupMemberId,
+            Long userId,
+            String userName,
+            LocalDate joinedAt,
+            GroupRole role
     ) {
 
         public static Member from(GroupMember groupMember) {
             return Member.builder()
-                .groupMemberId(groupMember.getId())
-                .userId(groupMember.getUser().getId())
-                .userName(groupMember.getUser().getName())
-                .joinedAt(groupMember.getCreatedAt().toLocalDate())
-                .role(groupMember.getGroupRole())
-                .build();
+                    .groupMemberId(groupMember.getId())
+                    .userId(groupMember.getUser().getId())
+                    .userName(groupMember.getUser().getName())
+                    .joinedAt(groupMember.getCreatedAt().toLocalDate())
+                    .role(groupMember.getGroupRole())
+                    .build();
         }
     }
 
     @Builder
     public record Members(
-        List<Member> members
+            List<Member> members
     ) {
 
         public static Members from(List<GroupMember> memberList) {
             return Members.builder()
-                .members(
-                    memberList.stream()
-                    .map(Member::from)
-                    .toList()
-                )
-                .build();
+                    .members(
+                            memberList.stream()
+                                    .map(Member::from)
+                                    .toList()
+                    )
+                    .build();
         }
     }
 
     @Builder
     public record Option(
-        Long groupMemberId,
-        Long userId,
-        String userName,
-        String imageUrl
+            Long groupMemberId,
+            Long userId,
+            String userName,
+            String imageUrl
     ) {
 
         public static Option from(GroupMember groupMember) {
             return Option.builder()
-                .groupMemberId(groupMember.getId())
-                .userId(groupMember.getUser().getId())
-                .userName(groupMember.getUser().getName())
-                .imageUrl(groupMember.getUser().getImageUrl())
-                .build();
+                    .groupMemberId(groupMember.getId())
+                    .userId(groupMember.getUser().getId())
+                    .userName(groupMember.getUser().getName())
+                    .imageUrl(groupMember.getUser().getImageUrl())
+                    .build();
         }
     }
 }

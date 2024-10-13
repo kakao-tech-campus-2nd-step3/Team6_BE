@@ -1,6 +1,5 @@
 package supernova.whokie.group_member.service;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +15,8 @@ import supernova.whokie.group_member.service.dto.GroupMemberModel.Members;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class GroupMemberService {
@@ -29,13 +30,13 @@ public class GroupMemberService {
         validateCurrentLeader(userId, command.pastLeaderId());
 
         GroupMember leader = groupMemberRepository.findByUserIdAndGroupId(command.pastLeaderId(),
-                command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
+                        command.groupId())
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
         leader.validateLeader();
 
         GroupMember newLeader = groupMemberRepository.findByUserIdAndGroupId(command.newLeaderId(),
-                command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
+                        command.groupId())
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
         newLeader.validateApprovalStatus();
 
         changeLeader(leader, newLeader);
@@ -55,13 +56,13 @@ public class GroupMemberService {
     @Transactional
     public void expelMember(Long userId, GroupMemberCommand.Expel command) {
         GroupMember leader = groupMemberRepository.findByUserIdAndGroupId(userId,
-                command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
+                        command.groupId())
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
         leader.validateLeader();
 
         GroupMember member = groupMemberRepository.findByUserIdAndGroupId(command.userId(),
-                command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
+                        command.groupId())
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
 
         groupMemberRepository.deleteByUserIdAndGroupId(member.getId(), command.groupId());
     }
@@ -69,7 +70,7 @@ public class GroupMemberService {
     @Transactional(readOnly = true)
     public Members getGroupMembers(Long userId, Long groupId) {
         GroupMember member = groupMemberRepository.findByUserIdAndGroupId(userId, groupId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
 
         List<GroupMember> groupMembers = groupMemberRepository.findAllByGroupId(groupId);
         return Members.from(groupMembers);
@@ -81,10 +82,10 @@ public class GroupMemberService {
             throw new ForbiddenException(MessageConstants.ALREADY_GROUP_MEMBER_MESSAGE);
         }
         Users user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         Groups group = groupRepository.findById(command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
 
         GroupMember groupMember = command.toEntity(user, group);
         groupMemberRepository.save(groupMember);
@@ -97,7 +98,7 @@ public class GroupMemberService {
     public void exitGroup(GroupMemberCommand.Exit command, Long userId) {
 
         GroupMember member = groupMemberRepository.findByUserIdAndGroupId(userId, command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
 
         if (member.isLeader()) {
             Long groupMemberSize = groupMemberRepository.countByGroupId(command.groupId());

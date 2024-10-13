@@ -1,6 +1,5 @@
 package supernova.whokie.user.infrastructure.apiCaller;
 
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -10,9 +9,10 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import supernova.whokie.global.exception.AuthenticationException;
 import supernova.whokie.global.property.KakaoProperties;
-import supernova.whokie.user.infrastructure.apiCaller.dto.KakaoAccount;
 import supernova.whokie.user.infrastructure.apiCaller.dto.TokenInfoResponse;
 import supernova.whokie.user.infrastructure.apiCaller.dto.UserInfoResponse;
+
+import java.net.URI;
 
 @Component
 @RequiredArgsConstructor
@@ -26,11 +26,11 @@ public class UserApiCaller {
         String redirectUrl = kakaoProperties.redirectUri();
 
         String url = UriComponentsBuilder.fromHttpUrl(authUrl)
-            .queryParam("client_id", kakaoProperties.clientId())
-            .queryParam("redirect_uri", redirectUrl)
-            .queryParam("response_type", "code")
-            .queryParam("scope", "profile_image,account_email,name,gender,birthyear,friends,talk_message")
-            .toUriString();
+                .queryParam("client_id", kakaoProperties.clientId())
+                .queryParam("redirect_uri", redirectUrl)
+                .queryParam("response_type", "code")
+                .queryParam("scope", "profile_image,account_email,name,gender,birthyear,friends,talk_message")
+                .toUriString();
 
         return url;
     }
@@ -41,12 +41,12 @@ public class UserApiCaller {
 
         try {
             TokenInfoResponse response = restClient.post()
-                .uri(URI.create(tokenUrl))
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .body(body)
-                .retrieve()
-                .toEntity(TokenInfoResponse.class)
-                .getBody();
+                    .uri(URI.create(tokenUrl))
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .body(body)
+                    .retrieve()
+                    .toEntity(TokenInfoResponse.class)
+                    .getBody();
 
             return response;
         } catch (ResourceAccessException e) {
@@ -72,11 +72,11 @@ public class UserApiCaller {
         String accessToken = tokenResponse.accessToken();
 
         UserInfoResponse response = restClient.get()
-            .uri(URI.create(userInfoUrl))
-            .header("Authorization", "Bearer " + accessToken)
-            .retrieve()
-            .toEntity(UserInfoResponse.class)
-            .getBody();
+                .uri(URI.create(userInfoUrl))
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .toEntity(UserInfoResponse.class)
+                .getBody();
 
         return response;
     }

@@ -35,7 +35,7 @@ public class GroupService {
         groupRepository.save(group);
 
         var user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         GroupMember leader = GroupMember.CreateLeader(user, group);
         groupMemberRepository.save(leader);
@@ -44,22 +44,22 @@ public class GroupService {
     @Transactional(readOnly = true)
     public Page<InfoWithMemberCount> getGroupPaging(Long userId, Pageable pageable) {
         Page<GroupInfoWithMemberCount> groupPage = groupRepository.findGroupsWithMemberCountByUserId(
-            userId,
-            pageable);
+                userId,
+                pageable);
         return groupPage.map(InfoWithMemberCount::from);
     }
 
     @Transactional
     public void modifyGroup(Long userId, GroupCommand.Modify command) {
         GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId,
-                command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
+                        command.groupId())
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
 
         if (!groupMember.isLeader()) {
             throw new ForbiddenException(MessageConstants.NOT_GROUP_LEADER_MESSAGE);
         }
         Groups group = groupRepository.findById(command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
 
         group.modify(command.groupName(), command.description());
     }
@@ -68,8 +68,8 @@ public class GroupService {
     public InfoWithMemberCount getGroupInfo(Long groupId) {
 
         GroupInfoWithMemberCount groupInfo = groupRepository.findGroupInfoWithMemberCountByGroupId(
-                groupId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
+                        groupId)
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
         return InfoWithMemberCount.from(groupInfo);
     }
 }

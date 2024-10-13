@@ -14,5 +14,7 @@ public final class MessageConstants {
     public static final String ALREADY_GROUP_MEMBER_MESSAGE = "이미 가입한 그룹입니다.";
     public static final String PROFILE_QUESTION_NOT_FOUND_MESSAGE = "해당 프로필질문을 찾을 수 없습니다.";
     public static final String PROFILE_ANSWER_NOT_FOUND_MESSAGE = "해당 프로필답변을 찾을 수 없습니다.";
-    private MessageConstants() {}
+
+    private MessageConstants() {
+    }
 }

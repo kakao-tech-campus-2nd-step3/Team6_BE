@@ -27,15 +27,15 @@ public class ProfileQuestionService {
     @Transactional(readOnly = true)
     public Page<ProfileQuestionModel.Info> getProfileQuestions(Long userId, Pageable pageable) {
         Page<ProfileQuestion> profileQuestions = profileQuestionRepository.findAllByUserId(userId,
-            pageable);
+                pageable);
         return profileQuestions.map(ProfileQuestionModel.Info::from);
     }
 
     @Transactional
     public void deleteProfileQuestion(Long userId, Long profileQuestionId) {
         ProfileQuestion profileQuestion = profileQuestionRepository.findByIdWithUser(
-                profileQuestionId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.PROFILE_QUESTION_NOT_FOUND_MESSAGE));
+                        profileQuestionId)
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.PROFILE_QUESTION_NOT_FOUND_MESSAGE));
 
         if (!profileQuestion.isOwner(userId)) {
             throw new ForbiddenException("질문을 작성한 사람만 삭제할 수 있습니다.");
@@ -48,10 +48,10 @@ public class ProfileQuestionService {
     @Transactional
     public void createProfileQuestion(Long userId, Create command) {
         Users user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         ProfileQuestion profileQuestion = command.toEntity(user);
-        
+
         profileQuestionRepository.save(profileQuestion);
     }
 }

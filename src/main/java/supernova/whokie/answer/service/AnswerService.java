@@ -46,42 +46,48 @@ public class AnswerService {
     private final GroupRepository groupsRepository;
     private final ApplicationEventPublisher eventPublisher;
 
+    private static void checkUserHasNotEnoughPoint(Users user, int hintPurchasePoint) {
+        if (user.hasNotEnoughPoint(hintPurchasePoint)) {
+            throw new InvalidEntityException(MessageConstants.NOT_ENOUGH_POINT_MESSAGE);
+        }
+    }
 
     @Transactional(readOnly = true)
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId) {
         Users user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         Page<Answer> answers = answerRepository.findAllByPicker(pageable, user);
 
         List<AnswerResponse.Record> answerResponse = answers.stream()
-            .map(AnswerResponse.Record::from)
-            .toList();
+                .map(AnswerResponse.Record::from)
+                .toList();
 
         return PagingResponse.from(
-            new PageImpl<>(answerResponse, pageable, answers.getTotalElements()));
+                new PageImpl<>(answerResponse, pageable, answers.getTotalElements()));
     }
 
     @Transactional
     public void answerToCommonQuestion(Long userId, AnswerCommand.CommonAnswer command) {
         Users user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
         Question question = questionRepository.findById(command.questionId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.QUESTION_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.QUESTION_NOT_FOUND_MESSAGE));
         Users picked = userRepository.findById(command.pickedId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
         answerRepository.save(answer);
 
         user.increasePoint(Constants.ANSWER_POINT);
         eventPublisher.publishEvent(
-            PointRecordEventDto.Earn.toDto(userId, Constants.ANSWER_POINT, 0, PointRecordOption.CHARGED,
-                Constants.POINT_EARN_MESSAGE));
+                PointRecordEventDto.Earn.toDto(userId, Constants.ANSWER_POINT, 0, PointRecordOption.CHARGED,
+                        Constants.POINT_EARN_MESSAGE));
 
     }
+
     @Transactional
-    public void answerToGroupQuestion(Long userId, AnswerCommand.Group command){
+    public void answerToGroupQuestion(Long userId, AnswerCommand.Group command) {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
@@ -108,18 +114,18 @@ public class AnswerService {
 
     public void recordEarnPoint(PointRecordEventDto.Earn event) {
         PointRecord pointRecord = PointRecord.create(event.userId(), event.point(), event.amount(),
-            event.option(), event.message());
+                event.option(), event.message());
         pointRecordRepository.save(pointRecord);
     }
 
     @Transactional(readOnly = true)
     public AnswerModel.Refresh refreshAnswerList(Long userId) {
         Users user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
         List<Friend> allFriends = friendRepository.findAllByHostUser(user);
 
         List<UserModel.PickedInfo> friendsInfoList = allFriends.stream().map(
-            friend -> UserModel.PickedInfo.from(friend.getFriendUser())
+                friend -> UserModel.PickedInfo.from(friend.getFriendUser())
         ).toList();
 
         return AnswerModel.Refresh.from(friendsInfoList);
@@ -128,9 +134,9 @@ public class AnswerService {
     @Transactional
     public void purchaseHint(Long userId, AnswerCommand.Purchase command) {
         Users user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
         Answer answer = answerRepository.findById(command.answerId())
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.ANSWER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.ANSWER_NOT_FOUND_MESSAGE));
 
         validateIsPickedUser(answer, user);
 
@@ -155,19 +161,13 @@ public class AnswerService {
         }
     }
 
-    private static void checkUserHasNotEnoughPoint(Users user, int hintPurchasePoint) {
-        if (user.hasNotEnoughPoint(hintPurchasePoint)) {
-            throw new InvalidEntityException(MessageConstants.NOT_ENOUGH_POINT_MESSAGE);
-        }
-    }
-
     @Transactional(readOnly = true)
     public List<AnswerModel.Hint> getHints(Long userId, String answerId) {
         Long parsedAnswerId = Long.parseLong(answerId);
         Users user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
         Answer answer = answerRepository.findById(parsedAnswerId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.ANSWER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.ANSWER_NOT_FOUND_MESSAGE));
 
         validateIsPickedUser(answer, user);
 
@@ -191,8 +191,8 @@ public class AnswerService {
         return !answer.getPicked().getId().equals(user.getId());
     }
 
-    private void checkGroupQuestion(Question question,Groups group){
-        if(question.isNotCorrectGroupQuestion(group.getId())){
+    private void checkGroupQuestion(Question question, Groups group) {
+        if (question.isNotCorrectGroupQuestion(group.getId())) {
             System.out.println("질문 아이디 " + question.getId());
             System.out.println("그룹 아이디 " + group.getId());
             throw new InvalidEntityException(MessageConstants.GROUP_NOT_FOUND_MESSAGE);

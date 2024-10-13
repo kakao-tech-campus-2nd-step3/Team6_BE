@@ -57,7 +57,7 @@ public class FriendService {
     @Transactional
     public void saveFriends(Long hostId, FriendCommand.Update command, List<Friend> existingFriends) {
         Users host = userRepository.findById(hostId)
-                .orElseThrow(()-> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
         // 새로운 Friend 필터링
         List<Long> newFriendIds = filteringNewFriendUserIds(command.friendIds(), existingFriends);
 

@@ -16,7 +16,7 @@ public class ProfileService {
 
     public ProfileModel.Info getProfile(Long userId) {
         Profile profile = profileRepository.findByUsersId(userId)
-            .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         return ProfileModel.Info.from(profile);
     }
