@@ -39,7 +39,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Gradle build를 수행합니다.
-        run: SPRING_PROFILES_ACTIVE=dev ./gradlew clean build
+        run: ./gradlew clean build -Dspring.profiles.active=dev
 
 
       - name: 테스트 결과를 PR에 코멘트로 등록합니다

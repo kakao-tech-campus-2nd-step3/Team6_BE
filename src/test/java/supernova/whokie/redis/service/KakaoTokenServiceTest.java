@@ -8,7 +8,9 @@ import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+import supernova.config.EmbeddedRedisConfig;
 import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.exception.AuthenticationException;
 import supernova.whokie.redis.entity.KakaoAccessToken;
@@ -24,8 +26,8 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
-//@EnabledIfEnvironmentVariable(named = "SPRING_PROFILES_ACTIVE", matches = "dev")
 @DataRedisTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = KakaoTokenService.class))
+@Import(EmbeddedRedisConfig.class)
 @TestPropertySource(properties = {
         "spring.profiles.active=default",
         "jwt.secret=abcd",
