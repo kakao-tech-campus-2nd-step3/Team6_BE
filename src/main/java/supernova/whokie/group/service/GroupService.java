@@ -29,12 +29,11 @@ public class GroupService {
      */
     @Transactional
     public void createGroup(GroupCommand.Create command, Long userId) {
+        var user = userRepository.findById(userId)
+            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
 
         var group = command.toEntity();
         groupRepository.save(group);
-
-        var user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 유저입니다."));
 
         GroupMember leader = GroupMember.CreateLeader(user, group);
         groupMemberRepository.save(leader);
