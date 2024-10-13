@@ -40,10 +40,6 @@ public class QuestionService {
     private final GroupRepository groupsRepository;
     private final GroupMemberRepository groupMemberRepository;
 
-    private static QuestionStatus getQuestionStatusByRequestStatus(Boolean status) {
-        return status ? QuestionStatus.APPROVED : QuestionStatus.REJECTED;
-    }
-
     @Transactional(readOnly = true)
     public List<QuestionModel.CommonQuestion> getCommonQuestion(Long userId) {
 
@@ -145,5 +141,8 @@ public class QuestionService {
                 .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_QUESTION_NOT_FOUND_MESSAGE));
 
         question.changeStatus(command.status());
+    }
+    private static QuestionStatus getQuestionStatusByRequestStatus(Boolean status) {
+        return status ? QuestionStatus.APPROVED : QuestionStatus.REJECTED;
     }
 }
