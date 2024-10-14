@@ -36,9 +36,11 @@ public class AnswerController {
 
     @PostMapping("/group")
     public GlobalResponse group(
-        @RequestBody @Valid AnswerRequest.Group request
+        @RequestBody @Valid AnswerRequest.Group request,
+        @Authenticate Long userId
     ) {
-        return GlobalResponse.builder().message("dummy").build();
+        answerService.answerToGroupQuestion(userId, request.toCommand());
+        return GlobalResponse.builder().message("그룹 질문 답변 완료").build();
     }
 
     @GetMapping("/refresh")

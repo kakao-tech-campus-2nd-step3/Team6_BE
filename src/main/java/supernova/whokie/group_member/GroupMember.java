@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import supernova.whokie.global.entity.BaseTimeEntity;
+import supernova.whokie.global.exception.ForbiddenException;
+import supernova.whokie.global.exception.InvalidEntityException;
 import supernova.whokie.group.Groups;
 import supernova.whokie.user.Users;
 
@@ -55,5 +57,26 @@ public class GroupMember extends BaseTimeEntity {
         } else {
             groupRole = GroupRole.LEADER;
         }
+    }
+
+    public void validateLeader() {
+        if (!isLeader()) {
+            throw new ForbiddenException("리더만 권한을 위임할 수 있습니다.");
+        }
+    }
+
+    public void validateApprovalStatus() {
+        if (!isApproved()) {
+            throw new InvalidEntityException("승인되지 않은 멤버입니다.");
+        }
+    }
+
+    public static GroupMember CreateLeader(Users user, Groups group) {
+        return GroupMember.builder()
+            .user(user)
+            .group(group)
+            .groupRole(GroupRole.LEADER)
+            .groupStatus(GroupStatus.APPROVED)
+            .build();
     }
 }
