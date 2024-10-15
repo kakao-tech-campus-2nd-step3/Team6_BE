@@ -2,14 +2,14 @@ package supernova.whokie.profile;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.profile.infrastructure.ProfileRepository;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
@@ -24,9 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
-        "spring.profiles.active=default",
-        "jwt.secret=abcd"
+    "spring.profiles.active=default",
+    "jwt.secret=abcd"
 })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ProfileIntegrationTest {
 
     @Autowired
@@ -38,53 +39,54 @@ public class ProfileIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private JwtProvider jwtProvider;
-
     private Users user;
     private Profile profile;
 
     @BeforeEach
     void setUp() {
-        user = createUser(1, 100, 25);
-
-        profile = createProfile(user);
+        user = createUser();
+        profile = createProfile();
     }
 
-    //@Test
+    @Test
     @DisplayName("프로필 조회")
     void getProfileInfo() throws Exception {
         mockMvc.perform(get("/api/profile/{user-id}", user.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("test"))
-                .andExpect(jsonPath("$.description").value("test"))
-                .andExpect(jsonPath("$.todayVisited").value(2))
-                .andExpect(jsonPath("$.totalVisited").value(12))
-                .andExpect(jsonPath("$.backgroundImageUrl").value("test"))
-                .andDo(print());
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name").value("test"))
+            .andExpect(jsonPath("$.description").value("test"))
+            .andExpect(jsonPath("$.todayVisited").value(2))
+            .andExpect(jsonPath("$.totalVisited").value(12))
+            .andExpect(jsonPath("$.backgroundImageUrl").value("test"))
+            .andDo(print());
     }
 
-    private Profile createProfile(Users user) {
-        return profileRepository.save(Profile.builder()
-                .users(user)
-                .todayVisited(2)
-                .totalVisited(12)
-                .description("test")
-                .backgroundImageUrl("test")
-                .build());
+    private Users createUser() {
+        Users user = Users.builder()
+            .name("test")
+            .email("test@gmail.com")
+            .point(1500)
+            .age(22)
+            .kakaoId(1L)
+            .gender(Gender.M)
+            .role(Role.USER)
+            .build();
+
+        userRepository.save(user);
+        return user;
     }
 
-    private Users createUser(int index, int point, int age) {
-        return userRepository.save(Users.builder()
-                .name("test" + index)
-                .email("test" + index + "@gmail.com")
-                .point(point)
-                .age(age)
-                .kakaoId(1L)
-                .gender(Gender.M)
-                .role(Role.USER)
-                .build());
-    }
+    private Profile createProfile() {
+        Profile profile = Profile.builder()
+            .users(user)
+            .todayVisited(2)
+            .totalVisited(12)
+            .description("test")
+            .backgroundImageUrl("test")
+            .build();
 
+        profileRepository.save(profile);
+        return profile;
+    }
 }
