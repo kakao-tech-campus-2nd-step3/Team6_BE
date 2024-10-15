@@ -11,6 +11,7 @@ import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.friend.service.dto.FriendCommand;
 import supernova.whokie.friend.service.dto.FriendModel;
+import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.user.Users;
@@ -58,7 +59,7 @@ public class FriendService {
     @Transactional
     public void saveFriends(Long hostId, FriendCommand.Update command, List<Friend> existingFriends) {
         Users host = userRepository.findById(hostId)
-                .orElseThrow(()-> new EntityNotFoundException("User not found."));
+                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
         // 새로운 Friend 필터링
         List<Long> newFriendIds = filteringNewFriendUserIds(command.friendIds(), existingFriends);
 

@@ -9,17 +9,17 @@ public class ProfileAnswerRequest {
 
     @Builder
     public record Answer(
-        @NotNull
-        String content,
-        @NotNull @Min(1)
-        Long profileQuestionId
+            @NotNull
+            String content,
+            @NotNull @Min(1)
+            Long profileQuestionId
     ) {
 
         public ProfileAnswerCommand.Create toCommand() {
             return ProfileAnswerCommand.Create.builder()
-                .content(content())
-                .profileQuestionId(profileQuestionId())
-                .build();
+                    .content(content())
+                    .profileQuestionId(profileQuestionId())
+                    .build();
         }
     }
 }

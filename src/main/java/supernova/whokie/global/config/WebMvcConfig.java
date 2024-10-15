@@ -1,6 +1,5 @@
 package supernova.whokie.global.config;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import supernova.whokie.global.auth.JwtInterceptor;
 import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.resolver.LoginUserArgumentResolver;
+
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -33,7 +34,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor())
-            .addPathPatterns("/api/**");
+                .addPathPatterns("/api/**");
     }
 
     @Override
@@ -44,11 +45,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOriginPatterns("*")
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-            .allowedHeaders("Authorization", "Content-Type")
-            .allowCredentials(true)
-            .exposedHeaders("Authorization")
-            .maxAge(3600);
+                .allowedOriginPatterns("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                .allowedHeaders("Authorization", "Content-Type")
+                .allowCredentials(true)
+                .exposedHeaders("Authorization")
+                .maxAge(3600);
     }
 }

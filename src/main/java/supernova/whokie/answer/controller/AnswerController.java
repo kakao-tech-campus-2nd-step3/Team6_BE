@@ -7,7 +7,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import supernova.whokie.answer.controller.dto.AnswerRequest;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.service.AnswerService;
@@ -27,8 +32,8 @@ public class AnswerController {
 
     @PostMapping("/common")
     public GlobalResponse common(
-        @RequestBody @Valid AnswerRequest.Common request,
-        @Authenticate Long userId
+            @RequestBody @Valid AnswerRequest.Common request,
+            @Authenticate Long userId
     ) {
         answerService.answerToCommonQuestion(userId, request.toCommand());
         return GlobalResponse.builder().message("답변 완료").build();
@@ -36,8 +41,8 @@ public class AnswerController {
 
     @PostMapping("/group")
     public GlobalResponse group(
-        @RequestBody @Valid AnswerRequest.Group request,
-        @Authenticate Long userId
+            @RequestBody @Valid AnswerRequest.Group request,
+            @Authenticate Long userId
     ) {
         answerService.answerToGroupQuestion(userId, request.toCommand());
         return GlobalResponse.builder().message("그룹 질문 답변 완료").build();
@@ -45,7 +50,7 @@ public class AnswerController {
 
     @GetMapping("/refresh")
     public AnswerResponse.Refresh refresh(
-        @Authenticate Long userId
+            @Authenticate Long userId
     ) {
         AnswerModel.Refresh refresh = answerService.refreshAnswerList(userId);
         return AnswerResponse.Refresh.from(refresh);
@@ -53,16 +58,16 @@ public class AnswerController {
 
     @GetMapping("/record")
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(
-        @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable,
-        @Authenticate Long userId
+            @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable,
+            @Authenticate Long userId
     ) {
         return answerService.getAnswerRecord(pageable, userId);
     }
 
     @GetMapping("/hint/{answer-id}")
     public AnswerResponse.Hints getHints(
-        @PathVariable("answer-id") @NotNull @Min(1) String answerId,
-        @Authenticate Long userId
+            @PathVariable("answer-id") @NotNull @Min(1) String answerId,
+            @Authenticate Long userId
     ) {
         List<AnswerModel.Hint> allHints = answerService.getHints(userId, answerId);
         return AnswerResponse.Hints.from(allHints);
@@ -70,8 +75,8 @@ public class AnswerController {
 
     @PostMapping("/hint")
     public GlobalResponse purchaseHint(
-        @RequestBody @Valid AnswerRequest.Purchase request,
-        @Authenticate Long userId
+            @RequestBody @Valid AnswerRequest.Purchase request,
+            @Authenticate Long userId
     ) {
         answerService.purchaseHint(userId, request.toCommand());
         return GlobalResponse.builder().message("힌트를 성공적으로 구매하였습니다!").build();
