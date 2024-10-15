@@ -196,13 +196,16 @@ class AnswerIntegrationTest {
         assertThat(finalPoint).isEqualTo(initialPoint + Constants.ANSWER_POINT);
     }
 
-    //@Test
+    @Test
     @DisplayName("전체 질문 기록 조회 테스트")
     void getAnswerRecordTest() throws Exception {
         // 별도의 더미 데이터 생성
         for (int i = 1; i <= 5; i++) {
             Question question = Question.builder()
                     .content("Custom Test Question " + i)
+                    .questionStatus(QuestionStatus.APPROVED)
+                    .groupId(1L)
+                    .writer(userRepository.findById(1L).orElseThrow())
                     .build();
             questionRepository.save(question);
 
@@ -212,14 +215,17 @@ class AnswerIntegrationTest {
                     .picked(userRepository.findById(2L).orElseThrow())
                     .hintCount(3)
                     .build();
-            ReflectionTestUtils.setField(answer, "createdAt",
-                    LocalDateTime.of(2024, 9, 20, 0, 0)); // 날짜 설정
             answerRepository.save(answer);
         }
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute("userId", "1");
+
         mockMvc.perform(get("/api/answer/record")
                         .requestAttr("userId", "1")
                         .param("page", "0")
                         .param("size", "10")
+                        .param("date","2024-10-01")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
