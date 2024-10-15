@@ -1,12 +1,25 @@
 package supernova.whokie.group_member.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.verify;
+
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group_member.GroupMember;
@@ -19,17 +32,12 @@ import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 
-import java.lang.reflect.Field;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@TestPropertySource(properties = {
+    "spring.profiles.active=default",
+    "jwt.secret=abcd"
+})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class GroupMemberServiceTest {
 
     @InjectMocks
@@ -43,59 +51,25 @@ public class GroupMemberServiceTest {
     private Users user1;
     private Users user2;
     private Groups group;
-    private Long userId = 1L;
-    private Long pastLeaderId = 1L;
-    private Long newLeaderId = 2L;
-    private Long groupId = 1L;
+    private Long userId;
+    private Long pastLeaderId;
+    private Long newLeaderId;
+    private Long groupId;
 
     @BeforeEach
     void setUp() {
-        user1 = Users.builder()
-                .id(1L)
-                .name("test")
-                .email("test@gmail.com")
-                .point(1000)
-                .age(30)
-                .kakaoId(1L)
-                .gender(Gender.M)
-                .imageUrl("test")
-                .role(Role.USER)
-                .build();
+        user1 = createUser("test1@gmail.com", 1L);
+        user2 = createUser("test2@gmail.com", 2L);
 
-        user2 = Users.builder()
-                .id(2L)
-                .name("test")
-                .email("test@gmail.com")
-                .point(1000)
-                .age(30)
-                .kakaoId(1L)
-                .gender(Gender.M)
-                .imageUrl("test")
-                .role(Role.USER)
-                .build();
+        userId = user1.getId();
+        pastLeaderId = user1.getId();
+        newLeaderId = user2.getId();
 
-        group = Groups.builder()
-                .id(groupId)
-                .groupName("test")
-                .description("test")
-                .groupImageUrl("test")
-                .build();
+        group = createGroup();
+        groupId = group.getId();
 
-        leader = GroupMember.builder()
-                .id(pastLeaderId)
-                .user(user1)
-                .group(group)
-                .groupRole(GroupRole.LEADER)
-                .groupStatus(GroupStatus.APPROVED)
-                .build();
-
-        member = GroupMember.builder()
-                .id(newLeaderId)
-                .user(user2)
-                .group(group)
-                .groupRole(GroupRole.MEMBER)
-                .groupStatus(GroupStatus.APPROVED)
-                .build();
+        leader = createGroupMember(user1, GroupRole.LEADER, 1L);
+        member = createGroupMember(user2, GroupRole.MEMBER, 2L);
     }
 
     @Test
@@ -104,17 +78,19 @@ public class GroupMemberServiceTest {
         // given
         GroupMemberCommand.Modify command = new GroupMemberCommand.Modify(groupId, pastLeaderId, newLeaderId);
         given(groupMemberRepository.findByUserIdAndGroupId(pastLeaderId, groupId))
-                .willReturn(Optional.of(leader));
+            .willReturn(Optional.of(leader));
 
         given(groupMemberRepository.findByUserIdAndGroupId(newLeaderId, groupId))
-                .willReturn(Optional.of(member));
+            .willReturn(Optional.of(member));
 
         // when
         groupMemberService.delegateLeader(userId, command);
 
         // then
-        assertThat(leader.getGroupRole()).isEqualTo(GroupRole.MEMBER);
-        assertThat(member.getGroupRole()).isEqualTo(GroupRole.LEADER);
+        assertAll(
+            () -> assertThat(leader.getGroupRole()).isEqualTo(GroupRole.MEMBER),
+            () -> assertThat(member.getGroupRole()).isEqualTo(GroupRole.LEADER)
+        );
     }
 
     @Test
@@ -123,15 +99,15 @@ public class GroupMemberServiceTest {
         // given
         GroupMemberCommand.Expel command = new GroupMemberCommand.Expel(groupId, member.getId());
         given(groupMemberRepository.findByUserIdAndGroupId(leader.getId(), groupId))
-                .willReturn(Optional.of(leader));
+            .willReturn(Optional.of(leader));
 
         given(groupMemberRepository.findByUserIdAndGroupId(member.getId(), groupId))
-                .willReturn(Optional.of(member));
+            .willReturn(Optional.of(member));
 
         doNothing().when(groupMemberRepository).deleteByUserIdAndGroupId(member.getId(), command.groupId());
 
         // when
-        groupMemberService.expelMember(1L, command);
+        groupMemberService.expelMember(leader.getId(), command);
 
         // then
         verify(groupMemberRepository).deleteByUserIdAndGroupId(member.getId(), command.groupId());
@@ -142,10 +118,10 @@ public class GroupMemberServiceTest {
     void getGroupMembers() throws Exception {
         // given
         given(groupMemberRepository.findByUserIdAndGroupId(userId, groupId))
-                .willReturn(Optional.of(member));
+            .willReturn(Optional.of(member));
 
         given(groupMemberRepository.findAllByGroupId(groupId))
-                .willReturn(List.of(leader, member));
+            .willReturn(List.of(leader, member));
 
         Field createdAtField = BaseTimeEntity.class.getDeclaredField("createdAt");
         createdAtField.setAccessible(true);
@@ -156,16 +132,47 @@ public class GroupMemberServiceTest {
         GroupMemberModel.Members members = groupMemberService.getGroupMembers(userId, groupId);
 
         // then
-        assertThat(members.members()).hasSize(2);
-        assertThat(members.members().get(0).userId()).isEqualTo(user1.getId());
-        assertThat(members.members().get(0).userName()).isEqualTo(user1.getName());
-        assertThat(members.members().get(0).role()).isEqualTo(GroupRole.LEADER);
+        assertAll(
+            () -> assertThat(members.members()).hasSize(2),
+            () -> assertThat(members.members().get(0).userId()).isEqualTo(user1.getId()),
+            () -> assertThat(members.members().get(0).userName()).isEqualTo(user1.getName()),
+            () -> assertThat(members.members().get(0).role()).isEqualTo(GroupRole.LEADER),
+            () -> assertThat(members.members().get(1).userId()).isEqualTo(user2.getId()),
+            () -> assertThat(members.members().get(1).userName()).isEqualTo(user2.getName()),
+            () -> assertThat(members.members().get(1).role()).isEqualTo(GroupRole.MEMBER),
+            () -> verify(groupMemberRepository).findByUserIdAndGroupId(userId, groupId),
+            () -> verify(groupMemberRepository).findAllByGroupId(groupId)
+        );
+    }
 
-        assertThat(members.members().get(1).userId()).isEqualTo(user2.getId());
-        assertThat(members.members().get(1).userName()).isEqualTo(user2.getName());
-        assertThat(members.members().get(1).role()).isEqualTo(GroupRole.MEMBER);
+    private Users createUser(String email, Long id) {
+        return Users.builder()
+            .id(id)
+            .name("test")
+            .email(email)
+            .point(1500)
+            .age(22)
+            .kakaoId(1L)
+            .gender(Gender.M)
+            .role(Role.USER)
+            .build();
+    }
 
-        verify(groupMemberRepository).findByUserIdAndGroupId(userId, groupId);
-        verify(groupMemberRepository).findAllByGroupId(groupId);
+    private Groups createGroup() {
+        return Groups.builder()
+            .groupName("test")
+            .description("test")
+            .groupImageUrl("tset")
+            .build();
+    }
+
+    private GroupMember createGroupMember(Users user, GroupRole groupRole, Long id) {
+        return GroupMember.builder()
+            .id(id)
+            .user(user)
+            .group(group)
+            .groupRole(groupRole)
+            .groupStatus(GroupStatus.APPROVED)
+            .build();
     }
 }

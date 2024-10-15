@@ -13,6 +13,7 @@ import supernova.whokie.friend.service.dto.FriendCommand;
 import supernova.whokie.friend.service.dto.FriendModel;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
+import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
@@ -27,11 +28,12 @@ public class FriendService {
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final KakaoTokenService kakaoTokenService;
 
     @Transactional
     public List<FriendModel.Info> getKakaoFriends(Long userId) {
         // userId로 kakaoAccessToken 조회
-        String accessToken = "testwsetest";
+        String accessToken = kakaoTokenService.refreshIfAccessTokenExpired(userId);
         List<KakaoDto.Profile> profiles = apiCaller.getKakaoFriends(accessToken).elements();
         List<Long> kakaoId = profiles.stream().map(KakaoDto.Profile::id).toList();
         List<Users> friendUsers = userRepository.findByKakaoIdIn(kakaoId);
