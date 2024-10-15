@@ -1,7 +1,5 @@
-package supernova.whokie.user.controller;
+package supernova.whokie.user;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,28 +11,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-import supernova.whokie.global.auth.JwtInterceptor;
-import supernova.whokie.global.auth.JwtProvider;
-import supernova.whokie.user.Gender;
-import supernova.whokie.user.Role;
-import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 @TestPropertySource(properties = {
     "spring.profiles.active=default",
     "jwt.secret=abcd"
 })
-class UserControllerTest {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class UserIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,38 +33,17 @@ class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
 
-    @MockBean
-    private JwtProvider jwtProvider;
-
-    @MockBean
-    private JwtInterceptor jwtInterceptor;
-
     private Users user;
 
     @BeforeEach
     void setUp() {
-        user = Users.builder()
-            .name("test")
-            .email("test@gmail.com")
-            .point(100)
-            .age(25)
-            .kakaoId(1L)
-            .gender(Gender.M)
-            .imageUrl("imageUrl")
-            .role(Role.USER)
-            .build();
-
-        userRepository.save(user);
+        user = createUser();
     }
 
     @Test
     @DisplayName("유저 정보 조회")
     void getUserInfo() throws Exception {
-        String token = jwtProvider.createToken(user.getId(), user.getRole());
-        given(jwtInterceptor.preHandle(any(), any(), any())).willReturn(true);
-
         mockMvc.perform(get("/api/user/mypage")
-                .header("Authorization", "Bearer " + token)
                 .requestAttr("userId", String.valueOf(user.getId()))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -85,18 +55,29 @@ class UserControllerTest {
             .andDo(print());
     }
 
-    //@Test
+    @Test
     @DisplayName("유저 포인트 조회")
     void getUserPoint() throws Exception {
-        String token = jwtProvider.createToken(user.getId(), user.getRole());
-        given(jwtInterceptor.preHandle(any(), any(), any())).willReturn(true);
-
         mockMvc.perform(get("/api/user/point")
-                .header("Authorization", "Bearer " + token)
                 .requestAttr("userId", String.valueOf(user.getId()))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.amount").value(100))
             .andDo(print());
+    }
+
+    private Users createUser() {
+        Users user = Users.builder()
+            .name("test")
+            .email("test@gmail.com")
+            .point(100)
+            .age(25)
+            .kakaoId(1L)
+            .gender(Gender.M)
+            .role(Role.USER)
+            .build();
+
+        userRepository.save(user);
+        return user;
     }
 }
