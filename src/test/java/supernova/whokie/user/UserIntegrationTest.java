@@ -50,17 +50,7 @@ class UserIntegrationTest {
         user = createUser(1, 100, 25);
     }
 
-    private Users createUser(int index, int point, int age) {
-        return userRepository.save(Users.builder()
-                .name("test" + index)
-                .email("test" + index + "@gmail.com")
-                .point(point)
-                .age(age)
-                .kakaoId(1L)
-                .gender(Gender.M)
-                .role(Role.USER)
-                .build());
-    }
+
 
     @Test
     @DisplayName("유저 정보 조회")
@@ -94,5 +84,17 @@ class UserIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.amount").value(100))
                 .andDo(print());
+    }
+
+    private Users createUser(int index, int point, int age) {
+        return userRepository.save(Users.builder()
+                .name("test" + index)
+                .email("test" + index + "@gmail.com")
+                .point(point)
+                .age(age)
+                .kakaoId(1L)
+                .gender(Gender.M)
+                .role(Role.USER)
+                .build());
     }
 }
