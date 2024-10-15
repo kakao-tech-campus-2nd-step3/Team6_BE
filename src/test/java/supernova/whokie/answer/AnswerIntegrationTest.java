@@ -26,6 +26,7 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -76,79 +77,9 @@ class AnswerIntegrationTest {
             Question question = createQuestion(i, user);
 
             // 답변 설정
-            createAnswer(question, user);
+            createAnswer(question, userRepository.findById(2L).orElseThrow(), user);
         }
 
-    }
-
-    private void createAnswer(Question question, Users user) {
-        Answer answer = Answer.builder()
-                .question(question)
-                .picker(userRepository.findById(2L).orElseThrow())
-                .picked(user)
-                .hintCount(2)
-                .build();
-        ReflectionTestUtils.setField(answer, "createdAt", LocalDateTime.of(2024, 9, 19, 0, 0));
-        answerRepository.save(answer);
-    }
-
-    private Question createQuestion(int index, Users user) {
-        Question question = Question.builder()
-                .content("Test Question " + index)
-                .questionStatus(QuestionStatus.APPROVED)
-                .writer(user)
-                .groupId(1L)
-                .build();
-        questionRepository.save(question);
-        return question;
-    }
-
-    private void setFriendRelation(int index, Users user) {
-        Users friendUser = userRepository.findById((long) index).orElseThrow();
-        Friend friend = Friend.builder()
-                .hostUser(user)
-                .friendUser(friendUser)
-                .build();
-        friendRepository.save(friend);
-    }
-
-    private void createFreindUser(int index) {
-        Users friendUser = Users.builder()
-                .name("Friend " + index)
-                .email("friend" + index + "@example.com")
-                .point(100)
-                .age(20)
-                .kakaoId(1234567890L + index)
-                .gender(Gender.F)
-                .imageUrl("default_image_url_friend_" + index + ".jpg")
-                .role(Role.USER)
-                .build();
-
-        userRepository.save(friendUser);
-    }
-
-    private void createGroup(int index) {
-        Groups group = Groups.builder()
-                .groupName("Test Group " + index)
-                .description("Test Group " + index)
-                .groupImageUrl("default_image_url.jpg")
-                .build();
-        groupRepository.save(group);
-    }
-
-    private Users createUser(int index) {
-        Users user = Users.builder()
-                .name("Test User " + index)
-                .email("test@example.com")
-                .point(100)
-                .age(20)
-                .kakaoId(1234567890L)
-                .gender(Gender.M)
-                .imageUrl("default_image_url.jpg")
-                .role(Role.USER)
-                .build();
-        userRepository.save(user);
-        return user;
     }
 
 
@@ -200,32 +131,23 @@ class AnswerIntegrationTest {
     @DisplayName("전체 질문 기록 조회 테스트")
     void getAnswerRecordTest() throws Exception {
         // 별도의 더미 데이터 생성
-        for (int i = 1; i <= 5; i++) {
-            Question question = Question.builder()
-                    .content("Custom Test Question " + i)
-                    .questionStatus(QuestionStatus.APPROVED)
-                    .groupId(1L)
-                    .writer(userRepository.findById(1L).orElseThrow())
-                    .build();
-            questionRepository.save(question);
+        for (int i = 6; i <= 10; i++) {
 
-            Answer answer = Answer.builder()
-                    .question(question)
-                    .picker(userRepository.findById(1L).orElseThrow())
-                    .picked(userRepository.findById(2L).orElseThrow())
-                    .hintCount(3)
-                    .build();
-            answerRepository.save(answer);
+            Question question = createQuestion(i, userRepository.findById(1L).orElseThrow());
+
+            createAnswer(question, userRepository.findById(1L).orElseThrow(), userRepository.findById(2L).orElseThrow());
         }
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute("userId", "1");
 
+        String currentDate = LocalDate.now().toString();
+
         mockMvc.perform(get("/api/answer/record")
                         .requestAttr("userId", "1")
                         .param("page", "0")
                         .param("size", "10")
-                        .param("date","2024-10-01")
+                        .param("date",currentDate)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
@@ -315,5 +237,76 @@ class AnswerIntegrationTest {
         int finalPoint = userAfterAnswer.getPoint();
         assertThat(finalPoint).isEqualTo(100 + Constants.ANSWER_POINT);
     }
+
+    private void createAnswer(Question question, Users picker, Users picked) {
+        Answer answer = Answer.builder()
+                .question(question)
+                .picker(picker)
+                .picked(picked)
+                .hintCount(2)
+                .build();
+//        ReflectionTestUtils.setField(answer, "createdAt", LocalDateTime.of(2024, 9, 19, 0, 0));
+        answerRepository.save(answer);
+    }
+
+    private Question createQuestion(int index, Users user) {
+        Question question = Question.builder()
+                .content("Test Question " + index)
+                .questionStatus(QuestionStatus.APPROVED)
+                .writer(user)
+                .groupId(1L)
+                .build();
+        questionRepository.save(question);
+        return question;
+    }
+
+    private void setFriendRelation(int index, Users user) {
+        Users friendUser = userRepository.findById((long) index).orElseThrow();
+        Friend friend = Friend.builder()
+                .hostUser(user)
+                .friendUser(friendUser)
+                .build();
+        friendRepository.save(friend);
+    }
+
+    private void createFreindUser(int index) {
+        Users friendUser = Users.builder()
+                .name("Friend " + index)
+                .email("friend" + index + "@example.com")
+                .point(100)
+                .age(20)
+                .kakaoId(1234567890L + index)
+                .gender(Gender.F)
+                .imageUrl("default_image_url_friend_" + index + ".jpg")
+                .role(Role.USER)
+                .build();
+
+        userRepository.save(friendUser);
+    }
+
+    private void createGroup(int index) {
+        Groups group = Groups.builder()
+                .groupName("Test Group " + index)
+                .description("Test Group " + index)
+                .groupImageUrl("default_image_url.jpg")
+                .build();
+        groupRepository.save(group);
+    }
+
+    private Users createUser(int index) {
+        Users user = Users.builder()
+                .name("Test User " + index)
+                .email("test@example.com")
+                .point(100)
+                .age(20)
+                .kakaoId(1234567890L)
+                .gender(Gender.M)
+                .imageUrl("default_image_url.jpg")
+                .role(Role.USER)
+                .build();
+        userRepository.save(user);
+        return user;
+    }
+
 
 }
