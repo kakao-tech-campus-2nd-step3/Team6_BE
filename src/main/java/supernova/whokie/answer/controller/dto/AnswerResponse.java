@@ -12,57 +12,60 @@ public class AnswerResponse {
 
     @Builder
     public record Refresh(
-            List<UserModel.PickedInfo> users
+        List<UserModel.PickedInfo> users
     ) {
+
         public static AnswerResponse.Refresh from(AnswerModel.Refresh refresh) {
             return Refresh.builder()
-                    .users(refresh.users())
-                    .build();
+                .users(refresh.users())
+                .build();
         }
 
     }
 
     @Builder
     public record Record(
-            Long answerId,
-            Long questionId,
-            String questionContent,
-            int hintCount,
-            LocalDate createdAt
+        Long answerId,
+        Long questionId,
+        String questionContent,
+        int hintCount,
+        LocalDate createdAt
     ) {
-        public static AnswerResponse.Record from(Answer answer) {
+
+        public static AnswerResponse.Record from(AnswerModel.Record model) {
             return new Record(
-                    answer.getId(),
-                    answer.getQuestion().getId(),
-                    answer.getQuestion().getContent(),
-                    answer.getHintCount(),
-                    answer.getCreatedAt().toLocalDate()
+                model.answerId(),
+                model.questionId(),
+                model.questionContent(),
+                model.hintCount(),
+                model.createdAt()
             );
         }
     }
 
     @Builder
     public record Hints(
-            List<AnswerResponse.Hint> hints
+        List<AnswerResponse.Hint> hints
     ) {
+
         public static AnswerResponse.Hints from(List<AnswerModel.Hint> hintList) {
             return Hints.builder()
-                    .hints(hintList.stream().map(
-                            hint -> Hint.builder()
-                                    .hintNum(hint.hintNum())
-                                    .valid(hint.valid())
-                                    .content(hint.content())
-                                    .build()
-                    ).toList()).build();
+                .hints(hintList.stream().map(
+                    hint -> Hint.builder()
+                        .hintNum(hint.hintNum())
+                        .valid(hint.valid())
+                        .content(hint.content())
+                        .build()
+                ).toList()).build();
         }
 
     }
 
     @Builder
     public record Hint(
-            int hintNum,
-            Boolean valid,
-            String content
+        int hintNum,
+        Boolean valid,
+        String content
     ) {
 
     }
