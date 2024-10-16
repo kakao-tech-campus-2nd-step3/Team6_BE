@@ -15,12 +15,17 @@ public class UserReaderService {
 
     private final UserRepository userRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Users getUserById(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(
                 () -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isUserExist(Long userId) {
+        return userRepository.existsById(userId);
     }
 
 }
