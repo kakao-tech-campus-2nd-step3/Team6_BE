@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.profile.Profile;
-import supernova.whokie.profile.infrastructure.ProfileRepository;
+import supernova.whokie.profile.infrastructure.repository.ProfileRepository;
 import supernova.whokie.profile.service.dto.ProfileModel;
 
 @Service

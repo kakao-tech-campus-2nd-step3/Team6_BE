@@ -7,7 +7,7 @@ import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.profile.Profile;
-import supernova.whokie.profile.infrastructure.ProfileRepository;
+import supernova.whokie.profile.infrastructure.repository.ProfileRepository;
 import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
@@ -63,8 +63,6 @@ public class UserService {
 
                     Profile profile = Profile.builder()
                             .users(newUser)
-                            .todayVisited(0)
-                            .totalVisited(0)
                             .backgroundImageUrl(kakaoAccount.profile().profileImageUrl())
                             .build();
 
@@ -111,8 +109,6 @@ public class UserService {
         Profile profile = Profile.builder()
                 .id(1L)
                 .users(user)
-                .todayVisited(2)
-                .totalVisited(12)
                 .description("test")
                 .backgroundImageUrl("test")
                 .build();
