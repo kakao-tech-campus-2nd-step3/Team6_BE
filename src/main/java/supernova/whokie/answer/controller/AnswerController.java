@@ -7,12 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import supernova.whokie.answer.controller.dto.AnswerRequest;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.service.AnswerService;
@@ -21,6 +16,7 @@ import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -59,9 +55,10 @@ public class AnswerController {
     @GetMapping("/record")
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(
             @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable,
+            @RequestParam(name = "date", defaultValue = "1900-01-01") LocalDate date,
             @Authenticate Long userId
     ) {
-        return answerService.getAnswerRecord(pageable, userId);
+        return answerService.getAnswerRecord(pageable, userId, date);
     }
 
     @GetMapping("/hint/{answer-id}")

@@ -1,6 +1,7 @@
 package supernova.whokie.answer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,6 +32,10 @@ import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,11 +52,15 @@ public class AnswerService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
-    public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId) {
+    public PagingResponse<AnswerResponse.Record> getAnswerRecord(Pageable pageable, Long userId, LocalDate date) {
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
-        Page<Answer> answers = answerRepository.findAllByPicker(pageable, user);
+        LocalDateTime startDate = date.atStartOfDay();
+        LocalDateTime endDate = date.withDayOfMonth(date.lengthOfMonth()).atTime(LocalTime.MAX);
+
+        // 해당 월의 데이터를 조회
+        Page<Answer> answers = answerRepository.findAllByPickerAndCreatedAtBetween(pageable, user, startDate, endDate);
 
         List<AnswerResponse.Record> answerResponse = answers.stream()
                 .map(AnswerResponse.Record::from)
