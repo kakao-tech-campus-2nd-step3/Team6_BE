@@ -7,29 +7,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.answer.Answer;
-import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.answer.service.dto.AnswerCommand;
 import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.friend.Friend;
-import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.friend.service.FriendReaderService;
 import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.constants.MessageConstants;
-import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.global.exception.InvalidEntityException;
 import supernova.whokie.group.Groups;
-import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.group.service.GroupReaderService;
 import supernova.whokie.point_record.PointRecord;
 import supernova.whokie.point_record.PointRecordOption;
 import supernova.whokie.point_record.event.PointRecordEventDto;
-import supernova.whokie.point_record.infrastructure.repository.PointRecordRepository;
 import supernova.whokie.point_record.sevice.PointRecordWriterService;
 import supernova.whokie.question.Question;
-import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.question.service.QuestionReaderService;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.service.UserReaderService;
 import supernova.whokie.user.service.dto.UserModel;
 
@@ -43,10 +36,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AnswerService {
 
-    private final AnswerRepository answerRepository;
-    private final FriendRepository friendRepository;
-    private final UserRepository userRepository;
-    private final PointRecordRepository pointRecordRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final UserReaderService userReaderService;
     private final AnswerReaderService answerReaderService;
@@ -108,6 +97,7 @@ public class AnswerService {
                 Constants.POINT_EARN_MESSAGE));
     }
 
+    @Transactional
     public void recordEarnPoint(PointRecordEventDto.Earn event) {
         PointRecord pointRecord = PointRecord.create(event.userId(), event.point(), event.amount(),
             event.option(), event.message());
