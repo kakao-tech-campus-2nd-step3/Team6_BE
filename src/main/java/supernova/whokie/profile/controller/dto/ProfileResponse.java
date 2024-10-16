@@ -20,4 +20,17 @@ public class ProfileResponse {
                     .build();
         }
     }
+
+    @Builder
+    public record Visited(
+            int todayVisited,
+            int totalVisited
+    ) {
+        public static ProfileResponse.Visited from(ProfileModel.Visited visited) {
+            return Visited.builder()
+                    .todayVisited(visited.todayVisited())
+                    .todayVisited(visited.totalVisited())
+                    .build();
+        }
+    }
 }

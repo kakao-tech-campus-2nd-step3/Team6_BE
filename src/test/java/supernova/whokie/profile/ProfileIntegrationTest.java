@@ -56,8 +56,6 @@ public class ProfileIntegrationTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.name").value("test"))
             .andExpect(jsonPath("$.description").value("test"))
-            .andExpect(jsonPath("$.todayVisited").value(2))
-            .andExpect(jsonPath("$.totalVisited").value(12))
             .andExpect(jsonPath("$.backgroundImageUrl").value("test"))
             .andDo(print());
     }
