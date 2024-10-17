@@ -27,7 +27,6 @@ import static org.mockito.BDDMockito.then;
 
 @SpringBootTest
 @TestPropertySource(properties = {
-    "spring.profiles.active=default",
     "jwt.secret=abcd"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)

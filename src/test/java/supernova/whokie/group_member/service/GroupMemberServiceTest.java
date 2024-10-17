@@ -32,7 +32,6 @@ import supernova.whokie.user.Users;
 
 @SpringBootTest
 @TestPropertySource(properties = {
-    "spring.profiles.active=default",
     "jwt.secret=abcd"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)

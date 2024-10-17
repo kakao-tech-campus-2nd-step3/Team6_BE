@@ -10,7 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import supernova.whokie.profile.infrastructure.ProfileRepository;
+import supernova.whokie.profile.infrastructure.repository.ProfileRepository;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
@@ -24,7 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
-    "spring.profiles.active=default",
     "jwt.secret=abcd"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -56,8 +55,6 @@ public class ProfileIntegrationTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.name").value("test"))
             .andExpect(jsonPath("$.description").value("test"))
-            .andExpect(jsonPath("$.todayVisited").value(2))
-            .andExpect(jsonPath("$.totalVisited").value(12))
             .andExpect(jsonPath("$.backgroundImageUrl").value("test"))
             .andDo(print());
     }
@@ -80,8 +77,6 @@ public class ProfileIntegrationTest {
     private Profile createProfile() {
         Profile profile = Profile.builder()
             .users(user)
-            .todayVisited(2)
-            .totalVisited(12)
             .description("test")
             .backgroundImageUrl("test")
             .build();
