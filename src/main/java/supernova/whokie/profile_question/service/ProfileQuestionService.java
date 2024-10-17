@@ -24,6 +24,7 @@ public class ProfileQuestionService {
 
     @Transactional(readOnly = true)
     public Page<ProfileQuestionModel.Info> getProfileQuestions(Long userId, Pageable pageable) {
+        userReaderService.isUserExist(userId);
         Page<ProfileQuestion> profileQuestions = profileQuestionReaderService.getAllByUserId(userId,
             pageable);
         return profileQuestions.map(ProfileQuestionModel.Info::from);
