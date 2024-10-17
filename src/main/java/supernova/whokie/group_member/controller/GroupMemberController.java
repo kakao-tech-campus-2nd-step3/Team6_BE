@@ -15,7 +15,6 @@ import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.group_member.controller.dto.GroupMemberRequest;
 import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
-import supernova.whokie.group_member.service.GroupMemberReaderService;
 import supernova.whokie.group_member.service.GroupMemberService;
 import supernova.whokie.group_member.service.GroupMemberWriterService;
 import supernova.whokie.group_member.service.dto.GroupMemberModel;
@@ -25,7 +24,6 @@ import supernova.whokie.group_member.service.dto.GroupMemberModel;
 @RequestMapping("/api/group")
 public class GroupMemberController {
 
-    private final GroupMemberReaderService groupMemberReaderService;
     private final GroupMemberWriterService groupMemberWriterService;
     private final GroupMemberService groupMemberService;
 
@@ -52,7 +50,7 @@ public class GroupMemberController {
         @PathVariable("group-id") @NotNull @Min(1) Long groupId,
         @Authenticate Long userId
     ) {
-        GroupMemberModel.Members model = groupMemberReaderService.getGroupMembers(userId, groupId);
+        GroupMemberModel.Members model = groupMemberService.getGroupMembers(userId, groupId);
         return GroupMemberResponse.Members.from(model);
     }
 

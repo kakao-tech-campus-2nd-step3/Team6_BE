@@ -1,5 +1,6 @@
 package supernova.whokie.group_member.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +10,7 @@ import supernova.whokie.group.Groups;
 import supernova.whokie.group.service.GroupReaderService;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.service.dto.GroupMemberCommand;
+import supernova.whokie.group_member.service.dto.GroupMemberModel.Members;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
 
@@ -62,4 +64,9 @@ public class GroupMemberService {
     }
 
 
+    @Transactional(readOnly = true)
+    public Members getGroupMembers(Long userId, Long groupId) {
+        List<GroupMember> groupMembers = groupMemberReaderService.getGroupMembers(userId, groupId);
+        return Members.from(groupMembers);
+    }
 }

@@ -9,7 +9,6 @@ import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
-import supernova.whokie.group_member.service.dto.GroupMemberModel.Members;
 
 @Service
 @RequiredArgsConstructor
@@ -31,13 +30,12 @@ public class GroupMemberReaderService {
     }
 
     @Transactional(readOnly = true)
-    public Members getGroupMembers(Long userId, Long groupId) {
+    public List<GroupMember> getGroupMembers(Long userId, Long groupId) {
         if (!groupMemberRepository.existsByUserIdAndGroupId(userId, groupId)) {
             throw new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE);
         }
 
-        List<GroupMember> groupMembers = groupMemberRepository.findAllByGroupId(groupId);
-        return Members.from(groupMembers);
+        return groupMemberRepository.findAllByGroupId(groupId);
     }
 
     @Transactional(readOnly = true)

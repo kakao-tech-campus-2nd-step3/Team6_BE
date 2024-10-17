@@ -10,7 +10,6 @@ import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.group.repository.dto.GroupInfoWithMemberCount;
-import supernova.whokie.group.service.dto.GroupModel.InfoWithMemberCount;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +23,9 @@ public class GroupReaderService {
     }
 
     @Transactional(readOnly = true)
-    public Page<InfoWithMemberCount> getGroupPaging(Long userId, Pageable pageable) {
-        Page<GroupInfoWithMemberCount> groupPage = groupRepository.findGroupsWithMemberCountByUserId(
-            userId,
-            pageable);
-        return groupPage.map(InfoWithMemberCount::from);
+    public Page<GroupInfoWithMemberCount> getGroupPaging(Long userId, Pageable pageable) {
+        return groupRepository.findGroupsWithMemberCountByUserId(
+            userId, pageable);
     }
 
     @Transactional(readOnly = true)

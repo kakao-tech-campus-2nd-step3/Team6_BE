@@ -1,6 +1,8 @@
 package supernova.whokie.group.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
@@ -59,5 +61,12 @@ public class GroupService {
         GroupInfoWithMemberCount groupInfo = groupReaderService.getGroupInfoWithMemberCountByGroupId(
             groupId);
         return InfoWithMemberCount.from(groupInfo);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<InfoWithMemberCount> getGroupPaging(Long userId, Pageable pageable) {
+        Page<GroupInfoWithMemberCount> groupPage = groupReaderService.getGroupPaging(userId,
+            pageable);
+        return groupPage.map(InfoWithMemberCount::from);
     }
 }

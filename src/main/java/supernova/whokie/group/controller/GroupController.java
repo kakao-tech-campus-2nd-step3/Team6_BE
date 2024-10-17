@@ -21,7 +21,6 @@ import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.group.controller.dto.GroupRequest;
 import supernova.whokie.group.controller.dto.GroupResponse;
-import supernova.whokie.group.service.GroupReaderService;
 import supernova.whokie.group.service.GroupService;
 import supernova.whokie.group.service.dto.GroupModel;
 
@@ -31,7 +30,6 @@ import supernova.whokie.group.service.dto.GroupModel;
 public class GroupController {
 
     private final GroupService groupService;
-    private final GroupReaderService groupReaderService;
 
     @PostMapping("")
     public GlobalResponse createGroup(
@@ -55,7 +53,7 @@ public class GroupController {
         @Authenticate Long userId,
         @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        Page<GroupModel.InfoWithMemberCount> groupPage = groupReaderService.getGroupPaging(userId,
+        Page<GroupModel.InfoWithMemberCount> groupPage = groupService.getGroupPaging(userId,
             pageable);
         Page<GroupResponse.Info> groupResponse = groupPage.map(GroupResponse.Info::from);
         return PagingResponse.from(groupResponse);
