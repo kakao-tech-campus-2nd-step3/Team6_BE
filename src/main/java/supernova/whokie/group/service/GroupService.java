@@ -6,15 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.ForbiddenException;
 import supernova.whokie.group.Groups;
-import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.group.repository.dto.GroupInfoWithMemberCount;
 import supernova.whokie.group.service.dto.GroupCommand;
 import supernova.whokie.group.service.dto.GroupModel.InfoWithMemberCount;
 import supernova.whokie.group_member.GroupMember;
-import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
 import supernova.whokie.group_member.service.GroupMemberReaderService;
 import supernova.whokie.group_member.service.GroupMemberWriterService;
-import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.service.UserReaderService;
 
 @Service
@@ -23,12 +20,9 @@ public class GroupService {
 
     private final GroupWriterService groupWriterService;
     private final GroupReaderService groupReaderService;
-    private final GroupRepository groupRepository;
-    private final GroupMemberRepository groupMemberRepository;
     private final UserReaderService userReaderService;
     private final GroupMemberWriterService groupMemberWriterService;
     private final GroupMemberReaderService groupMemberReaderService;
-    private final UserRepository userRepository;
 
     /**
      * 그룹 생성후, 그룹장을 생성한 유저로 지정한다.
