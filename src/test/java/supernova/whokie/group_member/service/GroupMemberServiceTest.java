@@ -4,13 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +40,12 @@ public class GroupMemberServiceTest {
 
     @InjectMocks
     private GroupMemberService groupMemberService;
+
+    @InjectMocks
+    private GroupMemberWriterService groupMemberWriterService;
+
+    @InjectMocks
+    private GroupMemberReaderService groupMemberReaderService;
 
     @Mock
     private GroupMemberRepository groupMemberRepository;
@@ -76,7 +80,8 @@ public class GroupMemberServiceTest {
     @DisplayName("그룹장 위임")
     void delegateLeader() {
         // given
-        GroupMemberCommand.Modify command = new GroupMemberCommand.Modify(groupId, pastLeaderId, newLeaderId);
+        GroupMemberCommand.Modify command = new GroupMemberCommand.Modify(groupId, pastLeaderId,
+            newLeaderId);
         given(groupMemberRepository.findByUserIdAndGroupId(pastLeaderId, groupId))
             .willReturn(Optional.of(leader));
 
@@ -104,10 +109,11 @@ public class GroupMemberServiceTest {
         given(groupMemberRepository.findByUserIdAndGroupId(member.getId(), groupId))
             .willReturn(Optional.of(member));
 
-        doNothing().when(groupMemberRepository).deleteByUserIdAndGroupId(member.getId(), command.groupId());
+        doNothing().when(groupMemberRepository)
+            .deleteByUserIdAndGroupId(member.getId(), command.groupId());
 
         // when
-        groupMemberService.expelMember(leader.getId(), command);
+        groupMemberWriterService.expelMember(leader.getId(), command);
 
         // then
         verify(groupMemberRepository).deleteByUserIdAndGroupId(member.getId(), command.groupId());
@@ -129,7 +135,8 @@ public class GroupMemberServiceTest {
         createdAtField.set(member, LocalDateTime.now());
 
         // when
-        GroupMemberModel.Members members = groupMemberService.getGroupMembers(userId, groupId);
+        GroupMemberModel.Members members = groupMemberReaderService.getGroupMembers(userId,
+            groupId);
 
         // then
         assertAll(
