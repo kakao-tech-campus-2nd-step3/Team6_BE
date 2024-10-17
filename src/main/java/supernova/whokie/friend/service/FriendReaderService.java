@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.friend.Friend;
@@ -31,6 +32,13 @@ public class FriendReaderService {
     public List<Friend> findByHostUserIdFetchJoin(Long userId) {
         return friendRepository.findByHostUserIdFetchJoin(userId);
     }
+
+    @Transactional(readOnly = true)
+    public List<Friend> findRandomFriendsByHostUser(Long hostUserId, Pageable pageable) {
+        return friendRepository.findRandomFriendsByHostUser(hostUserId,
+            pageable);
+    }
+
 
     public Set<Long> extractFriendUserIdAsSet(List<Friend> friends) {
         return friends.stream().map(Friend::getFriendUserId).collect(Collectors.toSet());
