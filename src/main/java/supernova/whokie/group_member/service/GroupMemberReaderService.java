@@ -2,6 +2,7 @@ package supernova.whokie.group_member.service;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
@@ -37,6 +38,13 @@ public class GroupMemberReaderService {
 
         List<GroupMember> groupMembers = groupMemberRepository.findAllByGroupId(groupId);
         return Members.from(groupMembers);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GroupMember> getRandomGroupMembersByGroupId(Long userId, Long groupId,
+        Pageable pageable) {
+        return groupMemberRepository.getRandomGroupMember(userId,
+            groupId, pageable);
     }
 
 }
