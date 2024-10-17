@@ -1,12 +1,10 @@
 package supernova.whokie.answer.controller.dto;
 
-import lombok.Builder;
-import supernova.whokie.answer.Answer;
-import supernova.whokie.answer.service.dto.AnswerModel;
-import supernova.whokie.user.service.dto.UserModel;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.Builder;
+import supernova.whokie.answer.service.dto.AnswerModel;
+import supernova.whokie.user.service.dto.UserModel;
 
 public class AnswerResponse {
 
@@ -49,14 +47,14 @@ public class AnswerResponse {
     ) {
 
         public static AnswerResponse.Hints from(List<AnswerModel.Hint> hintList) {
+            List<AnswerResponse.Hint> hints = hintList.stream().map(
+                hint -> Hint.builder()
+                    .hintNum(hint.hintNum())
+                    .valid(hint.valid())
+                    .content(hint.content())
+                    .build()).toList();
             return Hints.builder()
-                .hints(hintList.stream().map(
-                    hint -> Hint.builder()
-                        .hintNum(hint.hintNum())
-                        .valid(hint.valid())
-                        .content(hint.content())
-                        .build()
-                ).toList()).build();
+                .hints(hints).build();
         }
 
     }
