@@ -46,7 +46,7 @@ public class UserService {
         KakaoAccount kakaoAccount = userInfoResponse.kakaoAccount();
 
         // Users 저장 및 중복 체크
-        Users user = userRepository.findByEmail(kakaoAccount.email())\
+        Users user = userRepository.findByEmail(kakaoAccount.email())
                 .orElseGet(() -> {
                     Users newUser = userRepository.save(
                             Users.builder()
