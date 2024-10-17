@@ -3,6 +3,7 @@ package supernova.whokie.question.service.dto;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
+import supernova.whokie.friend.Friend;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.service.dto.GroupMemberModel;
 import supernova.whokie.question.Question;
@@ -19,11 +20,15 @@ public class QuestionModel {
     ) {
 
         public static QuestionModel.CommonQuestion from(Question question,
-            List<UserModel.PickedInfo> friendList) {
+            List<Friend> friendList) {
+            List<UserModel.PickedInfo> users = friendList.stream()
+                .map(friend -> UserModel.PickedInfo.from(friend.getFriendUser()))
+                .toList();
+
             return CommonQuestion.builder()
                 .questionId(question.getId())
                 .content(question.getContent())
-                .users(friendList)
+                .users(users)
                 .build();
         }
 
