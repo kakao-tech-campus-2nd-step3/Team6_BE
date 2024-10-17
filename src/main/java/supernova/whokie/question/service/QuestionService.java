@@ -8,21 +8,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.friend.Friend;
-import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.friend.service.FriendReaderService;
 import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group_member.GroupMember;
-import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
 import supernova.whokie.group_member.service.GroupMemberReaderService;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
-import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.question.service.dto.QuestionCommand;
 import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.service.UserReaderService;
 import supernova.whokie.user.service.dto.UserModel;
 
@@ -32,13 +28,9 @@ public class QuestionService {
 
     private final GroupMemberReaderService groupMemberReaderService;
     private final QuestionReaderService questionReaderService;
-    private final QuestionRepository questionRepository;
     private final FriendReaderService friendReaderService;
-    private final FriendRepository friendRepository;
     private final UserReaderService userReaderService;
-    private final UserRepository userRepository;
     private final QuestionWriterService questionWriterService;
-    private final GroupMemberRepository groupMemberRepository;
 
     @Transactional(readOnly = true)
     public List<QuestionModel.CommonQuestion> getCommonQuestion(Long userId, Pageable pageable) {
