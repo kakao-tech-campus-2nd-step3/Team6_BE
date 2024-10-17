@@ -1,5 +1,10 @@
 package supernova.whokie.answer.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -25,12 +30,6 @@ import supernova.whokie.question.service.QuestionReaderService;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
 import supernova.whokie.user.service.dto.UserModel;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -91,10 +90,12 @@ public class AnswerService {
         answerWriterService.save(answer);
 
         user.increasePoint(Constants.ANSWER_POINT);
-        eventPublisher.publishEvent(
-            PointRecordEventDto.Earn.toDto(userId, Constants.ANSWER_POINT, 0,
-                PointRecordOption.CHARGED,
-                Constants.POINT_EARN_MESSAGE));
+
+        var event = PointRecordEventDto.Earn.toDto(userId, Constants.ANSWER_POINT, 0,
+            PointRecordOption.CHARGED,
+            Constants.POINT_EARN_MESSAGE);
+
+        eventPublisher.publishEvent(event);
     }
 
     @Transactional
