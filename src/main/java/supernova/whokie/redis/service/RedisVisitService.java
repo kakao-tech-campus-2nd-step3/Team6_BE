@@ -2,7 +2,6 @@ package supernova.whokie.redis.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import supernova.whokie.profile.ProfileVisitCount;
 import supernova.whokie.profile.service.ProfileVisitReadService;
 import supernova.whokie.redis.entity.VisitCount;
 import supernova.whokie.redis.entity.Visitor;

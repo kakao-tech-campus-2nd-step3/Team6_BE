@@ -1,6 +1,5 @@
 package supernova.whokie.redis.service;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import supernova.config.EmbeddedRedisConfig;
 import supernova.whokie.profile.service.ProfileVisitReadService;
 import supernova.whokie.redis.entity.VisitCount;
 import supernova.whokie.redis.repository.VisitCountRepository;
-import supernova.whokie.redis.repository.VisitorRepository;
 import supernova.whokie.redis.service.dto.RedisCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,17 +35,11 @@ class RedisVisitServiceTest {
     @MockBean
     private ProfileVisitReadService profileVisitReadService;
 
-    private VisitCount visitCount;
-
-    @BeforeEach
-    void setUp() {
-        visitCount = createVisitCount();
-    }
-
     @Test
     @DisplayName("방문자 수 증가 테스트")
     void visitProfileTest() {
         // given
+        VisitCount visitCount = createVisitCount();
         Long hostId = visitCount.getHostId();
         String visitorIp = "visitorIp";
         int oldDailyVisited = visitCount.getDailyVisited();

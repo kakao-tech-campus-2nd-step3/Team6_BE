@@ -65,14 +65,12 @@ public class FriendService {
         List<Friend> newFriends = command.toEntity(host, friendUsers);
         // 새로운 Friends 저장
         friendWriterService.saveAll(newFriends);
-
     }
 
     @Transactional
     public void deleteFriends(FriendCommand.Update command, List<Friend> existingFriends) {
         // 삭제할 Friend 필터링
-        List<Long> deleteFriendIds = filteringDeleteFriendUserIds(command.friendIds(),
-            existingFriends);
+        List<Long> deleteFriendIds = filteringDeleteFriendUserIds(command.friendIds(), existingFriends);
 
         // Friends 삭제
         friendWriterService.deleteAllById(deleteFriendIds);
