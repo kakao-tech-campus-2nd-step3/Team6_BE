@@ -21,6 +21,7 @@ import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.group.controller.dto.GroupRequest;
 import supernova.whokie.group.controller.dto.GroupResponse;
+import supernova.whokie.group.service.GroupReaderService;
 import supernova.whokie.group.service.GroupService;
 import supernova.whokie.group.service.dto.GroupModel;
 
@@ -30,11 +31,12 @@ import supernova.whokie.group.service.dto.GroupModel;
 public class GroupController {
 
     private final GroupService groupService;
+    private final GroupReaderService groupReaderService;
 
     @PostMapping("")
     public GlobalResponse createGroup(
-            @RequestBody @Valid GroupRequest.Create request,
-            @Authenticate Long userId
+        @RequestBody @Valid GroupRequest.Create request,
+        @Authenticate Long userId
     ) {
         groupService.createGroup(request.toCommand(), userId);
         return GlobalResponse.builder().message("그룹이 성공적으로 만들어졌습니다.").build();
@@ -42,27 +44,27 @@ public class GroupController {
 
     @GetMapping("/{group-id}/invite")
     public String inviteGroup(
-            @RequestParam("user-id") @NotNull @Min(1) Long userId,
-            @PathVariable("group-id") @NotNull @Min(1) Long groupId
+        @RequestParam("user-id") @NotNull @Min(1) Long userId,
+        @PathVariable("group-id") @NotNull @Min(1) Long groupId
     ) {
         return "dummy-url";
     }
 
     @GetMapping("/my")
     public PagingResponse<GroupResponse.Info> getGroupPaging(
-            @Authenticate Long userId,
-            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
+        @Authenticate Long userId,
+        @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
-        Page<GroupModel.InfoWithMemberCount> groupPage = groupService.getGroupPaging(userId,
-                pageable);
+        Page<GroupModel.InfoWithMemberCount> groupPage = groupReaderService.getGroupPaging(userId,
+            pageable);
         Page<GroupResponse.Info> groupResponse = groupPage.map(GroupResponse.Info::from);
         return PagingResponse.from(groupResponse);
     }
 
     @PatchMapping("/modify")
     public GlobalResponse modifyGroup(
-            @Authenticate Long userId,
-            @RequestBody @Valid GroupRequest.Modify request
+        @Authenticate Long userId,
+        @RequestBody @Valid GroupRequest.Modify request
     ) {
         groupService.modifyGroup(userId, request.toCommand());
         return GlobalResponse.builder().message("그룹 정보를 성공적으로 변경했습니다.").build();
@@ -70,7 +72,7 @@ public class GroupController {
 
     @GetMapping("/info/{group-id}")
     public GroupResponse.Info getGroupInfo(
-            @PathVariable("group-id") @NotNull @Min(1) Long groupId
+        @PathVariable("group-id") @NotNull @Min(1) Long groupId
     ) {
         GroupModel.InfoWithMemberCount groupModel = groupService.getGroupInfo(groupId);
         return GroupResponse.Info.from(groupModel);
