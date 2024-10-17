@@ -93,17 +93,11 @@ public class QuestionService {
     public void createQuestion(Long userId, QuestionCommand.Create command) {
         GroupMember groupMember = groupMemberReaderService.getByUserIdAndGroupId(userId,
             command.groupId());
-        validateApprovalStatus(groupMember);
+        groupMember.validateApprovalStatus();
 
         Question question = command.toEntity(groupMember.getUser());
 
         questionWriterService.save(question);
-    }
-
-    public void validateApprovalStatus(GroupMember groupMember) {
-        if (!groupMember.isApproved()) {
-            throw new IllegalStateException(MessageConstants.NOT_APPROVED_MEMBER_MESSAGE);
-        }
     }
 
     @Transactional
