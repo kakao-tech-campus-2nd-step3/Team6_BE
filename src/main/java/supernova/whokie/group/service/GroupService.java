@@ -6,24 +6,25 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
-import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.global.exception.ForbiddenException;
 import supernova.whokie.group.Groups;
-import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.group.repository.dto.GroupInfoWithMemberCount;
 import supernova.whokie.group.service.dto.GroupCommand;
 import supernova.whokie.group.service.dto.GroupModel.InfoWithMemberCount;
 import supernova.whokie.group_member.GroupMember;
-import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
-import supernova.whokie.user.infrastructure.repository.UserRepository;
+import supernova.whokie.group_member.service.GroupMemberReaderService;
+import supernova.whokie.group_member.service.GroupMemberWriterService;
+import supernova.whokie.user.service.UserReaderService;
 
 @Service
 @RequiredArgsConstructor
 public class GroupService {
 
-    private final GroupRepository groupRepository;
-    private final GroupMemberRepository groupMemberRepository;
-    private final UserRepository userRepository;
+    private final GroupWriterService groupWriterService;
+    private final GroupReaderService groupReaderService;
+    private final UserReaderService userReaderService;
+    private final GroupMemberWriterService groupMemberWriterService;
+    private final GroupMemberReaderService groupMemberReaderService;
 
     /**
      * 그룹 생성후, 그룹장을 생성한 유저로 지정한다.
@@ -32,34 +33,24 @@ public class GroupService {
     public void createGroup(GroupCommand.Create command, Long userId) {
 
         var group = command.toEntity();
-        groupRepository.save(group);
+        groupWriterService.save(group);
 
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+        var user = userReaderService.getUserById(userId);
 
         GroupMember leader = GroupMember.CreateLeader(user, group);
-        groupMemberRepository.save(leader);
+        groupMemberWriterService.save(leader);
     }
 
-    @Transactional(readOnly = true)
-    public Page<InfoWithMemberCount> getGroupPaging(Long userId, Pageable pageable) {
-        Page<GroupInfoWithMemberCount> groupPage = groupRepository.findGroupsWithMemberCountByUserId(
-                userId,
-                pageable);
-        return groupPage.map(InfoWithMemberCount::from);
-    }
 
     @Transactional
     public void modifyGroup(Long userId, GroupCommand.Modify command) {
-        GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId,
-                        command.groupId())
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE));
+        GroupMember groupMember = groupMemberReaderService.getByUserIdAndGroupId(userId,
+            command.groupId());
 
         if (!groupMember.isLeader()) {
             throw new ForbiddenException(MessageConstants.NOT_GROUP_LEADER_MESSAGE);
         }
-        Groups group = groupRepository.findById(command.groupId())
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
+        Groups group = groupReaderService.getGroupById(command.groupId());
 
         group.modify(command.groupName(), command.description());
     }
@@ -67,9 +58,15 @@ public class GroupService {
     @Transactional(readOnly = true)
     public InfoWithMemberCount getGroupInfo(Long groupId) {
 
-        GroupInfoWithMemberCount groupInfo = groupRepository.findGroupInfoWithMemberCountByGroupId(
-                        groupId)
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.GROUP_NOT_FOUND_MESSAGE));
+        GroupInfoWithMemberCount groupInfo = groupReaderService.getGroupInfoWithMemberCountByGroupId(
+            groupId);
         return InfoWithMemberCount.from(groupInfo);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<InfoWithMemberCount> getGroupPaging(Long userId, Pageable pageable) {
+        Page<GroupInfoWithMemberCount> groupPage = groupReaderService.getGroupPaging(userId,
+            pageable);
+        return groupPage.map(InfoWithMemberCount::from);
     }
 }
