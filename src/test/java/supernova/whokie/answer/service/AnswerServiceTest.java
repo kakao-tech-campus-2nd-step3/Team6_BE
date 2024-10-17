@@ -4,27 +4,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.util.ReflectionTestUtils;
 import supernova.whokie.answer.Answer;
-import supernova.whokie.answer.controller.dto.AnswerResponse;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.answer.service.dto.AnswerCommand;
 import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
-import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,8 +31,8 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @TestPropertySource(properties = {
-        "spring.profiles.active=default",
-        "jwt.secret=abcd"
+    "spring.profiles.active=default",
+    "jwt.secret=abcd"
 })
 class AnswerServiceTest {
 
@@ -127,33 +118,34 @@ class AnswerServiceTest {
         Users dummyUser = Users.builder().id(1L).build();
 
         List<Friend> dummyFriends = List.of(
-                Friend.builder()
-                        .hostUser(dummyUser)
-                        .friendUser(Users.builder().id(2L).name("Friend 1").imageUrl("url1").build())
-                        .build(),
-                Friend.builder()
-                        .hostUser(dummyUser)
-                        .friendUser(Users.builder().id(3L).name("Friend 2").imageUrl("url2").build())
-                        .build(),
-                Friend.builder()
-                        .hostUser(dummyUser)
-                        .friendUser(Users.builder().id(4L).name("Friend 3").imageUrl("url3").build())
-                        .build(),
-                Friend.builder()
-                        .hostUser(dummyUser)
-                        .friendUser(Users.builder().id(5L).name("Friend 4").imageUrl("url4").build())
-                        .build(),
-                Friend.builder()
-                        .hostUser(dummyUser)
-                        .friendUser(Users.builder().id(6L).name("Friend 5").imageUrl("url5").build())
-                        .build()
+            Friend.builder()
+                .hostUser(dummyUser)
+                .friendUser(Users.builder().id(2L).name("Friend 1").imageUrl("url1").build())
+                .build(),
+            Friend.builder()
+                .hostUser(dummyUser)
+                .friendUser(Users.builder().id(3L).name("Friend 2").imageUrl("url2").build())
+                .build(),
+            Friend.builder()
+                .hostUser(dummyUser)
+                .friendUser(Users.builder().id(4L).name("Friend 3").imageUrl("url3").build())
+                .build(),
+            Friend.builder()
+                .hostUser(dummyUser)
+                .friendUser(Users.builder().id(5L).name("Friend 4").imageUrl("url4").build())
+                .build(),
+            Friend.builder()
+                .hostUser(dummyUser)
+                .friendUser(Users.builder().id(6L).name("Friend 5").imageUrl("url5").build())
+                .build()
         );
 
         //when
         when(friendRepository.findAllByHostUser(any(Users.class))).thenReturn(dummyFriends);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(dummyUser));
 
-        AnswerModel.Refresh refreshResponse = answerService.refreshAnswerList(dummyUser.getId());
+        AnswerModel.Refresh refreshResponse = answerService.refreshAnswerList(
+            dummyUser.getId());
 
         //then
         assertEquals(5, refreshResponse.users().size());

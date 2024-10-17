@@ -4,53 +4,50 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import supernova.whokie.global.constants.MessageConstants;
-import supernova.whokie.global.exception.EntityNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.exception.ForbiddenException;
 import supernova.whokie.profile_answer.ProfileAnswer;
-import supernova.whokie.profile_answer.infrastructure.repository.ProfileAnswerRepository;
 import supernova.whokie.profile_answer.service.dto.ProfileAnswerCommand;
 import supernova.whokie.profile_answer.service.dto.ProfileAnswerModel;
 import supernova.whokie.profile_question.ProfileQuestion;
-import supernova.whokie.profile_question.infrastructure.repository.ProfileQuestionRepository;
+import supernova.whokie.profile_question.service.ProfileQuestionReaderService;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.infrastructure.repository.UserRepository;
+import supernova.whokie.user.service.UserReaderService;
 
 @Service
 @RequiredArgsConstructor
 public class ProfileAnswerService {
 
-    private final UserRepository userRepository;
-    private final ProfileQuestionRepository profileQuestionRepository;
-    private final ProfileAnswerRepository profileAnswerRepository;
+    private final ProfileAnswerReaderService profileAnswerReaderService;
+    private final ProfileAnswerWriterService profileAnswerWriterService;
+    private final UserReaderService userReaderService;
+    private final ProfileQuestionReaderService profileQuestionReaderService;
 
+
+    @Transactional(readOnly = true)
     public Page<ProfileAnswerModel.Info> getProfileAnswers(Long userId, Pageable pageable) {
-        Page<ProfileAnswer> profileAnswers = profileAnswerRepository.findAllByUserId(userId,
-                pageable);
+        Page<ProfileAnswer> profileAnswers = profileAnswerReaderService.getAllByUserId(userId,
+            pageable);
         return profileAnswers.map(ProfileAnswerModel.Info::from);
     }
 
+    @Transactional
     public void createProfileAnswer(Long answeredUserId, ProfileAnswerCommand.Create command) {
-        Users answeredUser = userRepository.findById(answeredUserId)
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
-
-        ProfileQuestion profileQuestion = profileQuestionRepository.findById(
-                        command.profileQuestionId())
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.PROFILE_QUESTION_NOT_FOUND_MESSAGE));
-
+        Users answeredUser = userReaderService.getUserById(answeredUserId);
+        ProfileQuestion profileQuestion = profileQuestionReaderService.getById(
+            command.profileQuestionId());
         ProfileAnswer profileAnswer = command.toEntity(answeredUser, profileQuestion);
 
-        profileAnswerRepository.save(profileAnswer);
+        profileAnswerWriterService.save(profileAnswer);
     }
 
+    @Transactional
     public void deleteProfileAnswer(Long userId, Long profileAnswerId) {
-        ProfileAnswer profileAnswer = profileAnswerRepository.findByIdWithAnsweredUser(
-                        profileAnswerId)
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.PROFILE_ANSWER_NOT_FOUND_MESSAGE));
-
+        ProfileAnswer profileAnswer = profileAnswerReaderService.getByIdWithAnsweredUser(
+            profileAnswerId);
         if (!profileAnswer.isOwner(userId)) {
             throw new ForbiddenException("답변을 작성한 사람만 삭제할 수 있습니다.");
         }
-        profileAnswerRepository.deleteById(profileAnswerId);
+        profileAnswerWriterService.deleteById(profileAnswerId);
     }
 }

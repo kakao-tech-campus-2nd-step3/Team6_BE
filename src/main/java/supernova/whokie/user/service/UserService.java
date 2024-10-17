@@ -1,5 +1,6 @@
 package supernova.whokie.user.service;
 
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +20,6 @@ import supernova.whokie.user.infrastructure.apiCaller.dto.UserInfoResponse;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.service.dto.UserModel;
 
-import java.time.LocalDate;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -35,6 +34,7 @@ public class UserService {
         return userApiCaller.createCodeUrl();
     }
 
+    //TODO 리팩 필요
     @Transactional
     public String register(String code) {
         // 토큰 발급
@@ -46,7 +46,7 @@ public class UserService {
         KakaoAccount kakaoAccount = userInfoResponse.kakaoAccount();
 
         // Users 저장 및 중복 체크
-        Users user = userRepository.findByEmail(kakaoAccount.email())
+        Users user = userRepository.findByEmail(kakaoAccount.email())\
                 .orElseGet(() -> {
                     Users newUser = userRepository.save(
                             Users.builder()
@@ -78,14 +78,16 @@ public class UserService {
 
     public UserModel.Info getUserInfo(Long userId) {
         Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+            .orElseThrow(
+                () -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         return UserModel.Info.from(user);
     }
 
     public UserModel.Point getPoint(Long userId) {
         Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+            .orElseThrow(
+                () -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         return UserModel.Point.from(user);
     }
@@ -93,16 +95,16 @@ public class UserService {
     @Transactional
     public String testRegister() {  // 로그인 테스트용
         Users user = Users.builder()
-                .id(1L)
-                .name("test")
-                .email("test@gmail.com")
-                .point(1000)
-                .age(30)
-                .kakaoId(1L)
-                .gender(Gender.M)
-                .imageUrl("test")
-                .role(Role.USER)
-                .build();
+            .id(1L)
+            .name("test")
+            .email("test@gmail.com")
+            .point(1000)
+            .age(30)
+            .kakaoId(1L)
+            .gender(Gender.M)
+            .imageUrl("test")
+            .role(Role.USER)
+            .build();
 
         userRepository.save(user);
 
