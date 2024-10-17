@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.service.FriendReaderService;
 import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.constants.MessageConstants;
@@ -20,7 +19,6 @@ import supernova.whokie.question.service.dto.QuestionCommand;
 import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
-import supernova.whokie.user.service.dto.UserModel;
 
 @Service
 @RequiredArgsConstructor
@@ -38,9 +36,12 @@ public class QuestionService {
         Users user = userReaderService.getUserById(userId);
 
         List<Question> randomQuestions = questionReaderService.getRandomQuestions(pageable);
+        Pageable friendPageable = PageRequest.of(0, Constants.FRIEND_LIMIT);
 
+        //TODO 리팩토링 필요
         return randomQuestions.stream()
-            .map(question -> QuestionModel.CommonQuestion.from(question, getFriendList(user)))
+            .map(question -> QuestionModel.CommonQuestion.from(question,
+                friendReaderService.findRandomFriendsByHostUser(user.getId(), friendPageable)))
             .toList();
     }
 
@@ -56,16 +57,6 @@ public class QuestionService {
             pageable);
 
         return groupQuestionPage.map(question -> QuestionModel.Info.from(question, status));
-    }
-
-    private List<UserModel.PickedInfo> getFriendList(Users user) {
-        Pageable pageable = PageRequest.of(0, Constants.FRIEND_LIMIT);
-        List<Friend> randomFriends = friendReaderService.findRandomFriendsByHostUser(user.getId(),
-            pageable);
-
-        return randomFriends.stream()
-            .map(friend -> UserModel.PickedInfo.from(friend.getFriendUser()))
-            .toList();
     }
 
     @Transactional(readOnly = true)
