@@ -1,161 +1,104 @@
 package supernova.whokie.question.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import supernova.whokie.friend.Friend;
-import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.friend.service.FriendReaderService;
 import supernova.whokie.global.constants.Constants;
+import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
-import supernova.whokie.group.Groups;
-import supernova.whokie.group.repository.GroupRepository;
 import supernova.whokie.group_member.GroupMember;
-import supernova.whokie.group_member.infrastructure.repository.GroupMemberRepository;
-import supernova.whokie.group_member.service.dto.GroupMemberModel;
-import supernova.whokie.group_member.service.dto.GroupMemberModel.Option;
+import supernova.whokie.group_member.service.GroupMemberReaderService;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
-import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.question.service.dto.QuestionCommand;
 import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.infrastructure.repository.UserRepository;
-import supernova.whokie.user.service.dto.UserModel;
-
-import java.util.ArrayList;
-import java.util.List;
+import supernova.whokie.user.service.UserReaderService;
 
 @Service
 @RequiredArgsConstructor
 public class QuestionService {
 
-
-    private final QuestionRepository questionRepository;
-    private final FriendRepository friendRepository;
-    private final UserRepository userRepository;
-    private final GroupRepository groupsRepository;
-    private final GroupMemberRepository groupMemberRepository;
-
-    @Transactional(readOnly = true)
-    public List<QuestionModel.CommonQuestion> getCommonQuestion(Long userId) {
-
-        Users user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
-
-        return getCommonQuestionList(user);
-    }
-
-
+    private final GroupMemberReaderService groupMemberReaderService;
+    private final QuestionReaderService questionReaderService;
+    private final FriendReaderService friendReaderService;
+    private final UserReaderService userReaderService;
+    private final QuestionWriterService questionWriterService;
 
     @Transactional(readOnly = true)
-    public Page<QuestionModel.Info> getGroupQuestionPaging(Long userId, String groupId, Boolean status, Pageable pageable) {
-        Long parsedGroupId = Long.parseLong(groupId);
-        Users user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("유저가 존재하지 않습니다."));
-        Groups group = groupsRepository.findById(parsedGroupId)
-                .orElseThrow(() -> new EntityNotFoundException("그룹이 존재하지 않습니다."));
+    public List<QuestionModel.CommonQuestion> getCommonQuestion(Long userId, Pageable pageable) {
 
-        List<Question> groupQuestions = questionRepository.findAllByGroupId(parsedGroupId);
+        Users user = userReaderService.getUserById(userId);
 
-        return getGroupQuestionsByStatus(status, groupQuestions, pageable);
-    }
+        List<Question> randomQuestions = questionReaderService.getRandomQuestions(pageable);
+        Pageable friendPageable = PageRequest.of(0, Constants.FRIEND_LIMIT);
 
-    private static Page<QuestionModel.Info> getGroupQuestionsByStatus(Boolean status, List<Question> groupQuestions, Pageable pageable) {
-        List<Question> filteredQuestions;
-
-
-        if (Boolean.TRUE.equals(status)) {
-            filteredQuestions = groupQuestions.stream()
-                    .filter(question -> question.getQuestionStatus().equals(QuestionStatus.APPROVED))
-                    .toList();
-        } else if (Boolean.FALSE.equals(status)) {
-            filteredQuestions = groupQuestions.stream()
-                    .filter(question -> question.getQuestionStatus().equals(QuestionStatus.REJECTED))
-                    .toList();
-        } else {
-            filteredQuestions = new ArrayList<>();
-        }
-
-
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), filteredQuestions.size());
-        List<QuestionModel.Info> result = filteredQuestions.subList(start, end).stream()
-                .map(question -> QuestionModel.Info.from(question, status))
-                .toList();
-
-        return new PageImpl<>(result, pageable, filteredQuestions.size());
-    }
-
-
-    private List<QuestionModel.CommonQuestion> getCommonQuestionList(Users user) {
-        Pageable pageable = PageRequest.of(0, Constants.QUESTION_LIMIT);
-
-        List<Question> randomQuestions = questionRepository.findRandomQuestions(pageable);
-
+        //TODO 리팩토링 필요
         return randomQuestions.stream()
-                .map(question -> QuestionModel.CommonQuestion.from(question, getFriendList(user)))
-                .toList();
-    }
-
-    private List<UserModel.PickedInfo> getFriendList(Users user) {
-        Pageable pageable = PageRequest.of(0, Constants.FRIEND_LIMIT);
-        List<Friend> randomFriends = friendRepository.findRandomFriendsByHostUser(user.getId(), pageable);
-
-        return randomFriends.stream()
-                .map(friend -> UserModel.PickedInfo.from(friend.getFriendUser()))
-                .toList();
-    }
-
-    public List<QuestionModel.GroupQuestion> getGroupQuestions(Long userId, Long groupId) {
-        GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, groupId)
-            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
-
-        Pageable pageable = PageRequest.of(0, Constants.QUESTION_LIMIT);
-        List<Question> randomQuestions = questionRepository.findRandomGroupQuestions(groupId, pageable);
-
-        return randomQuestions.stream()
-            .map(question -> QuestionModel.GroupQuestion.from(question, getGroupMemberList(userId, groupId)))
+            .map(question -> QuestionModel.CommonQuestion.from(question,
+                friendReaderService.findRandomFriendsByHostUser(user.getId(), friendPageable)))
             .toList();
     }
 
-    private List<GroupMemberModel.Option> getGroupMemberList(Long userId, Long groupId) {
-        Pageable pageable = PageRequest.of(0, Constants.FRIEND_LIMIT);
-        List<GroupMember> randomGroupMembers = groupMemberRepository.getRandomGroupMember(userId, groupId, pageable);
+    @Transactional(readOnly = true)
+    public Page<QuestionModel.Info> getGroupQuestionPaging(Long userId, Long groupId,
+        QuestionStatus status, Pageable pageable) {
 
-        return randomGroupMembers.stream()
-            .map(Option::from)
+        if (!groupMemberReaderService.isGroupMemberExist(userId, groupId)) {
+            throw new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE);
+        }
+
+        Page<Question> groupQuestionPage = questionReaderService.getAllByStatus(groupId, status,
+            pageable);
+
+        return groupQuestionPage.map(question -> QuestionModel.Info.from(question, status));
+    }
+
+    @Transactional(readOnly = true)
+    public List<QuestionModel.GroupQuestion> getGroupQuestions(Long userId, Long groupId) {
+
+        if (!groupMemberReaderService.isGroupMemberExist(userId, groupId)) {
+            throw new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE);
+        }
+
+        Pageable pageable = PageRequest.of(0, Constants.QUESTION_LIMIT);
+        List<Question> randomQuestions = questionReaderService.getRandomGroupQuestions(groupId,
+            pageable);
+
+        Pageable GroupMemberpageable = PageRequest.of(0, Constants.FRIEND_LIMIT);
+
+        //TODO 리팩토링 필요
+        return randomQuestions.stream()
+            .map(question -> QuestionModel.GroupQuestion.from(question,
+                groupMemberReaderService.getRandomGroupMembersByGroupId(userId, groupId,
+                    GroupMemberpageable)))
             .toList();
     }
 
     @Transactional
     public void createQuestion(Long userId, QuestionCommand.Create command) {
-        GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
-        validateApprovalStatus(groupMember);
+        GroupMember groupMember = groupMemberReaderService.getByUserIdAndGroupId(userId,
+            command.groupId());
+        groupMember.validateApprovalStatus();
 
         Question question = command.toEntity(groupMember.getUser());
 
-        questionRepository.save(question);
-    }
-
-    public void validateApprovalStatus(GroupMember groupMember) {
-        if (!groupMember.isApproved()) {
-            throw new IllegalStateException("승인되지 않은 멤버입니다.");
-        }
+        questionWriterService.save(question);
     }
 
     @Transactional
     public void approveQuestion(Long userId, QuestionCommand.Approve command) {
-        GroupMember groupMember = groupMemberRepository.findByUserIdAndGroupId(userId, command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 유저가 존재하지 않습니다."));
+        GroupMember groupMember = groupMemberReaderService.getByUserIdAndGroupId(userId,
+            command.groupId());
         groupMember.validateLeader();
 
-        Question question = questionRepository.findByIdAndGroupId(command.questionId(),
-                command.groupId())
-            .orElseThrow(() -> new EntityNotFoundException("그룹 내에 해당 질문이 존재하지 않습니다."));
+        Question question = questionReaderService.getQuestionByIdAndGroupId(command.questionId(),
+            command.groupId());
 
         question.changeStatus(command.status());
     }

@@ -11,18 +11,18 @@ public class ProfileAnswerCommand {
 
     @Builder
     public record Create(
-        @NotNull
-        Long profileQuestionId,
-        @NotBlank
-        String content
+            @NotNull
+            Long profileQuestionId,
+            @NotBlank
+            String content
     ) {
 
         public ProfileAnswer toEntity(Users answeredUser, ProfileQuestion profileQuestion) {
             return ProfileAnswer.builder()
-                .content(content)
-                .profileQuestion(profileQuestion)
-                .answeredUser(answeredUser)
-                .build();
+                    .content(content)
+                    .profileQuestion(profileQuestion)
+                    .answeredUser(answeredUser)
+                    .build();
         }
     }
 }

@@ -4,14 +4,19 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
-import supernova.whokie.group.controller.dto.GroupRequest;
 import supernova.whokie.group_member.controller.dto.GroupMemberRequest;
 import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
-
 import supernova.whokie.group_member.service.GroupMemberService;
+import supernova.whokie.group_member.service.GroupMemberWriterService;
 import supernova.whokie.group_member.service.dto.GroupMemberModel;
 
 @RestController
@@ -19,6 +24,7 @@ import supernova.whokie.group_member.service.dto.GroupMemberModel;
 @RequestMapping("/api/group")
 public class GroupMemberController {
 
+    private final GroupMemberWriterService groupMemberWriterService;
     private final GroupMemberService groupMemberService;
 
     @PatchMapping("leader")
@@ -35,7 +41,7 @@ public class GroupMemberController {
         @RequestBody @Valid GroupMemberRequest.Expel request,
         @Authenticate Long userId
     ) {
-        groupMemberService.expelMember(userId, request.toCommand());
+        groupMemberWriterService.expelMember(userId, request.toCommand());
         return GlobalResponse.builder().message("그룹 멤버 강퇴에 성공하였습니다.").build();
     }
 
@@ -63,7 +69,7 @@ public class GroupMemberController {
         @Authenticate Long userId
     ) {
 
-        groupMemberService.exitGroup(request.toCommand(), userId);
+        groupMemberWriterService.exitGroup(request.toCommand(), userId);
         return GlobalResponse.builder().message("dummy").build();
     }
 }

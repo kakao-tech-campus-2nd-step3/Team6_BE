@@ -10,9 +10,9 @@ public class FriendEventDto {
 
     @Builder
     public record Update(
-        Long hostId,
-        FriendCommand.Update command,
-        List<Friend> existingFriends
+            Long hostId,
+            FriendCommand.Update command,
+            List<Friend> existingFriends
     ) {
         public static FriendEventDto.Update toDto(Long hostId, FriendCommand.Update command, List<Friend> existingFriends) {
             return Update.builder()

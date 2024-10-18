@@ -11,7 +11,7 @@ public class PointRecordEventDto {
             int amount,
             PointRecordOption option,
             String message
-    ){
+    ) {
         public static PointRecordEventDto.Earn toDto(Long userId, int point, int amount, PointRecordOption option, String message) {
             return Earn.builder()
                     .userId(userId)

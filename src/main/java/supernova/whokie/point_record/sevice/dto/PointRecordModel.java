@@ -10,10 +10,10 @@ public class PointRecordModel {
 
     @Builder
     public record Record(
-        Long id,
-        int point,
-        PointRecordOption option,
-        LocalDate createdAt
+            Long id,
+            int point,
+            PointRecordOption option,
+            LocalDate createdAt
     ) {
         public static PointRecordModel.Record from(PointRecord entity) {
             return PointRecordModel.Record.builder()

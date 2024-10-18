@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ProblemDetail> methodArgumentNotValidException(
-        MethodArgumentNotValidException e) {
+            MethodArgumentNotValidException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setTitle("Validation Error");
 

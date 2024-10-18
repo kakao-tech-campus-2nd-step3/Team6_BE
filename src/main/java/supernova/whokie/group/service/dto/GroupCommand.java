@@ -7,25 +7,25 @@ public class GroupCommand {
 
     @Builder
     public record Create(
-        String groupName,
-        String groupDescription,
-        String groupImageUrl
+            String groupName,
+            String groupDescription,
+            String groupImageUrl
     ) {
 
         public Groups toEntity() {
             return Groups.builder()
-                .groupName(groupName)
-                .description(groupDescription)
-                .groupImageUrl(groupImageUrl)
-                .build();
+                    .groupName(groupName)
+                    .description(groupDescription)
+                    .groupImageUrl(groupImageUrl)
+                    .build();
         }
     }
 
     @Builder
     public record Modify(
-        Long groupId,
-        String groupName,
-        String description
+            Long groupId,
+            String groupName,
+            String description
     ) {
 
     }

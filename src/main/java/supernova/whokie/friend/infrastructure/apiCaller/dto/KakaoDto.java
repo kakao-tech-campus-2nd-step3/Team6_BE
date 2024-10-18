@@ -10,8 +10,8 @@ public class KakaoDto {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public record Friends(
-        String afterUrl,
-        List<Profile> elements
+            String afterUrl,
+            List<Profile> elements
     ) {
 
     }

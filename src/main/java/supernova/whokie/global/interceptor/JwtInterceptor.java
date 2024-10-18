@@ -1,9 +1,10 @@
-package supernova.whokie.global.auth;
+package supernova.whokie.global.interceptor;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
+import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.exception.AuthenticationException;
 
 public class JwtInterceptor implements HandlerInterceptor {
@@ -18,7 +19,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-        Object handler) throws Exception {
+                             Object handler) throws Exception {
         String authHeader = request.getHeader(HEADER_AUTHORIZATION);
         if (authHeader == null) {
             return true;
