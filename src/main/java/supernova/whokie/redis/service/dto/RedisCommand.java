@@ -2,7 +2,7 @@ package supernova.whokie.redis.service.dto;
 
 import lombok.Builder;
 import supernova.whokie.profile.ProfileVisitCount;
-import supernova.whokie.redis.entity.VisitCount;
+import supernova.whokie.redis.entity.RedisVisitCount;
 
 public class RedisCommand {
 
@@ -20,8 +20,8 @@ public class RedisCommand {
                     .build();
         }
 
-        public VisitCount toRedisEntity() {
-            return VisitCount.builder()
+        public RedisVisitCount toRedisEntity() {
+            return RedisVisitCount.builder()
                     .hostId(hostId)
                     .dailyVisited(dailyVisited)
                     .totalVisited(totalVisited)
