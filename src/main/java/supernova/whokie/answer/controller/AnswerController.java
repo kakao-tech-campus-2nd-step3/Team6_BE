@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -16,6 +17,7 @@ import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -54,14 +56,19 @@ public class AnswerController {
     @GetMapping("/record")
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(
         @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable,
+        @RequestParam(name = "date", defaultValue = "1900-01-01") LocalDate date,
         @Authenticate Long userId
     ) {
-        return answerService.getAnswerRecord(pageable, userId);
+
+        Page<AnswerModel.Record> page = answerService.getAnswerRecord(pageable, userId,
+            date);
+        Page<AnswerResponse.Record> response = page.map(AnswerResponse.Record::from);
+        return PagingResponse.from(response);
     }
 
     @GetMapping("/hint/{answer-id}")
     public AnswerResponse.Hints getHints(
-        @PathVariable("answer-id") @NotNull @Min(1) String answerId,
+        @PathVariable("answer-id") @NotNull @Min(1) Long answerId,
         @Authenticate Long userId
     ) {
         List<AnswerModel.Hint> allHints = answerService.getHints(userId, answerId);

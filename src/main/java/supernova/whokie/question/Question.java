@@ -1,6 +1,14 @@
 package supernova.whokie.question;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -35,10 +43,10 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id")
     private Users writer;
 
-    public boolean isNotCorrectGroupQuestion(Long groupId){
+
+    public boolean isNotCorrectGroupQuestion(Long groupId) {
         return this.groupId != groupId;
     }
-
 
     public void changeStatus(Boolean status) {
         if (status) {

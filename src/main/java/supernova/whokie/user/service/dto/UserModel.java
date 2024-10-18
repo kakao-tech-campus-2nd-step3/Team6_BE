@@ -1,10 +1,11 @@
 package supernova.whokie.user.service.dto;
 
-import java.time.LocalDate;
 import lombok.Builder;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
+
+import java.time.LocalDate;
 
 public class UserModel {
 
@@ -14,7 +15,7 @@ public class UserModel {
             String name,
             String imageUrl
     ) {
-        public static PickedInfo from(Users user){
+        public static PickedInfo from(Users user) {
             return PickedInfo.builder()
                     .userId(user.getId())
                     .name(user.getName())

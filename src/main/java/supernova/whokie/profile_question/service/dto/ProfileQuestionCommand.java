@@ -8,15 +8,15 @@ public class ProfileQuestionCommand {
 
     @Builder
     public record Create(
-        String content
+            String content
     ) {
 
         public ProfileQuestion toEntity(Users user) {
             return ProfileQuestion.builder()
-                .content(content)
-                .user(user)
-                .profileQuestionStatus(true)
-                .build();
+                    .content(content)
+                    .user(user)
+                    .profileQuestionStatus(true)
+                    .build();
         }
     }
 

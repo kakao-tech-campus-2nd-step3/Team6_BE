@@ -5,18 +5,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.auth.JwtProvider;
+import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.profile.Profile;
-import supernova.whokie.profile.infrastructure.ProfileRepository;
+import supernova.whokie.profile.infrastructure.repository.ProfileRepository;
 import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
+import supernova.whokie.user.infrastructure.apiCaller.UserApiCaller;
 import supernova.whokie.user.infrastructure.apiCaller.dto.KakaoAccount;
 import supernova.whokie.user.infrastructure.apiCaller.dto.TokenInfoResponse;
 import supernova.whokie.user.infrastructure.apiCaller.dto.UserInfoResponse;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
-import supernova.whokie.user.infrastructure.apiCaller.UserApiCaller;
 import supernova.whokie.user.service.dto.UserModel;
 
 @Service
@@ -33,6 +34,7 @@ public class UserService {
         return userApiCaller.createCodeUrl();
     }
 
+    //TODO 리팩 필요
     @Transactional
     public String register(String code) {
         // 토큰 발급
@@ -45,30 +47,28 @@ public class UserService {
 
         // Users 저장 및 중복 체크
         Users user = userRepository.findByEmail(kakaoAccount.email())
-            .orElseGet(() -> {
-                Users newUser = userRepository.save(
-                    Users.builder()
-                        .name(kakaoAccount.name())
-                        .email(kakaoAccount.email())
-                        .point(0)
-                        .age(LocalDate.now().getYear() - Integer.parseInt(kakaoAccount.birthYear()))
-                        .gender(Gender.fromString(kakaoAccount.gender()))
-                        .imageUrl(kakaoAccount.profile().profileImageUrl())
-                        .role(Role.USER)
-                        .kakaoId(userInfoResponse.id())
-                        .build()
-                );
+                .orElseGet(() -> {
+                    Users newUser = userRepository.save(
+                            Users.builder()
+                                    .name(kakaoAccount.name())
+                                    .email(kakaoAccount.email())
+                                    .point(0)
+                                    .age(LocalDate.now().getYear() - Integer.parseInt(kakaoAccount.birthYear()))
+                                    .gender(Gender.fromString(kakaoAccount.gender()))
+                                    .imageUrl(kakaoAccount.profile().profileImageUrl())
+                                    .role(Role.USER)
+                                    .kakaoId(userInfoResponse.id())
+                                    .build()
+                    );
 
-                Profile profile = Profile.builder()
-                    .users(newUser)
-                    .todayVisited(0)
-                    .totalVisited(0)
-                    .backgroundImageUrl(kakaoAccount.profile().profileImageUrl())
-                    .build();
+                    Profile profile = Profile.builder()
+                            .users(newUser)
+                            .backgroundImageUrl(kakaoAccount.profile().profileImageUrl())
+                            .build();
 
-                profileRepository.save(profile);
-                return newUser;
-            });
+                    profileRepository.save(profile);
+                    return newUser;
+                });
 
         // kakao token 저장
         kakaoTokenService.saveToken(user.getId(), tokenResponse);
@@ -78,14 +78,16 @@ public class UserService {
 
     public UserModel.Info getUserInfo(Long userId) {
         Users user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            .orElseThrow(
+                () -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         return UserModel.Info.from(user);
     }
 
     public UserModel.Point getPoint(Long userId) {
         Users user = userRepository.findById(userId)
-            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+            .orElseThrow(
+                () -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
 
         return UserModel.Point.from(user);
     }
@@ -107,13 +109,11 @@ public class UserService {
         userRepository.save(user);
 
         Profile profile = Profile.builder()
-            .id(1L)
-            .users(user)
-            .todayVisited(2)
-            .totalVisited(12)
-            .description("test")
-            .backgroundImageUrl("test")
-            .build();
+                .id(1L)
+                .users(user)
+                .description("test")
+                .backgroundImageUrl("test")
+                .build();
 
         profileRepository.save(profile);
 

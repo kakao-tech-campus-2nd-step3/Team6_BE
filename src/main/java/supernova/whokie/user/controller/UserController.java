@@ -26,8 +26,8 @@ public class UserController {
         String loginUrl = userService.getCodeUrl();
 
         return ResponseEntity.status(HttpStatus.SEE_OTHER)
-            .header("location", loginUrl)
-            .build();
+                .header("location", loginUrl)
+                .build();
     }
 
     @GetMapping("/callback")
@@ -37,8 +37,8 @@ public class UserController {
         String token = userService.register(code);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .header("Authorization", token)
-            .body(GlobalResponse.builder().message(token).build());
+                .header("Authorization", token)
+                .body(GlobalResponse.builder().message(token).build());
     }
 
     @GetMapping("/mypage")
@@ -62,7 +62,7 @@ public class UserController {
         String token = userService.testRegister();
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .header("Authorization", token)
-            .body(GlobalResponse.builder().message("로그인이 완료되었습니다.").build());
+                .header("Authorization", token)
+                .body(GlobalResponse.builder().message("로그인이 완료되었습니다.").build());
     }
 }

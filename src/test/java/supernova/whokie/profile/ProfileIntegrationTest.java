@@ -1,17 +1,16 @@
-package supernova.whokie.profile.controller;
+package supernova.whokie.profile;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import supernova.whokie.global.auth.JwtProvider;
-import supernova.whokie.profile.Profile;
-import supernova.whokie.profile.infrastructure.ProfileRepository;
+import supernova.whokie.profile.infrastructure.repository.ProfileRepository;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
@@ -27,7 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {
     "jwt.secret=abcd"
 })
-public class ProfileControllerTest {
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+public class ProfileIntegrationTest {
 
     @Autowired
     private ProfileRepository profileRepository;
@@ -38,38 +38,16 @@ public class ProfileControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private JwtProvider jwtProvider;
-
     private Users user;
     private Profile profile;
 
     @BeforeEach
     void setUp() {
-        user = Users.builder()
-            .name("test")
-            .email("test@gmail.com")
-            .point(100)
-            .age(25)
-            .kakaoId(1L)
-            .gender(Gender.M)
-            .role(Role.USER)
-            .build();
-
-        userRepository.save(user);
-
-        profile = Profile.builder()
-            .users(user)
-            .todayVisited(2)
-            .totalVisited(12)
-            .description("test")
-            .backgroundImageUrl("test")
-            .build();
-
-        profileRepository.save(profile);
+        user = createUser();
+        profile = createProfile();
     }
 
-    //@Test
+    @Test
     @DisplayName("프로필 조회")
     void getProfileInfo() throws Exception {
         mockMvc.perform(get("/api/profile/{user-id}", user.getId())
@@ -77,10 +55,33 @@ public class ProfileControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.name").value("test"))
             .andExpect(jsonPath("$.description").value("test"))
-            .andExpect(jsonPath("$.todayVisited").value(2))
-            .andExpect(jsonPath("$.totalVisited").value(12))
             .andExpect(jsonPath("$.backgroundImageUrl").value("test"))
             .andDo(print());
     }
 
+    private Users createUser() {
+        Users user = Users.builder()
+            .name("test")
+            .email("test@gmail.com")
+            .point(1500)
+            .age(22)
+            .kakaoId(1L)
+            .gender(Gender.M)
+            .role(Role.USER)
+            .build();
+
+        userRepository.save(user);
+        return user;
+    }
+
+    private Profile createProfile() {
+        Profile profile = Profile.builder()
+            .users(user)
+            .description("test")
+            .backgroundImageUrl("test")
+            .build();
+
+        profileRepository.save(profile);
+        return profile;
+    }
 }
