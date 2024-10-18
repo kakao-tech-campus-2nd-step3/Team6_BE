@@ -8,7 +8,7 @@ import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.profile.Profile;
-import supernova.whokie.profile.infrastructure.ProfileRepository;
+import supernova.whokie.profile.infrastructure.repository.ProfileRepository;
 import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
@@ -47,30 +47,28 @@ public class UserService {
 
         // Users 저장 및 중복 체크
         Users user = userRepository.findByEmail(kakaoAccount.email())
-            .orElseGet(() -> {
-                Users newUser = userRepository.save(
-                    Users.builder()
-                        .name(kakaoAccount.name())
-                        .email(kakaoAccount.email())
-                        .point(0)
-                        .age(LocalDate.now().getYear() - Integer.parseInt(kakaoAccount.birthYear()))
-                        .gender(Gender.fromString(kakaoAccount.gender()))
-                        .imageUrl(kakaoAccount.profile().profileImageUrl())
-                        .role(Role.USER)
-                        .kakaoId(userInfoResponse.id())
-                        .build()
-                );
+                .orElseGet(() -> {
+                    Users newUser = userRepository.save(
+                            Users.builder()
+                                    .name(kakaoAccount.name())
+                                    .email(kakaoAccount.email())
+                                    .point(0)
+                                    .age(LocalDate.now().getYear() - Integer.parseInt(kakaoAccount.birthYear()))
+                                    .gender(Gender.fromString(kakaoAccount.gender()))
+                                    .imageUrl(kakaoAccount.profile().profileImageUrl())
+                                    .role(Role.USER)
+                                    .kakaoId(userInfoResponse.id())
+                                    .build()
+                    );
 
-                Profile profile = Profile.builder()
-                    .users(newUser)
-                    .todayVisited(0)
-                    .totalVisited(0)
-                    .backgroundImageUrl(kakaoAccount.profile().profileImageUrl())
-                    .build();
+                    Profile profile = Profile.builder()
+                            .users(newUser)
+                            .backgroundImageUrl(kakaoAccount.profile().profileImageUrl())
+                            .build();
 
-                profileRepository.save(profile);
-                return newUser;
-            });
+                    profileRepository.save(profile);
+                    return newUser;
+                });
 
         // kakao token 저장
         kakaoTokenService.saveToken(user.getId(), tokenResponse);
@@ -111,13 +109,11 @@ public class UserService {
         userRepository.save(user);
 
         Profile profile = Profile.builder()
-            .id(1L)
-            .users(user)
-            .todayVisited(2)
-            .totalVisited(12)
-            .description("test")
-            .backgroundImageUrl("test")
-            .build();
+                .id(1L)
+                .users(user)
+                .description("test")
+                .backgroundImageUrl("test")
+                .build();
 
         profileRepository.save(profile);
 

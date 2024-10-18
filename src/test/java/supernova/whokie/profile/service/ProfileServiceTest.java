@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import supernova.whokie.profile.Profile;
-import supernova.whokie.profile.infrastructure.ProfileRepository;
+import supernova.whokie.profile.infrastructure.repository.ProfileRepository;
 import supernova.whokie.profile.service.dto.ProfileModel;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
@@ -57,8 +57,6 @@ public class ProfileServiceTest {
             () -> assertThat(result).isNotNull(),
             () -> assertThat(result.name()).isEqualTo("test"),
             () -> assertThat(result.description()).isEqualTo("test"),
-            () -> assertThat(result.todayVisited()).isEqualTo(2),
-            () -> assertThat(result.totalVisited()).isEqualTo(12),
             () -> assertThat(result.backgroundImageUrl()).isEqualTo("test"),
             () -> then(profileRepository).should().findByUsersId(user.getId())
         );
@@ -80,8 +78,6 @@ public class ProfileServiceTest {
     private Profile createProfile() {
         return profile = Profile.builder()
             .users(user)
-            .todayVisited(2)
-            .totalVisited(12)
             .description("test")
             .backgroundImageUrl("test")
             .build();
