@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 @RedisHash("VisitCount")
 @Builder
-public class VisitCount {
+public class RedisVisitCount {
     @Id
     private Long hostId;
 
