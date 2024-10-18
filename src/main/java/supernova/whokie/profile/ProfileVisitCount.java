@@ -25,11 +25,6 @@ public class ProfileVisitCount extends BaseTimeEntity {
     @Column(nullable = false)
     private int totalVisited;
 
-    public void visit() {
-        dailyVisited += 1;
-        totalVisited += 1;
-    }
-
     public Long getHostId() {
         return hostId;
     }

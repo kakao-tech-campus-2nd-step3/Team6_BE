@@ -9,7 +9,9 @@ public class ProfileResponse {
     public record Info(
             String description,
             String backgroundImageUrl,
-            String name
+            String name,
+            int todayVisited,
+            int totalVisited
     ) {
 
         public static ProfileResponse.Info from(ProfileModel.Info info) {
@@ -17,19 +19,8 @@ public class ProfileResponse {
                     .description(info.description())
                     .backgroundImageUrl(info.backgroundImageUrl())
                     .name(info.name())
-                    .build();
-        }
-    }
-
-    @Builder
-    public record Visited(
-            int todayVisited,
-            int totalVisited
-    ) {
-        public static ProfileResponse.Visited from(ProfileModel.Visited visited) {
-            return Visited.builder()
-                    .todayVisited(visited.todayVisited())
-                    .todayVisited(visited.totalVisited())
+                    .todayVisited(info.todayVisited())
+                    .totalVisited(info.totalVisited())
                     .build();
         }
     }
