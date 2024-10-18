@@ -8,9 +8,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
+import supernova.whokie.user.infrastructure.repository.UserRepository;
 
 import java.util.List;
-import supernova.whokie.user.infrastructure.repository.UserRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

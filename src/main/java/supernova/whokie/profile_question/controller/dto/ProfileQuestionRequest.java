@@ -8,14 +8,14 @@ public class ProfileQuestionRequest {
 
     @Builder
     public record Create(
-        @NotBlank
-        String content
+            @NotBlank
+            String content
     ) {
 
         public ProfileQuestionCommand.Create toCommand() {
             return ProfileQuestionCommand.Create.builder()
-                .content(content)
-                .build();
+                    .content(content)
+                    .build();
         }
     }
 

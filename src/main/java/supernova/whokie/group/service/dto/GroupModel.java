@@ -7,21 +7,21 @@ public class GroupModel {
 
     @Builder
     public record InfoWithMemberCount(
-        Long groupId,
-        String groupName,
-        String groupDescription,
-        String groupImageUrl,
-        Long groupMemberCount
+            Long groupId,
+            String groupName,
+            String groupDescription,
+            String groupImageUrl,
+            Long groupMemberCount
     ) {
 
         public static InfoWithMemberCount from(GroupInfoWithMemberCount groupInfoWithMemberCount) {
             return InfoWithMemberCount.builder()
-                .groupId(groupInfoWithMemberCount.getGroupId())
-                .groupName(groupInfoWithMemberCount.getGroupName())
-                .groupDescription(groupInfoWithMemberCount.getDescription())
-                .groupImageUrl(groupInfoWithMemberCount.getGroupImageUrl())
-                .groupMemberCount(groupInfoWithMemberCount.getGroupMemberCount())
-                .build();
+                    .groupId(groupInfoWithMemberCount.getGroupId())
+                    .groupName(groupInfoWithMemberCount.getGroupName())
+                    .groupDescription(groupInfoWithMemberCount.getDescription())
+                    .groupImageUrl(groupInfoWithMemberCount.getGroupImageUrl())
+                    .groupMemberCount(groupInfoWithMemberCount.getGroupMemberCount())
+                    .build();
         }
     }
 

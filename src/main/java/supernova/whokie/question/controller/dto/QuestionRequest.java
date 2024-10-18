@@ -16,9 +16,9 @@ public class QuestionRequest {
 
         public QuestionCommand.Create toCommand() {
             return QuestionCommand.Create.builder()
-                .groupId(groupId)
-                .content(content)
-                .build();
+                    .groupId(groupId)
+                    .content(content)
+                    .build();
         }
     }
 
@@ -34,10 +34,10 @@ public class QuestionRequest {
 
         public QuestionCommand.Approve toCommand() {
             return QuestionCommand.Approve.builder()
-                .groupId(groupId)
-                .questionId(questionId)
-                .status(status)
-                .build();
+                    .groupId(groupId)
+                    .questionId(questionId)
+                    .status(status)
+                    .build();
         }
     }
 }
