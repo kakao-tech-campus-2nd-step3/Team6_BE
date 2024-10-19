@@ -28,6 +28,7 @@ public class UserService {
     private final ProfileRepository profileRepository;
     private final JwtProvider jwtProvider;
     private final UserApiCaller userApiCaller;
+    private final UserReaderService userReaderService;
     private final KakaoTokenService kakaoTokenService;
 
     public String getCodeUrl() {
@@ -77,47 +78,12 @@ public class UserService {
     }
 
     public UserModel.Info getUserInfo(Long userId) {
-        Users user = userRepository.findById(userId)
-            .orElseThrow(
-                () -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
-
+        Users user = userReaderService.getUserById(userId);
         return UserModel.Info.from(user);
     }
 
     public UserModel.Point getPoint(Long userId) {
-        Users user = userRepository.findById(userId)
-            .orElseThrow(
-                () -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
-
+        Users user = userReaderService.getUserById(userId);
         return UserModel.Point.from(user);
-    }
-
-    @Transactional
-    public String testRegister() {  // 로그인 테스트용
-        Users user = Users.builder()
-            .id(1L)
-            .name("test")
-            .email("test@gmail.com")
-            .point(1000)
-            .age(30)
-            .kakaoId(1L)
-            .gender(Gender.M)
-            .imageUrl("test")
-            .role(Role.USER)
-            .build();
-
-        userRepository.save(user);
-
-        Profile profile = Profile.builder()
-                .id(1L)
-                .users(user)
-                .description("test")
-                .backgroundImageUrl("test")
-                .build();
-
-        profileRepository.save(profile);
-
-        String token = jwtProvider.createToken(user.getId(), user.getRole());
-        return token;
     }
 }
