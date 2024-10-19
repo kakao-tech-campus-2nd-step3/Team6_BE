@@ -14,7 +14,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import supernova.whokie.answer.Answer;
+import supernova.whokie.global.constants.Constants;
+import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.entity.BaseTimeEntity;
+import supernova.whokie.global.exception.InvalidEntityException;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -66,4 +70,29 @@ public class Users extends BaseTimeEntity {
     public void decreasePoint(int point) {
         this.point -= point;
     }
+
+    public void decreasePointsByHintCount(Answer answer) {
+        switch (answer.getHintCount()) {
+            case 1:
+                checkUserHasNotEnoughPoint(Constants.FIRST_HINT_PURCHASE_POINT);
+                decreasePoint(Constants.FIRST_HINT_PURCHASE_POINT);
+                break;
+            case 2:
+                checkUserHasNotEnoughPoint(Constants.SECOND_HINT_PURCHASE_POINT);
+                decreasePoint(Constants.SECOND_HINT_PURCHASE_POINT);
+                break;
+            case 3:
+                checkUserHasNotEnoughPoint(Constants.THIRD_HINT_PURCHASE_POINT);
+                decreasePoint(Constants.THIRD_HINT_PURCHASE_POINT);
+                break;
+        }
+    }
+
+    private void checkUserHasNotEnoughPoint(int point) {
+        if (this.point < point) {
+            throw new InvalidEntityException(MessageConstants.NOT_ENOUGH_POINT_MESSAGE);
+        }
+    }
+
+
 }

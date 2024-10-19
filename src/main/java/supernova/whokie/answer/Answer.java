@@ -64,4 +64,8 @@ public class Answer extends BaseTimeEntity {
         this.hintCount++;
     }
 
+    public boolean isNotPicked(Users user){
+        return !(this.picked.getId().equals(user.getId()));
+    }
+
 }
