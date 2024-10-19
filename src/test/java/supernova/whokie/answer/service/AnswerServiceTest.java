@@ -36,7 +36,6 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @TestPropertySource(properties = {
-    "spring.profiles.active=default",
     "jwt.secret=abcd"
 })
 class AnswerServiceTest {

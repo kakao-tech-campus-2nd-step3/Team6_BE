@@ -38,7 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
-        "spring.profiles.active=default",
         "jwt.secret=abcd",
         "spring.sql.init.mode=never"
 })
