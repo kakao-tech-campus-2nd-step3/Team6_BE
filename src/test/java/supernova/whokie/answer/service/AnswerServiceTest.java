@@ -1,10 +1,13 @@
 package supernova.whokie.answer.service;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.util.ReflectionTestUtils;
 import supernova.whokie.answer.Answer;
 import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.answer.service.dto.AnswerCommand;
@@ -16,6 +19,8 @@ import supernova.whokie.question.repository.QuestionRepository;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,39 +53,46 @@ class AnswerServiceTest {
     @Autowired
     private AnswerService answerService;
 
-    //@Test
-//    @DisplayName("전체 질문 기록을 가져오는 메서드 테스트")
-//    void getAnswerRecordTest() {
-//        Users dummyUser = mock(Users.class);
-//        // given
-//        Answer dummyAnswer = Answer.builder()
-//                .id(1L)
-//                .question(mock(Question.class))
-//                .picker(mock(Users.class))
-//                .picked(mock(Users.class))
-//                .hintCount(3)
-//                .build();
-//        ReflectionTestUtils.setField(dummyAnswer, "createdAt", LocalDateTime.of(2024, 9, 19, 0, 0));
-//
-//        Page<Answer> answerPage = new PageImpl<>(List.of(dummyAnswer), PageRequest.of(0, 10), 1);
-//
-//        // when
-//        when(answerRepository.findAllByPicker(any(Pageable.class), eq(dummyUser))).thenReturn(
-//                answerPage);
-//        when(userRepository.findById(anyLong())).thenReturn(Optional.of(dummyUser));
-//
-//        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").ascending());
-//
-//        PagingResponse<AnswerResponse.Record> response = answerService.getAnswerRecord(pageable,
-//                dummyUser.getId());
-//
-//        // then
-//        assertEquals(1, response.content().size());
-//        assertEquals(dummyAnswer.getId(), response.content().get(0).answerId());
-//        assertEquals(3, response.content().get(0).hintCount());
-//    }
+    @Test
+    @DisplayName("전체 질문 기록을 가져오는 메서드 테스트")
+    void getAnswerRecordTest() {
+        // given
+        Users dummyUser = mock(Users.class);
+        Answer dummyAnswer = Answer.builder()
+                .id(1L)
+                .question(mock(Question.class))
+                .picker(dummyUser)
+                .picked(mock(Users.class))
+                .hintCount(3)
+                .build();
 
-    //@Test
+        ReflectionTestUtils.setField(dummyAnswer, "createdAt", LocalDateTime.of(2024, 9, 19, 0, 0));
+
+        // 더미 페이지 데이터 생성
+        Page<Answer> answerPage = new PageImpl<>(List.of(dummyAnswer), PageRequest.of(0, 10), 1);
+
+        // when
+        when(answerRepository.findAllByPickerAndCreatedAtBetween(
+                any(Pageable.class), eq(dummyUser), any(LocalDateTime.class), any(LocalDateTime.class))
+        ).thenReturn(answerPage);
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(dummyUser));
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").ascending());
+
+
+        LocalDate testDate = LocalDate.of(2024, 9, 1);
+
+        Page<AnswerModel.Record> response = answerService.getAnswerRecord(pageable, dummyUser.getId(), testDate);
+
+        // then
+        assertEquals(1, response.getContent().size());
+        assertEquals(dummyAnswer.getId(), response.getContent().get(0).answerId());
+        assertEquals(3, response.getContent().get(0).hintCount());
+    }
+
+
+    @Test
     @DisplayName("공통 질문 답하기 메서드의 save가 잘 작동하는지 테스트")
     void answerToCommonQuestionSaveTest() {
         // given
@@ -111,7 +123,7 @@ class AnswerServiceTest {
         verify(answerRepository, times(1)).save(answer);
     }
 
-    //@Test
+    @Test
     @DisplayName("답변 새로고침 기능이 잘 동작하는지 확인하는 테스트")
     void refreshAnswerListTest() {
         //given
