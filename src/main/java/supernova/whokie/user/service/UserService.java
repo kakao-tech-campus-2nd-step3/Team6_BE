@@ -8,7 +8,9 @@ import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.profile.Profile;
+import supernova.whokie.profile.ProfileVisitCount;
 import supernova.whokie.profile.infrastructure.repository.ProfileRepository;
+import supernova.whokie.profile.infrastructure.repository.ProfileVisitCountRepository;
 import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
@@ -26,6 +28,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
+    private final ProfileVisitCountRepository profileVisitCountRepository;
     private final JwtProvider jwtProvider;
     private final UserApiCaller userApiCaller;
     private final UserReaderService userReaderService;
@@ -68,6 +71,14 @@ public class UserService {
                             .build();
 
                     profileRepository.save(profile);
+
+                    ProfileVisitCount visitCount = ProfileVisitCount.builder()
+                            .hostId(newUser.getId())
+                            .dailyVisited(0)
+                            .totalVisited(0)
+                            .build();
+                    profileVisitCountRepository.save(visitCount);
+
                     return newUser;
                 });
 

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 @RedisHash("Visitor")
 @Builder
-public class Visitor {
+public class RedisVisitor {
 
     @Id
     private String id;

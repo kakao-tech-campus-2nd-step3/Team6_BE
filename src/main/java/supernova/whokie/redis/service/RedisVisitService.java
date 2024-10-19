@@ -3,10 +3,10 @@ package supernova.whokie.redis.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import supernova.whokie.profile.service.ProfileVisitReadService;
-import supernova.whokie.redis.entity.VisitCount;
-import supernova.whokie.redis.entity.Visitor;
-import supernova.whokie.redis.repository.VisitCountRepository;
-import supernova.whokie.redis.repository.VisitorRepository;
+import supernova.whokie.redis.entity.RedisVisitCount;
+import supernova.whokie.redis.entity.RedisVisitor;
+import supernova.whokie.redis.repository.RedisVisitCountRepository;
+import supernova.whokie.redis.repository.RedisVisitorRepository;
 import supernova.whokie.redis.service.dto.RedisCommand;
 
 import java.time.LocalDateTime;
@@ -16,24 +16,24 @@ import java.time.temporal.ChronoUnit;
 @AllArgsConstructor
 public class RedisVisitService {
 
-    private VisitorRepository visitorRepository;
-    private VisitCountRepository visitCountRepository;
+    private RedisVisitorRepository redisVisitorRepository;
+    private RedisVisitCountRepository redisVisitCountRepository;
     private ProfileVisitReadService profileVisitReadService;
 
-    public VisitCount visitProfile(Long hostId, String visitorIp) {
-        VisitCount visitCount = findVisitCountByHostId(hostId);
+    public RedisVisitCount visitProfile(Long hostId, String visitorIp) {
+        RedisVisitCount redisVisitCount = findVisitCountByHostId(hostId);
         if(!checkVisited(hostId, visitorIp)) {
-            visitCount.visit();
-            visitCountRepository.save(visitCount);
+            redisVisitCount.visit();
+            redisVisitCountRepository.save(redisVisitCount);
         }
         // 방문자 로그 기록
         saveVisitor(hostId, visitorIp);
 
-        return visitCount;
+        return redisVisitCount;
     }
 
     public boolean checkVisited(Long hostId, String visitorIp) {
-        return visitorRepository.existsById(hostId + ":" + visitorIp);
+        return redisVisitorRepository.existsById(hostId + ":" + visitorIp);
     }
 
     public void saveVisitor(Long hostId, String visitorIp) {
@@ -41,18 +41,18 @@ public class RedisVisitService {
         LocalDateTime now = LocalDateTime.now();
         long expiresIn = ChronoUnit.SECONDS.between(now, endOfDay);
 
-        Visitor visitor = Visitor.builder()
+        RedisVisitor redisVisitor = RedisVisitor.builder()
                 .id(hostId + ":" + visitorIp)
                 .hostId(hostId)
                 .visitorIp(visitorIp)
                 .visitTime(now)
                 .expiresIn(expiresIn)
                 .build();
-        visitorRepository.save(visitor);
+        redisVisitorRepository.save(redisVisitor);
     }
 
-    public VisitCount findVisitCountByHostId(Long hostId) {
-        return visitCountRepository.findById(hostId)
+    public RedisVisitCount findVisitCountByHostId(Long hostId) {
+        return redisVisitCountRepository.findById(hostId)
                 .orElseGet(() -> {
                     RedisCommand.Visited command = profileVisitReadService.findVisitCountById(hostId);
                     return command.toRedisEntity();

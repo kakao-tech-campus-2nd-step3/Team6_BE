@@ -12,8 +12,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import supernova.config.EmbeddedRedisConfig;
 import supernova.whokie.profile.service.ProfileVisitReadService;
-import supernova.whokie.redis.entity.VisitCount;
-import supernova.whokie.redis.repository.VisitCountRepository;
+import supernova.whokie.redis.entity.RedisVisitCount;
+import supernova.whokie.redis.repository.RedisVisitCountRepository;
 import supernova.whokie.redis.service.dto.RedisCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +31,7 @@ class RedisVisitServiceTest {
     @Autowired
     private RedisVisitService redisVisitService;
     @Autowired
-    private VisitCountRepository visitCountRepository;
+    private RedisVisitCountRepository redisVisitCountRepository;
     @MockBean
     private ProfileVisitReadService profileVisitReadService;
 
@@ -39,14 +39,14 @@ class RedisVisitServiceTest {
     @DisplayName("방문자 수 증가 테스트")
     void visitProfileTest() {
         // given
-        VisitCount visitCount = createVisitCount();
-        Long hostId = visitCount.getHostId();
+        RedisVisitCount redisVisitCount = createVisitCount();
+        Long hostId = redisVisitCount.getHostId();
         String visitorIp = "visitorIp";
-        int oldDailyVisited = visitCount.getDailyVisited();
-        int oldTotalVisited = visitCount.getTotalVisited();
+        int oldDailyVisited = redisVisitCount.getDailyVisited();
+        int oldTotalVisited = redisVisitCount.getTotalVisited();
 
         // when
-        VisitCount actual = redisVisitService.visitProfile(hostId, visitorIp);
+        RedisVisitCount actual = redisVisitService.visitProfile(hostId, visitorIp);
 
         // then
         assertAll(
@@ -68,7 +68,7 @@ class RedisVisitServiceTest {
                 .willReturn(command);
 
         // when
-        VisitCount actual = redisVisitService.findVisitCountByHostId(hostId);
+        RedisVisitCount actual = redisVisitService.findVisitCountByHostId(hostId);
 
         // then
         assertAll(
@@ -78,14 +78,14 @@ class RedisVisitServiceTest {
     }
 
 
-    private VisitCount createVisitCount() {
-        VisitCount visitCount = VisitCount.builder()
+    private RedisVisitCount createVisitCount() {
+        RedisVisitCount redisVisitCount = RedisVisitCount.builder()
                 .hostId(1L)
                 .dailyVisited(0)
                 .totalVisited(10)
                 .build();
-        visitCountRepository.save(visitCount);
-        return visitCount;
+        redisVisitCountRepository.save(redisVisitCount);
+        return redisVisitCount;
     }
 
 }
