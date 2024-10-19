@@ -84,12 +84,6 @@ public class GroupMemberServiceTest {
         GroupMemberCommand.Modify command = new GroupMemberCommand.Modify(groupId, pastLeaderId,
             newLeaderId);
 
-        given(groupMemberRepository.findByUserIdAndGroupId(pastLeaderId, groupId))
-            .willReturn(Optional.of(leader));
-
-        given(groupMemberRepository.findByUserIdAndGroupId(newLeaderId, groupId))
-            .willReturn(Optional.of(member));
-
         given(groupMemberReaderService.getByUserIdAndGroupId(pastLeaderId, groupId))
             .willReturn(leader);
 
@@ -131,16 +125,10 @@ public class GroupMemberServiceTest {
     @DisplayName("그룹 내 멤버 조회")
     void getGroupMembers() throws Exception {
         // given
-        given(groupMemberRepository.existsByUserIdAndGroupId(userId, groupId))
-            .willReturn(true);
-
         Field createdAtField = BaseTimeEntity.class.getDeclaredField("createdAt");
         createdAtField.setAccessible(true);
         createdAtField.set(leader, LocalDateTime.now());
         createdAtField.set(member, LocalDateTime.now());
-
-        given(groupMemberRepository.findAllByGroupId(groupId))
-            .willReturn(List.of(leader, member));
 
         given(groupMemberReaderService.getGroupMembers(userId, groupId))
             .willReturn(List.of(leader, member));

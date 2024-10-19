@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.then;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +23,6 @@ import supernova.whokie.user.Users;
 
 @SpringBootTest
 @TestPropertySource(properties = {
-    "spring.profiles.active=default",
     "jwt.secret=abcd"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -30,6 +30,9 @@ public class ProfileServiceTest {
 
     @Mock
     private ProfileRepository profileRepository;
+
+    @Mock
+    private ProfileReaderService profileReaderService;
 
     @InjectMocks
     private ProfileService profileService;
@@ -43,11 +46,11 @@ public class ProfileServiceTest {
         profile = createProfile();
     }
 
-    //@Test
+    @Test
     @DisplayName("프로필 조회")
     void getProfile() {
         // given
-        given(profileRepository.findByUsersId(user.getId())).willReturn(Optional.of(profile));
+        given(profileReaderService.getByUserId(user.getId())).willReturn(profile);
 
         // when
         ProfileModel.Info result = profileService.getProfile(user.getId());
@@ -58,7 +61,7 @@ public class ProfileServiceTest {
             () -> assertThat(result.name()).isEqualTo("test"),
             () -> assertThat(result.description()).isEqualTo("test"),
             () -> assertThat(result.backgroundImageUrl()).isEqualTo("test"),
-            () -> then(profileRepository).should().findByUsersId(user.getId())
+            () -> then(profileReaderService).should().getByUserId(user.getId())
         );
     }
 
