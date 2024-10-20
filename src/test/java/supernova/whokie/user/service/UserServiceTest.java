@@ -27,7 +27,6 @@ import static org.mockito.BDDMockito.then;
 
 @SpringBootTest
 @TestPropertySource(properties = {
-    "spring.profiles.active=default",
     "jwt.secret=abcd"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -37,7 +36,7 @@ class UserServiceTest {
     private UserService userService;
 
     @Mock
-    UserRepository userRepository;
+    UserReaderService userReaderService;
 
     private Users user;
 
@@ -50,7 +49,7 @@ class UserServiceTest {
     @DisplayName("내 포인트 조회")
     void getPoint() {
         // given
-        given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
+        given(userReaderService.getUserById(user.getId())).willReturn(user);
 
         // when
         UserModel.Point point = userService.getPoint(user.getId());
@@ -58,7 +57,7 @@ class UserServiceTest {
         // then
         assertAll(
             () -> assertEquals(1000, point.amount()),
-            () -> then(userRepository).should().findById(user.getId())
+            () -> then(userReaderService).should().getUserById(user.getId())
         );
     }
 
@@ -70,7 +69,7 @@ class UserServiceTest {
         createdAtField.setAccessible(true);
         createdAtField.set(user, LocalDateTime.now());
 
-        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        given(userReaderService.getUserById(user.getId())).willReturn(user);
 
         // when
         UserModel.Info userInfo = userService.getUserInfo(user.getId());
@@ -82,7 +81,7 @@ class UserServiceTest {
             () -> assertThat(userInfo.age()).isEqualTo(user.getAge()),
             () -> assertThat(userInfo.gender()).isEqualTo(user.getGender()),
             () -> assertThat(userInfo.role()).isEqualTo(user.getRole()),
-            () -> then(userRepository).should().findById(user.getId())
+            () -> then(userReaderService).should().getUserById(user.getId())
         );
     }
 

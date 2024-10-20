@@ -6,11 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import supernova.whokie.profile.infrastructure.ProfileRepository;
+import supernova.config.EmbeddedRedisConfig;
+import supernova.whokie.profile.infrastructure.repository.ProfileRepository;
+import supernova.whokie.profile.infrastructure.repository.ProfileVisitCountRepository;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
@@ -23,8 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(EmbeddedRedisConfig.class)
 @TestPropertySource(properties = {
-    "spring.profiles.active=default",
     "jwt.secret=abcd"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -37,15 +40,20 @@ public class ProfileIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
+    ProfileVisitCountRepository profileVisitCountRepository;
+
+    @Autowired
     private MockMvc mockMvc;
 
     private Users user;
     private Profile profile;
+    private ProfileVisitCount profileVisitCount;
 
     @BeforeEach
     void setUp() {
         user = createUser();
         profile = createProfile();
+        profileVisitCount = createProfileVisitCount();
     }
 
     @Test
@@ -56,8 +64,6 @@ public class ProfileIntegrationTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.name").value("test"))
             .andExpect(jsonPath("$.description").value("test"))
-            .andExpect(jsonPath("$.todayVisited").value(2))
-            .andExpect(jsonPath("$.totalVisited").value(12))
             .andExpect(jsonPath("$.backgroundImageUrl").value("test"))
             .andDo(print());
     }
@@ -73,20 +79,25 @@ public class ProfileIntegrationTest {
             .role(Role.USER)
             .build();
 
-        userRepository.save(user);
-        return user;
+        return userRepository.save(user);
     }
 
     private Profile createProfile() {
         Profile profile = Profile.builder()
             .users(user)
-            .todayVisited(2)
-            .totalVisited(12)
             .description("test")
             .backgroundImageUrl("test")
             .build();
 
-        profileRepository.save(profile);
-        return profile;
+        return profileRepository.save(profile);
+    }
+
+    private ProfileVisitCount createProfileVisitCount() {
+        ProfileVisitCount visitCount = ProfileVisitCount.builder()
+                .hostId(user.getId())
+                .dailyVisited(0)
+                .totalVisited(0)
+                .build();
+        return profileVisitCountRepository.save(visitCount);
     }
 }

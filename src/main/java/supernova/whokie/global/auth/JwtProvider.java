@@ -16,7 +16,8 @@ import java.util.Date;
 @Component
 public class JwtProvider {
 
-    private final long validityInMilliseconds = 60 * 60 * 1000;
+    @Value("${jwt.validate-time}")
+    private long validityInMilliseconds;
     @Value("${jwt.secret}")
     private String secretKey;
 

@@ -56,13 +56,4 @@ public class UserController {
         UserModel.Point response = userService.getPoint(userId);
         return ResponseEntity.ok().body(UserResponse.Point.from(response));
     }
-
-    @GetMapping("/test/login")
-    public ResponseEntity<GlobalResponse> testLogin() { // 로그인 테스트용
-        String token = userService.testRegister();
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Authorization", token)
-                .body(GlobalResponse.builder().message("로그인이 완료되었습니다.").build());
-    }
 }
