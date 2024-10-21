@@ -1,7 +1,17 @@
 package supernova.whokie.point_record;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import supernova.whokie.global.entity.BaseTimeEntity;
 
 @Builder
@@ -28,12 +38,12 @@ public class PointRecord extends BaseTimeEntity {
     private String description;
 
     public static PointRecord create(Long userId, Integer point, Integer amount,
-        PointRecordOption option, String description) {
+                                     PointRecordOption option, String description) {
         return PointRecord.builder()
-            .userId(userId)
-            .point(point)
-            .amount(amount)
-            .option(option)
-            .description(description).build();
+                .userId(userId)
+                .point(point)
+                .amount(amount)
+                .option(option)
+                .description(description).build();
     }
 }

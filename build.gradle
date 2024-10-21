@@ -39,10 +39,18 @@ dependencies {
     // MySQL JDBC 드라이버 추가
     runtimeOnly 'mysql:mysql-connector-java:8.0.33'
 
-
+    // jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // embedded redis - 테스트 시 적용
+    testImplementation('it.ozimov:embedded-redis:0.7.3') {
+        exclude group: 'org.slf4j', module: 'slf4j-simple' // SLF4J Simple 제외 (필요한 경우)
+    }
 }
 
 tasks.named('test') {
