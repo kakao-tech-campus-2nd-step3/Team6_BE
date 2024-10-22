@@ -35,8 +35,8 @@ import supernova.whokie.user.infrastructure.repository.UserRepository;
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(properties = {
-    "jwt.secret=abcd",
-    "spring.sql.init.mode=never"
+        "jwt.secret=abcd",
+        "spring.sql.init.mode=never"
 })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class QuestionIntegrationTest {
