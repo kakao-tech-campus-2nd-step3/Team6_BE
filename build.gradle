@@ -23,6 +23,10 @@ repositories {
     mavenCentral()
 }
 
+ext {
+    isAwsProfileActive = project.hasProperty('spring.profiles.active') && project.spring.profiles.active.contains('aws')
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -52,9 +56,8 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-simple' // SLF4J Simple 제외 (필요한 경우)
     }
 
-    // aws - s3
-    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.1")
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
+    // s3
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3:3.1.1'
 }
 
 tasks.named('test') {
