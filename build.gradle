@@ -51,6 +51,10 @@ dependencies {
     testImplementation('it.ozimov:embedded-redis:0.7.3') {
         exclude group: 'org.slf4j', module: 'slf4j-simple' // SLF4J Simple 제외 (필요한 경우)
     }
+
+    // aws - s3
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.1.1")
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
 }
 
 tasks.named('test') {
