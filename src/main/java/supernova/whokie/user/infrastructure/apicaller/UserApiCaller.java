@@ -1,4 +1,4 @@
-package supernova.whokie.user.infrastructure.apiCaller;
+package supernova.whokie.user.infrastructure.apicaller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.constraints.NotNull;
@@ -12,9 +12,9 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import supernova.whokie.global.exception.AuthenticationException;
 import supernova.whokie.global.property.KakaoProperties;
-import supernova.whokie.user.infrastructure.apiCaller.dto.RefreshedTokenInfoResponse;
-import supernova.whokie.user.infrastructure.apiCaller.dto.TokenInfoResponse;
-import supernova.whokie.user.infrastructure.apiCaller.dto.UserInfoResponse;
+import supernova.whokie.user.infrastructure.apicaller.dto.RefreshedTokenInfoResponse;
+import supernova.whokie.user.infrastructure.apicaller.dto.TokenInfoResponse;
+import supernova.whokie.user.infrastructure.apicaller.dto.UserInfoResponse;
 
 import java.net.URI;
 
