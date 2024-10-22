@@ -29,4 +29,7 @@ public class S3ServiceCaller {
         }
     }
 
+    public URL getFileAsSignedUrl(String key) {
+        return s3Template.createSignedGetURL(awsS3Properties.bucket(), key, Duration.ofHours(1));
+    }
 }

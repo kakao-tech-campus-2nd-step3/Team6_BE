@@ -23,6 +23,9 @@ public class S3Service {
         return key;
     }
 
+    public String getSignedUrl(String key) {
+        return s3ServiceCaller.getFileAsSignedUrl(key).toString();
+    }
 
     private String createKey(S3Command.Upload command) {
         validateFileType(command.file(), command.fileType());
