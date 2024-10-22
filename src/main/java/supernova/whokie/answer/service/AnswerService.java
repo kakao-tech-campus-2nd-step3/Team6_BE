@@ -84,7 +84,9 @@ public class AnswerService {
         Users picked = userReaderService.getUserById(command.pickedId());
         Groups group = groupReaderService.getGroupById(command.groupId());
 
-        checkGroupQuestion(question, group);
+        if(question.isNotCorrectGroupQuestion(group.getId())){
+            throw new InvalidEntityException(MessageConstants.GROUP_NOT_FOUND_MESSAGE);
+        }
 
         Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
         answerWriterService.save(answer);
@@ -123,35 +125,23 @@ public class AnswerService {
         Users user = userReaderService.getUserById(userId);
         Answer answer = answerReaderService.getAnswerById(command.answerId());
 
-        validateIsPickedUser(answer, user);
-
-        decreaseUserPoint(user, answer);
-        answer.increaseHintCount();
-    }
-
-    //TODO 도메인 로직으로 넣어야함
-    private void decreaseUserPoint(Users user, Answer answer) {
-        switch (answer.getHintCount()) {
-            case 1:
-                checkUserHasNotEnoughPoint(user, Constants.FIRST_HINT_PURCHASE_POINT);
-                user.decreasePoint(Constants.FIRST_HINT_PURCHASE_POINT);
-                break;
-            case 2:
-                checkUserHasNotEnoughPoint(user, Constants.SECOND_HINT_PURCHASE_POINT);
-                user.decreasePoint(Constants.SECOND_HINT_PURCHASE_POINT);
-                break;
-            case 3:
-                checkUserHasNotEnoughPoint(user, Constants.THIRD_HINT_PURCHASE_POINT);
-                user.decreasePoint(Constants.THIRD_HINT_PURCHASE_POINT);
-                break;
+        if (answer.isNotPicked(user)){
+            throw new InvalidEntityException(MessageConstants.NOT_PICKED_USER_MESSAGE);
         }
+
+        user.decreasePointsByHintCount(answer);
+
+        answer.increaseHintCount();
     }
 
     @Transactional(readOnly = true)
     public List<AnswerModel.Hint> getHints(Long userId, Long answerId) {
         Users user = userReaderService.getUserById(userId);
         Answer answer = answerReaderService.getAnswerById(answerId);
-        validateIsPickedUser(answer, user);
+
+        if (answer.isNotPicked(user)){
+            throw new InvalidEntityException(MessageConstants.NOT_PICKED_USER_MESSAGE);
+        }
 
         List<AnswerModel.Hint> allHints = new ArrayList<>();
 
@@ -163,26 +153,4 @@ public class AnswerService {
         return allHints;
     }
 
-    //TODO 도메인 로직으로 넣어야함
-    private void validateIsPickedUser(Answer answer, Users user) {
-        if (isNotPicked(answer, user)) {
-            throw new InvalidEntityException(MessageConstants.NOT_PICKED_USER_MESSAGE);
-        }
-    }
-
-    private boolean isNotPicked(Answer answer, Users user) {
-        return !answer.getPicked().getId().equals(user.getId());
-    }
-
-    private void checkGroupQuestion(Question question, Groups group) {
-        if (question.isNotCorrectGroupQuestion(group.getId())) {
-            throw new InvalidEntityException(MessageConstants.GROUP_NOT_FOUND_MESSAGE);
-        }
-    }
-
-    private static void checkUserHasNotEnoughPoint(Users user, int hintPurchasePoint) {
-        if (user.hasNotEnoughPoint(hintPurchasePoint)) {
-            throw new InvalidEntityException(MessageConstants.NOT_ENOUGH_POINT_MESSAGE);
-        }
-    }
 }
