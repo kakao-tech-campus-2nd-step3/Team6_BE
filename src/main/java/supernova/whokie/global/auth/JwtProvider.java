@@ -9,6 +9,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import supernova.whokie.global.exception.AuthenticationException;
 import supernova.whokie.user.Role;
 
 import java.util.Date;
@@ -45,6 +46,8 @@ public class JwtProvider {
             throw new JwtException("지원되지 않는 토큰입니다.");
         } catch (IllegalArgumentException e) {
             throw new JwtException("토큰이 존재하지 않습니다.");
+        } catch (Exception e) {
+            throw new AuthenticationException("토큰 에러(수정 예정)"); // 이거 왜 항상 시그니처 에러가 뜰까
         }
     }
 }
