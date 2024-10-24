@@ -67,4 +67,12 @@ public class GlobalExceptionHandler {
         problemDetail.setDetail(e.getMessage());
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
+
+    @ExceptionHandler(FileTypeMismatchException.class)
+    public ResponseEntity<ProblemDetail> FileTypeMismatchException(FileTypeMismatchException e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(e.getStatus());
+        problemDetail.setTitle(e.getTitle());
+        problemDetail.setDetail(e.getMessage());
+        return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
+    }
 }
