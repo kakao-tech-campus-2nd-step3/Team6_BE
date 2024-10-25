@@ -45,11 +45,13 @@ public class FriendService {
 
     @Transactional(readOnly = true)
     public void updateFriends(Long userId, FriendCommand.Update command) {
+        Users host = userReaderService.getUserById(userId);
         // 사용자의 모든 Friend 조회
         List<Friend> existingFriends = friendReaderService.findByHostUserIdFetchJoin(userId);
 
         // 비동기로 친구 삭제 및 저장
         eventPublisher.publishEvent(FriendEventDto.Update.toDto(userId, command, existingFriends));
+        friendWriterService.deleteAllByHostUser(host);
     }
 
     @Transactional
@@ -67,29 +69,12 @@ public class FriendService {
         friendWriterService.saveAll(newFriends);
     }
 
-    @Transactional
-    public void deleteFriends(FriendCommand.Update command, List<Friend> existingFriends) {
-        // 삭제할 Friend 필터링
-        List<Long> deleteFriendIds = filteringDeleteFriendUserIds(command.friendIds(), existingFriends);
-
-        // Friends 삭제
-        friendWriterService.deleteAllById(deleteFriendIds);
-    }
-
     public List<Long> filteringNewFriendUserIds(List<Long> friendUserIds,
         List<Friend> existingFriends) {
         List<Long> existingFriendIds = existingFriends.stream().map(Friend::getFriendUserId)
             .toList();
         return friendUserIds.stream()
             .filter(id -> !existingFriendIds.contains(id))
-            .toList();
-    }
-
-    public List<Long> filteringDeleteFriendUserIds(List<Long> friendUserIds,
-        List<Friend> existingFriends) {
-        return existingFriends.stream()
-            .filter(friend -> !friendUserIds.contains(friend.getFriendUserId()))
-            .map(Friend::getId)
             .toList();
     }
 

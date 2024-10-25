@@ -117,36 +117,6 @@ class FriendServiceTest {
     }
 
     @Test
-    @Transactional
-    @DisplayName("누락된 Friend 삭제")
-    void deleteFriendsTest() {
-        // given
-        Users host = users.get(0);
-        Users user1 = users.get(1);
-        Users user2 = users.get(2);
-        Users user3 = users.get(3);
-        Long hostId = host.getId();
-        Friend friend1 = new Friend(1L, host, user1);
-        Friend friend2 = new Friend(2L, host, user2);
-        Friend friend3 = new Friend(3L, host, user3);
-        friendRepository.saveAll(List.of(friend1, friend2, friend3));
-
-        FriendCommand.Update command = FriendCommand.Update.builder()
-            .friendIds(List.of(user1.getId(), user2.getId()))
-            .build();
-
-        entityManager.flush();
-        entityManager.clear();
-
-        // when
-        friendService.deleteFriends(command, List.of(friend1, friend2, friend3));
-        List<Friend> actual = friendRepository.findByHostUserIdFetchJoin(hostId);
-
-        // then
-        assertThat(actual).hasSize(2);
-    }
-
-    @Test
     @DisplayName("새로운 친구만 추출")
     void filterNewFriendsTest() {
         // given
@@ -168,30 +138,6 @@ class FriendServiceTest {
         assertThat(actual).hasSize(2);
         assertThat(actual.get(0)).isEqualTo(user1.getId());
         assertThat(actual.get(1)).isEqualTo(user2.getId());
-    }
-
-    @Test
-    @DisplayName("삭제할 친구만 추출")
-    void filterDeleteFriendsTest() {
-        // given
-        Users user1 = users.get(0);
-        Users user2 = users.get(1);
-        Users user3 = users.get(2);
-        Users user4 = users.get(3);
-        List<Users> usersList = List.of(user1, user2, user3);
-        List<Long> friendUserIds = usersList.stream().map(Users::getId).toList();
-
-        Friend friend1 = Friend.builder().friendUser(user3).build();
-        Friend friend2 = Friend.builder().friendUser(user4).build();
-        List<Friend> existingFriends = List.of(friend1, friend2);
-
-        // when
-        List<Long> actual = friendService.filteringDeleteFriendUserIds(friendUserIds,
-            existingFriends);
-
-        // then
-        assertThat(actual).hasSize(1);
-        assertThat(actual.getFirst()).isEqualTo(friend2.getId());
     }
 
 
