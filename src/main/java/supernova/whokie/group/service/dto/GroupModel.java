@@ -1,7 +1,7 @@
 package supernova.whokie.group.service.dto;
 
 import lombok.Builder;
-import supernova.whokie.group.repository.dto.GroupInfoWithMemberCount;
+import supernova.whokie.group.infrastructure.repository.dto.GroupInfoWithMemberCount;
 
 public class GroupModel {
 

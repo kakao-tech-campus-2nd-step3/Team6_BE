@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.ForbiddenException;
 import supernova.whokie.group.Groups;
-import supernova.whokie.group.repository.dto.GroupInfoWithMemberCount;
+import supernova.whokie.group.infrastructure.repository.dto.GroupInfoWithMemberCount;
 import supernova.whokie.group.service.dto.GroupCommand;
 import supernova.whokie.group.service.dto.GroupModel.InfoWithMemberCount;
 import supernova.whokie.group_member.GroupMember;

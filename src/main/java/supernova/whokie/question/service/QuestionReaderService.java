@@ -10,7 +10,7 @@ import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
-import supernova.whokie.question.repository.QuestionRepository;
+import supernova.whokie.question.infrastructure.repository.QuestionRepository;
 
 @Service
 @RequiredArgsConstructor

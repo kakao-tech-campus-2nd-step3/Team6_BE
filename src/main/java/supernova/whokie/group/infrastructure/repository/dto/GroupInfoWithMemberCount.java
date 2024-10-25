@@ -1,4 +1,4 @@
-package supernova.whokie.group.repository.dto;
+package supernova.whokie.group.infrastructure.repository.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

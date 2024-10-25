@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import supernova.whokie.group.Groups;
-import supernova.whokie.group.repository.GroupRepository;
+import supernova.whokie.group.infrastructure.repository.GroupRepository;
 import supernova.whokie.ranking.Ranking;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;

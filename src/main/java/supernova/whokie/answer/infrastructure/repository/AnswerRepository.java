@@ -1,4 +1,4 @@
-package supernova.whokie.answer.repository;
+package supernova.whokie.answer.infrastructure.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

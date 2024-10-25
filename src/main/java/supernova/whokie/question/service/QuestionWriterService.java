@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.question.Question;
-import supernova.whokie.question.repository.QuestionRepository;
+import supernova.whokie.question.infrastructure.repository.QuestionRepository;
 
 @Service
 @RequiredArgsConstructor
