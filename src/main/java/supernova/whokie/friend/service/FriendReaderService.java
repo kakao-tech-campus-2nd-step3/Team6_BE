@@ -29,11 +29,6 @@ public class FriendReaderService {
     }
 
     @Transactional(readOnly = true)
-    public List<Friend> findByHostUserIdFetchJoin(Long userId) {
-        return friendRepository.findByHostUserIdFetchJoin(userId);
-    }
-
-    @Transactional(readOnly = true)
     public List<Friend> findRandomFriendsByHostUser(Long hostUserId, Pageable pageable) {
         return friendRepository.findRandomFriendsByHostUser(hostUserId,
             pageable);

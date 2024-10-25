@@ -1,7 +1,5 @@
 package supernova.whokie.friend.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
 import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
@@ -26,7 +23,6 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,8 +51,6 @@ class FriendServiceTest {
     private KakaoTokenService kakaoTokenService;
     @MockBean
     private JwtProvider jwtProvider;
-    @PersistenceContext
-    EntityManager entityManager;
 
     private List<KakaoDto.Profile> profiles;
     private List<Users> users;
@@ -95,49 +89,50 @@ class FriendServiceTest {
     }
 
     @Test
-    @DisplayName("새로운 친구 리스트 저장")
+    @DisplayName("친구 목록 업데이트 테스트")
+    void updateFriendsTest() {
+        // given
+        Users host = users.get(0);
+        Users user1 = users.get(1);
+        Users user2 = users.get(2);
+        Users user3 = users.get(3);
+
+        FriendCommand.Update command = FriendCommand.Update.builder()
+                .friendIds(List.of(user2.getId(), user3.getId()))
+                .build();
+        friendRepository.save(new Friend(1L, host, user1));
+
+        // when
+        friendService.updateFriends(host.getId(), command);
+        List<Friend> actuals = friendRepository.findByHostUserIdFetchJoin(host.getId());
+
+        // then
+        assertAll(
+                () -> assertThat(actuals).hasSize(2),
+                () -> assertThat(actuals.get(0).getFriendUser().getId()).isEqualTo(user2.getId()),
+                () -> assertThat(actuals.get(1).getFriendUser().getId()).isEqualTo(user3.getId())
+        );
+    }
+
+    @Test
+    @DisplayName("새로운 친구 리스트 저장 테스트")
     void saveFriendsTest() {
         // given
         Users host = users.get(0);
         Users user1 = users.get(1);
         Users user2 = users.get(2);
         Users user3 = users.get(3);
-        Long hostId = host.getId();
 
         FriendCommand.Update command = FriendCommand.Update.builder()
             .friendIds(List.of(user1.getId(), user2.getId(), user3.getId()))
             .build();
 
         // when
-        friendService.saveFriends(hostId, command, new ArrayList<>());
-        List<Friend> actual = friendRepository.findByHostUserIdFetchJoin(hostId);
+        friendService.saveFriends(host, command);
+        List<Friend> actual = friendRepository.findByHostUserIdFetchJoin(host.getId());
 
         // then
         assertThat(actual).hasSize(3);
-    }
-
-    @Test
-    @DisplayName("새로운 친구만 추출")
-    void filterNewFriendsTest() {
-        // given
-        Users user1 = users.get(0);
-        Users user2 = users.get(1);
-        Users user3 = users.get(2);
-        Users user4 = users.get(3);
-        List<Users> users = List.of(user1, user2, user3);
-        List<Long> userIds = users.stream().map(Users::getId).toList();
-
-        Friend friend1 = Friend.builder().friendUser(user3).build();
-        Friend friend2 = Friend.builder().friendUser(user4).build();
-        List<Friend> friends = List.of(friend1, friend2);
-
-        // when
-        List<Long> actual = friendService.filteringNewFriendUserIds(userIds, friends);
-
-        // then
-        assertThat(actual).hasSize(2);
-        assertThat(actual.get(0)).isEqualTo(user1.getId());
-        assertThat(actual.get(1)).isEqualTo(user2.getId());
     }
 
 

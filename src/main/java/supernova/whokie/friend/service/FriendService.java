@@ -1,13 +1,9 @@
 package supernova.whokie.friend.service;
 
-import java.util.List;
-import java.util.Set;
 import lombok.AllArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.friend.Friend;
-import supernova.whokie.friend.event.FriendEventDto;
 import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
 import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
 import supernova.whokie.friend.service.dto.FriendCommand;
@@ -16,6 +12,9 @@ import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 @AllArgsConstructor
 public class FriendService {
@@ -23,7 +22,6 @@ public class FriendService {
     private final FriendKakaoApiCaller apiCaller;
     private final UserReaderService userReaderService;
     private final FriendReaderService friendReaderService;
-    private final ApplicationEventPublisher eventPublisher;
     private final KakaoTokenService kakaoTokenService;
     private final FriendWriterService friendWriterService;
 
@@ -43,39 +41,17 @@ public class FriendService {
             .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void updateFriends(Long userId, FriendCommand.Update command) {
         Users host = userReaderService.getUserById(userId);
-        // 사용자의 모든 Friend 조회
-        List<Friend> existingFriends = friendReaderService.findByHostUserIdFetchJoin(userId);
-
-        // 비동기로 친구 삭제 및 저장
-        eventPublisher.publishEvent(FriendEventDto.Update.toDto(userId, command, existingFriends));
         friendWriterService.deleteAllByHostUser(host);
+        saveFriends(host, command);
     }
 
     @Transactional
-    public void saveFriends(Long hostId, FriendCommand.Update command,
-        List<Friend> existingFriends) {
-        Users host = userReaderService.getUserById(hostId);
-        // 새로운 Friend 필터링
-        List<Long> newFriendIds = filteringNewFriendUserIds(command.friendIds(), existingFriends);
-
-        // 새로운 친구 Users 조회
-        List<Users> friendUsers = userReaderService.getUserListByUserIdIn(newFriendIds);
-
-        List<Friend> newFriends = command.toEntity(host, friendUsers);
-        // 새로운 Friends 저장
+    public void saveFriends(Users host, FriendCommand.Update command) {
+        List<Users> friendUserList = userReaderService.getUserListByUserIdIn(command.friendIds());
+        List<Friend> newFriends = command.toEntity(host, friendUserList);
         friendWriterService.saveAll(newFriends);
     }
-
-    public List<Long> filteringNewFriendUserIds(List<Long> friendUserIds,
-        List<Friend> existingFriends) {
-        List<Long> existingFriendIds = existingFriends.stream().map(Friend::getFriendUserId)
-            .toList();
-        return friendUserIds.stream()
-            .filter(id -> !existingFriendIds.contains(id))
-            .toList();
-    }
-
 }
