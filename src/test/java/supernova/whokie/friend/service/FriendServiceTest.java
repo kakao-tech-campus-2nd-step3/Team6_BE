@@ -4,26 +4,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
-import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
 import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
-import supernova.whokie.friend.infrastructure.repository.FriendRepository;
-import supernova.whokie.friend.service.dto.FriendCommand;
 import supernova.whokie.friend.service.dto.FriendModel;
-import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.infrastructure.repository.UserRepository;
+import supernova.whokie.user.service.UserReaderService;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -31,27 +25,19 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@TestPropertySource(properties = {
-    "jwt.secret=abcd"
-})
 class FriendServiceTest {
 
-    @Autowired
+    @InjectMocks
     private FriendService friendService;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private FriendRepository friendRepository;
-    @MockBean
+    @Mock
     private FriendKakaoApiCaller apiCaller;
-    @MockBean
+    @Mock
     private KakaoTokenService kakaoTokenService;
-    @MockBean
-    private JwtProvider jwtProvider;
-
+    @Mock
+    private FriendReaderService friendReaderService;
+    @Mock
+    private UserReaderService userReaderService;
     private List<KakaoDto.Profile> profiles;
     private List<Users> users;
 
@@ -68,14 +54,15 @@ class FriendServiceTest {
         String accessToken = "accessToken";
         Users host = users.get(0);
         Users user1 = users.get(1);
+        Users user2 = users.get(2);
+        Users user3 = users.get(3);
         List<KakaoDto.Profile> profileList = List.of(profiles.get(1), profiles.get(2), profiles.get(3));
         KakaoDto.Friends kakaodto = new KakaoDto.Friends(null, profileList);
-        given(kakaoTokenService.refreshIfAccessTokenExpired(any()))
-            .willReturn(accessToken);
-        given(apiCaller.getKakaoFriends(eq(accessToken)))
-            .willReturn(kakaodto);
-        friendRepository.save(new Friend(1L, host, user1));
-
+        given(kakaoTokenService.refreshIfAccessTokenExpired(any())).willReturn(accessToken);
+        given(apiCaller.getKakaoFriends(eq(accessToken))).willReturn(kakaodto);
+        List<Long> kakaoId = profileList.stream().map(KakaoDto.Profile::id).toList();
+        given(userReaderService.getUserListByKakaoIdIn(eq(kakaoId))).willReturn(List.of(user1, user2, user3));
+        given(friendReaderService.getFriendIdsByHostUser(eq(host.getId()))).willReturn(Set.of(user1.getId()));
 
         // when
         List<FriendModel.Info> actual = friendService.getKakaoFriends(host.getId());
@@ -86,53 +73,6 @@ class FriendServiceTest {
                 () -> assertThat(actual.get(1).isFriend()).isFalse(),
                 () -> assertThat(actual.get(2).isFriend()).isFalse()
         );
-    }
-
-    @Test
-    @DisplayName("친구 목록 업데이트 테스트")
-    void updateFriendsTest() {
-        // given
-        Users host = users.get(0);
-        Users user1 = users.get(1);
-        Users user2 = users.get(2);
-        Users user3 = users.get(3);
-
-        FriendCommand.Update command = FriendCommand.Update.builder()
-                .friendIds(List.of(user2.getId(), user3.getId()))
-                .build();
-        friendRepository.save(new Friend(1L, host, user1));
-
-        // when
-        friendService.updateFriends(host.getId(), command);
-        List<Friend> actuals = friendRepository.findByHostUserIdFetchJoin(host.getId());
-
-        // then
-        assertAll(
-                () -> assertThat(actuals).hasSize(2),
-                () -> assertThat(actuals.get(0).getFriendUser().getId()).isEqualTo(user2.getId()),
-                () -> assertThat(actuals.get(1).getFriendUser().getId()).isEqualTo(user3.getId())
-        );
-    }
-
-    @Test
-    @DisplayName("새로운 친구 리스트 저장 테스트")
-    void saveFriendsTest() {
-        // given
-        Users host = users.get(0);
-        Users user1 = users.get(1);
-        Users user2 = users.get(2);
-        Users user3 = users.get(3);
-
-        FriendCommand.Update command = FriendCommand.Update.builder()
-            .friendIds(List.of(user1.getId(), user2.getId(), user3.getId()))
-            .build();
-
-        // when
-        friendService.saveFriends(host, command);
-        List<Friend> actual = friendRepository.findByHostUserIdFetchJoin(host.getId());
-
-        // then
-        assertThat(actual).hasSize(3);
     }
 
 
@@ -153,6 +93,6 @@ class FriendServiceTest {
                 .kakaoId(profiles.get(2).id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
         Users user4 = Users.builder().id(4L).name("name").email("email4").point(0).age(1)
                 .kakaoId(profiles.get(3).id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        return userRepository.saveAll(List.of(user1, user2, user3, user4));
+        return List.of(user1, user2, user3, user4);
     }
 }

@@ -2,62 +2,42 @@ package supernova.whokie.answer.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationEventPublisher;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
 import supernova.whokie.answer.Answer;
-import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.answer.service.dto.AnswerCommand;
 import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.friend.Friend;
-import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.friend.service.FriendReaderService;
-import supernova.whokie.global.constants.Constants;
-import supernova.whokie.group.service.GroupReaderService;
-import supernova.whokie.point_record.event.PointRecordEventDto;
-import supernova.whokie.point_record.sevice.PointRecordWriterService;
 import supernova.whokie.question.Question;
-import supernova.whokie.question.repository.QuestionRepository;
-import supernova.whokie.question.service.QuestionReaderService;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.infrastructure.repository.UserRepository;
 import supernova.whokie.user.service.UserReaderService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.anyLong;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@TestPropertySource(properties = {
-    "jwt.secret=abcd"
-})
+@ExtendWith(MockitoExtension.class)
 class AnswerServiceTest {
 
-    @MockBean
+    @Mock
     private AnswerReaderService answerReaderService;
 
-    @MockBean
+    @Mock
     private UserReaderService userReaderService;
 
-    @MockBean
+    @Mock
     private FriendReaderService friendReaderService;
 
-    @Autowired
+    @InjectMocks
     private AnswerService answerService;
 
     @Test
