@@ -1,5 +1,6 @@
 package supernova.whokie.friend.service;
 
+import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,8 +8,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import supernova.whokie.friend.infrastructure.apiCaller.FriendKakaoApiCaller;
-import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import supernova.whokie.friend.Friend;
+import supernova.whokie.friend.infrastructure.apicaller.FriendKakaoApiCaller;
+import supernova.whokie.friend.infrastructure.apicaller.dto.KakaoDto;
+import supernova.whokie.friend.infrastructure.repository.FriendRepository;
+import supernova.whokie.friend.service.dto.FriendCommand;
 import supernova.whokie.friend.service.dto.FriendModel;
 import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.user.Gender;
@@ -26,6 +34,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
+@MockBean({S3Client.class, S3Template.class, S3Presigner.class})
 class FriendServiceTest {
 
     @InjectMocks

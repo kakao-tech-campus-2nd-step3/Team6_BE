@@ -1,5 +1,6 @@
 package supernova.whokie.ranking.service;
 
+import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,6 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import supernova.whokie.group.Groups;
 import supernova.whokie.ranking.Ranking;
 import supernova.whokie.ranking.infrastructure.repoistory.RankingRepository;
@@ -20,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
+@MockBean({S3Client.class, S3Template.class, S3Presigner.class})
 class RankingServiceTest {
     @InjectMocks
     private RankingService rankingService;

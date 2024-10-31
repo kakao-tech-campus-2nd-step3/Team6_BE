@@ -58,4 +58,17 @@ public class UserModel {
                     .build();
         }
     }
+
+    @Builder
+    public record Login(
+            String jwt,
+            Long userId
+    ) {
+        public static UserModel.Login from(String jwt, Long userId) {
+            return UserModel.Login.builder()
+                    .jwt(jwt)
+                    .userId(userId)
+                    .build();
+        }
+    }
 }
