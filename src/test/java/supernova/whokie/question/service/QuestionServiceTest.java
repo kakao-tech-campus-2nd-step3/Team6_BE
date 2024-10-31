@@ -4,13 +4,13 @@ import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import supernova.whokie.friend.Friend;
@@ -38,31 +38,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-
-@SpringBootTest
-@TestPropertySource(properties = {
-    "jwt.secret=abcd"
-})
+@ExtendWith(MockitoExtension.class)
 @MockBean({S3Client.class, S3Template.class, S3Presigner.class})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class QuestionServiceTest {
 
-    @Autowired
+    @InjectMocks
     private QuestionService questionService;
 
-    @MockBean
+    @Mock
     private GroupMemberReaderService groupMemberReaderService;
 
-    @MockBean
+    @Mock
     private FriendReaderService friendReaderService;
 
-    @MockBean
+    @Mock
     private QuestionReaderService questionReaderService;
 
-    @MockBean
+    @Mock
     private UserReaderService userReaderService;
 
-    @MockBean
+    @Mock
     private QuestionWriterService questionWriterService;
 
     private Users user;

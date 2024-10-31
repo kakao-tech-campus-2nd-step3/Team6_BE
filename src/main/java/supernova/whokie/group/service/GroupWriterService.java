@@ -3,7 +3,7 @@ package supernova.whokie.group.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import supernova.whokie.group.Groups;
-import supernova.whokie.group.repository.GroupRepository;
+import supernova.whokie.group.infrastructure.repository.GroupRepository;
 
 @Service
 @RequiredArgsConstructor

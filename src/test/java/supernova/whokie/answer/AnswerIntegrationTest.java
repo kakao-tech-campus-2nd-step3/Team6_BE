@@ -12,26 +12,24 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import supernova.whokie.answer.infrastructure.repository.AnswerRepository;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import supernova.whokie.answer.repository.AnswerRepository;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.infrastructure.repository.FriendRepository;
 import supernova.whokie.global.constants.Constants;
 import supernova.whokie.group.Groups;
-import supernova.whokie.group.repository.GroupRepository;
+import supernova.whokie.group.infrastructure.repository.GroupRepository;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
-import supernova.whokie.question.repository.QuestionRepository;
+import supernova.whokie.question.infrastructure.repository.QuestionRepository;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -70,7 +68,7 @@ class AnswerIntegrationTest {
 
 
         for (int i = 1; i <= 5; i++) {
-            createFreindUser(i);
+            createFriendUser(i);
         }
 
         for (int i = 1; i <= 5; i++) {
@@ -273,7 +271,7 @@ class AnswerIntegrationTest {
         friendRepository.save(friend);
     }
 
-    private void createFreindUser(int index) {
+    private void createFriendUser(int index) {
         Users friendUser = Users.builder()
                 .name("Friend " + index)
                 .email("friend" + index + "@example.com")
