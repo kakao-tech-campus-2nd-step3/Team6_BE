@@ -1,5 +1,6 @@
 package supernova.whokie.question.service;
 
+import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.service.FriendReaderService;
 import supernova.whokie.global.constants.Constants;
@@ -40,6 +43,7 @@ import static org.mockito.Mockito.*;
 @TestPropertySource(properties = {
     "jwt.secret=abcd"
 })
+@MockBean({S3Client.class, S3Template.class, S3Presigner.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class QuestionServiceTest {
 

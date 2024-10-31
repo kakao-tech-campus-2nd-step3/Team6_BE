@@ -59,4 +59,17 @@ public class UserResponse {
                     .build();
         }
     }
+
+    @Builder
+    public record Login(
+            Long userId,
+            String jwt
+    ) {
+        public static Login from(UserModel.Login model) {
+            return Login.builder()
+                    .userId(model.userId())
+                    .jwt(model.jwt())
+                    .build();
+        }
+    }
 }

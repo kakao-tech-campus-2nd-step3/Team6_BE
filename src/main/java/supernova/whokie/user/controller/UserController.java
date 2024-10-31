@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import supernova.whokie.global.annotation.Authenticate;
-import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.service.UserService;
 import supernova.whokie.user.service.dto.UserModel;
@@ -31,22 +30,14 @@ public class UserController {
     }
 
     @GetMapping("/callback")
-    public ResponseEntity<GlobalResponse> registerUser(
+    public ResponseEntity<UserResponse.Login> registerUser(
             @RequestParam("code") @NotNull String code
     ) {
-        String token = userService.register(code);
+        UserModel.Login model = userService.register(code);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .header("Authorization", token)
-                .body(GlobalResponse.builder().message(token).build());
-    }
-
-    @GetMapping("/mypage")
-    public ResponseEntity<UserResponse.Info> getUserInfo(
-            @Authenticate Long userId
-    ) {
-        UserModel.Info response = userService.getUserInfo(userId);
-        return ResponseEntity.ok().body(UserResponse.Info.from(response));
+                .header("Authorization", model.jwt())
+                .body(UserResponse.Login.from(model));
     }
 
     @GetMapping("/point")

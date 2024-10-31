@@ -15,11 +15,11 @@ import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.exception.AuthenticationException;
 import supernova.whokie.redis.entity.KakaoAccessToken;
 import supernova.whokie.redis.entity.KakaoRefreshToken;
-import supernova.whokie.redis.repository.AccessTokenRepository;
-import supernova.whokie.redis.repository.RefreshTokenRepository;
-import supernova.whokie.user.infrastructure.apiCaller.UserApiCaller;
-import supernova.whokie.user.infrastructure.apiCaller.dto.RefreshedTokenInfoResponse;
-import supernova.whokie.user.infrastructure.apiCaller.dto.TokenInfoResponse;
+import supernova.whokie.redis.infrastructure.repository.AccessTokenRepository;
+import supernova.whokie.redis.infrastructure.repository.RefreshTokenRepository;
+import supernova.whokie.user.infrastructure.apicaller.UserApiCaller;
+import supernova.whokie.user.infrastructure.apicaller.dto.RefreshedTokenInfoResponse;
+import supernova.whokie.user.infrastructure.apicaller.dto.TokenInfoResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

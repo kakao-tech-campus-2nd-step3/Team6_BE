@@ -13,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
 import supernova.config.EmbeddedRedisConfig;
 import supernova.whokie.profile.service.ProfileVisitReadService;
 import supernova.whokie.redis.entity.RedisVisitCount;
-import supernova.whokie.redis.repository.RedisVisitCountRepository;
+import supernova.whokie.redis.infrastructure.repository.RedisVisitCountRepository;
 import supernova.whokie.redis.service.dto.RedisCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;

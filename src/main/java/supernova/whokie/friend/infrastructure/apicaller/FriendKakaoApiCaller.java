@@ -1,10 +1,10 @@
-package supernova.whokie.friend.infrastructure.apiCaller;
+package supernova.whokie.friend.infrastructure.apicaller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import supernova.whokie.friend.infrastructure.apiCaller.dto.KakaoDto;
+import supernova.whokie.friend.infrastructure.apicaller.dto.KakaoDto;
 
 @Component
 @AllArgsConstructor
