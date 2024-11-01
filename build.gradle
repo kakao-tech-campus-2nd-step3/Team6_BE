@@ -50,6 +50,7 @@ dependencies {
 
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.33.0'
 
     // embedded redis - 테스트 시 적용
     testImplementation('it.ozimov:embedded-redis:0.7.3') {
