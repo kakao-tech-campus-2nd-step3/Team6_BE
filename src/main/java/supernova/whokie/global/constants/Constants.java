@@ -15,6 +15,7 @@ public final class Constants {
     public static final int QUESTION_LIMIT = 10;
     public static final int SECOND_HINT_PURCHASE_POINT = 20;
     public static final int THIRD_HINT_PURCHASE_POINT = 30;
+    public static final Long SSE_TIMEOUT = 1000L * 60L;
 
 
     private Constants() {
