@@ -1,6 +1,9 @@
 package supernova.whokie.global.config;
 
 import lombok.RequiredArgsConstructor;
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -15,6 +18,7 @@ import supernova.whokie.global.property.RedisProperties;
 @RequiredArgsConstructor
 public class RedisConfig {
     private final RedisProperties redisProperties;
+    private static final String REDISSON_HOST_PREFIX = "redis://";
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
@@ -22,15 +26,9 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
-
-        // Key는 String으로 저장
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        // Value는 기본적으로 Jdk 직렬화로 저장
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
-
-        return redisTemplate;
+    public RedissonClient redissonClient() {
+        Config config = new Config();
+        config.useSingleServer().setAddress(REDISSON_HOST_PREFIX + redisProperties.host() + ":" + redisProperties.port());
+        return Redisson.create(config);
     }
 }
