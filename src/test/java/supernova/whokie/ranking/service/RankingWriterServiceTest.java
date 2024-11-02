@@ -56,12 +56,13 @@ class RankingWriterServiceTest {
         int originalCount = ranking.getCount();
         Users user = ranking.getUsers();
         String question = ranking.getQuestion();
+        Groups group1 = ranking.getGroups();
 
         // when
-        rankingWriterService.increaseRankingCountByUserAndQuestion(user, question);
+        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question, group1);
         entityManager.flush();
         entityManager.clear();
-        Ranking actual = rankingRepository.findByUsersAndQuestion(user, question).orElse(null);
+        Ranking actual = rankingRepository.findByUsersAndQuestionAndGroups(user, question, group1).orElse(null);
 
         // then
         assertThat(actual.getCount()).isEqualTo(originalCount + 1);

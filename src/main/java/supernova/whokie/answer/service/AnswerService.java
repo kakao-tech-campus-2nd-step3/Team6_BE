@@ -1,10 +1,5 @@
 package supernova.whokie.answer.service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -31,6 +26,12 @@ import supernova.whokie.s3.service.S3Service;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
 import supernova.whokie.user.service.dto.UserModel;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -71,12 +72,14 @@ public class AnswerService {
         Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
         answerWriterService.save(answer);
 
+        // Ranking Count 증가
+
         user.increasePoint(Constants.ANSWER_POINT);
+
         eventPublisher.publishEvent(
             PointRecordEventDto.Earn.toDto(userId, Constants.ANSWER_POINT, 0,
                 PointRecordOption.CHARGED,
                 Constants.POINT_EARN_MESSAGE));
-
     }
 
     @Transactional
@@ -92,6 +95,8 @@ public class AnswerService {
 
         Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
         answerWriterService.save(answer);
+
+        // Ranking Count 증가
 
         user.increasePoint(Constants.ANSWER_POINT);
 
