@@ -1,33 +1,28 @@
 package supernova.whokie.redis.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import io.awspring.cloud.s3.S3Template;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.TestPropertySource;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import supernova.whokie.redis.entity.RedisVisitCount;
+import supernova.whokie.redis.infrastructure.repository.RedisVisitCountRepository;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
-import supernova.config.EmbeddedRedisConfig;
-import supernova.whokie.profile.infrastructure.repository.ProfileVisitCountRepository;
-import supernova.whokie.profile.service.ProfileVisitReadService;
-import supernova.whokie.redis.entity.RedisVisitCount;
-import supernova.whokie.redis.infrastructure.repository.AccessTokenRepository;
-import supernova.whokie.redis.infrastructure.repository.RedisVisitCountRepository;
-import supernova.whokie.redis.infrastructure.repository.RedisVisitorRepository;
 
-@DataRedisTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = RedisVisitService.class))
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Import({EmbeddedRedisConfig.class, ProfileVisitReadService.class})
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+@SpringBootTest
+@MockBean({S3Client.class, S3Template.class, S3Presigner.class})
 @TestPropertySource(properties = {
     "jwt.secret=abcd"
 })
@@ -36,11 +31,16 @@ public class RaceConditionTest {
     @Autowired
     private RedisVisitCountRepository redisVisitCountRepository;
 
-    @MockBean
-    private ProfileVisitCountRepository profileVisitCountRepository;
-
     @Autowired
     private RedisVisitService redisVisitService;
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    @BeforeEach
+    void setUp() {
+        redissonClient.getKeys().flushall();
+    }
 
     @Test
     @DisplayName("동시 방문자 수 증가 테스트")
@@ -70,15 +70,15 @@ public class RaceConditionTest {
             });
         }
         latch.await();
+        executorService.shutdown();
 
         // then
         RedisVisitCount actual = redisVisitCountRepository.findById(hostId).orElseThrow();
+
         assertAll(
             () -> assertThat(actual.getDailyVisited()).isEqualTo(oldDailyVisited + threadCount),
             () -> assertThat(actual.getTotalVisited()).isEqualTo(oldTotalVisited + threadCount)
         );
-
-        executorService.shutdown();
     }
 
     private RedisVisitCount createVisitCount() {

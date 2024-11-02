@@ -2,7 +2,6 @@ package supernova.whokie.redis.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.annotation.RedissonLock;
 import supernova.whokie.profile.service.ProfileVisitReadService;
 import supernova.whokie.redis.entity.RedisVisitCount;
@@ -19,18 +18,16 @@ import java.util.List;
 @AllArgsConstructor
 public class RedisVisitService {
 
-    private RedisVisitorRepository redisVisitorRepository;
-    private RedisVisitCountRepository redisVisitCountRepository;
-    private ProfileVisitReadService profileVisitReadService;
+    private final RedisVisitorRepository redisVisitorRepository;
+    private final RedisVisitCountRepository redisVisitCountRepository;
+    private final ProfileVisitReadService profileVisitReadService;
 
-    @RedissonLock(value = "visitedId:#hostId")
+    @RedissonLock(value = "#hostId")
     public RedisVisitCount visitProfile(Long hostId, String visitorIp) {
         RedisVisitCount redisVisitCount = findVisitCountByHostId(hostId);
         if(!checkVisited(hostId, visitorIp)) {
             redisVisitCount.visit();
-            System.out.println(redisVisitCount.getDailyVisited());
             redisVisitCountRepository.save(redisVisitCount);
-            System.out.println("-----------------");
         }
         // 방문자 로그 기록
         saveVisitor(hostId, visitorIp);

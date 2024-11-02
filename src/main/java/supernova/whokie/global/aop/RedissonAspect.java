@@ -1,7 +1,5 @@
 package supernova.whokie.global.aop;
 
-import java.lang.reflect.Method;
-import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -14,6 +12,9 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 import supernova.whokie.global.annotation.RedissonLock;
+
+import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
 @Aspect
 @Component
@@ -29,10 +30,8 @@ public class RedissonAspect {
         RedissonLock annotation = method.getAnnotation(RedissonLock.class);
         String lockKey = method.getName() + getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), annotation.value());
         RLock lock = redissonClient.getLock(lockKey);
-
         try {
             boolean lockable = lock.tryLock(annotation.waitTime(), annotation.leaseTime(), TimeUnit.MILLISECONDS);
-
             if (!lockable) {
                 return false;
             }
