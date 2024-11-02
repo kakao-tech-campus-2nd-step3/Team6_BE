@@ -11,11 +11,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.point_record.PointRecordOption;
@@ -38,7 +34,7 @@ public class PointRecordController {
     private final PointRecordService pointRecordService;
     private final PointRecordReaderService pointRecordReaderService;
 
-    @GetMapping("/purchase")
+    @PostMapping("/purchase")
     public ResponseEntity<Void> purchasePoint(
             @Authenticate Long userId,
             @RequestBody @Valid PointRecordRequest.Purchase request,

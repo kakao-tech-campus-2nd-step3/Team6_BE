@@ -6,7 +6,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public record KakaoPayProperties(
         String secretKey,
         String readyUrl,
-        String approveUrl
+        String approveUrl,
+        String approveRedirectUrl,
+        String failRedirectUrl,
+        String cancelRedirectUrl
 ) {
 
 }

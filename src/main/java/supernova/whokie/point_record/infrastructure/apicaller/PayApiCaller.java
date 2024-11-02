@@ -77,9 +77,9 @@ public class PayApiCaller {
         body.put("quantity", String.valueOf(point));
         body.put("total_amount", String.valueOf(point));
         body.put("tax_free_amount", "0");
-        body.put("approval_url", "http://localhost:8080/api/point/purchase/approve");
-        body.put("fail_url", "http://localhost:8080");
-        body.put("cancel_url", "http://localhost:8080");
+        body.put("approval_url", kakaoPayProperties.approveRedirectUrl());
+        body.put("fail_url", kakaoPayProperties.failRedirectUrl());
+        body.put("cancel_url", kakaoPayProperties.cancelRedirectUrl());
 
         return body;
     }
