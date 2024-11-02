@@ -8,6 +8,7 @@ public class ProfileResponse {
     @Builder
     public record Info(
             String description,
+            String imageUrl,
             String backgroundImageUrl,
             String name,
             int todayVisited,
@@ -17,6 +18,7 @@ public class ProfileResponse {
         public static ProfileResponse.Info from(ProfileModel.Info info) {
             return Info.builder()
                     .description(info.description())
+                    .imageUrl(info.imageUrl())
                     .backgroundImageUrl(info.backgroundImageUrl())
                     .name(info.name())
                     .todayVisited(info.todayVisited())

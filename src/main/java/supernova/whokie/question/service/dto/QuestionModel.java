@@ -1,14 +1,13 @@
 package supernova.whokie.question.service.dto;
 
-import java.time.LocalDate;
-import java.util.List;
 import lombok.Builder;
-import supernova.whokie.friend.Friend;
-import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.service.dto.GroupMemberModel;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
 import supernova.whokie.user.service.dto.UserModel;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class QuestionModel {
 
@@ -19,16 +18,11 @@ public class QuestionModel {
         List<UserModel.PickedInfo> users
     ) {
 
-        public static QuestionModel.CommonQuestion from(Question question,
-            List<Friend> friendList) {
-            List<UserModel.PickedInfo> users = friendList.stream()
-                .map(friend -> UserModel.PickedInfo.from(friend.getFriendUser()))
-                .toList();
-
+        public static QuestionModel.CommonQuestion from(Question question, List<UserModel.PickedInfo> pickers) {
             return CommonQuestion.builder()
                 .questionId(question.getId())
                 .content(question.getContent())
-                .users(users)
+                .users(pickers)
                 .build();
         }
 
@@ -64,11 +58,8 @@ public class QuestionModel {
         List<GroupMemberModel.Option> groupMembers
     ) {
 
-        public static QuestionModel.GroupQuestion from(Question question,
-            List<GroupMember> groupMemberList) {
-            List<GroupMemberModel.Option> groupMembers = groupMemberList.stream()
-                .map(GroupMemberModel.Option::from)
-                .toList();
+        public static QuestionModel.GroupQuestion from(
+                Question question, List<GroupMemberModel.Option> groupMembers) {
             return GroupQuestion.builder()
                 .questionId(question.getId())
                 .content(question.getContent())

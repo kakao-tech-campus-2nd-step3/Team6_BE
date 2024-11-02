@@ -1,6 +1,7 @@
 package supernova.whokie.user.service;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,11 @@ public class UserReaderService {
     @Transactional(readOnly = true)
     public List<Users> getUserListByUserIdIn(List<Long> userId) {
         return userRepository.findByIdIn(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Users> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 }

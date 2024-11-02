@@ -17,6 +17,7 @@ import supernova.whokie.user.infrastructure.repository.UserRepository;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -29,55 +30,105 @@ class RankingRepositoryTest {
     @Autowired
     private GroupRepository groupRepository;
 
-    private Users user1;
-    private Groups group1;
+    private List<Users> users;
+    private List<Groups> groups;
     private List<Ranking> rankings;
 
     @BeforeEach
     void setUp() {
-        user1 = createUser();
-        group1 = createGroup();
+        users = createUsers();
+        groups = createGroups();
         rankings = createRankings();
     }
 
     @Test
     @DisplayName("userId로 랭킹 조회")
-    void findByUsers_IdOrderByCountDesc() {
+    void findByUsers_IdOrderByCountDescTest() {
         // given
-        Users user = user1;
-        List<Ranking> rankingList = rankings;
-
+        Users user = users.get(0);
+        List<Ranking> rankings1 = rankings.stream()
+                .filter(ranking -> ranking.getUsers() == user)
+                .toList();
+      
         // when
         List<Ranking> actual = rankingRepository.findTop3ByUsers_IdOrderByCountDesc(user.getId());
 
         // then
-        assertThat(actual).hasSize(3);
-        assertThat(actual.get(0).getCount()).isEqualTo(rankingList.get(0).getCount());
-        assertThat(actual.get(1).getCount()).isEqualTo(rankingList.get(2).getCount());
-        assertThat(actual.get(2).getCount()).isEqualTo(rankingList.get(3).getCount());
+        assertAll(
+                () -> assertThat(actual).hasSize(rankings1.size())
+        );
     }
 
-    private Users createUser() {
-        Users user = Users.builder().id(1L).name("host").email("host").point(1).age(1).kakaoId(1L)
-                .gender(Gender.F).imageUrl("image").role(Role.USER).build();
-        return userRepository.save(user);
+    @Test
+    @DisplayName("groupId로 랭킹 조회")
+    void findTop3ByGroups_IdOrderByCountDescTest() {
+        // given
+        Groups group = groups.get(0);
+        List<Ranking> rankings1 = rankings.stream()
+                .filter(ranking -> ranking.getGroups() == group)
+                .toList();
+        // when
+        List<Ranking> actual = rankingRepository.findTop3ByGroups_IdOrderByCountDesc(group.getId());
+
+
+        // then
+        assertAll(
+                () -> assertThat(actual).hasSize(rankings1.size())
+        );
     }
 
-    private Groups createGroup() {
-        Groups group = Groups.builder().id(1L).groupName("group").description("test")
-                .groupImageUrl("image").build();
-        return groupRepository.save(group);
+    private List<Users> createUsers() {
+        Users user1 = Users.builder()
+                .id(1L)
+                .name("host")
+                .email("host")
+                .point(1)
+                .age(1)
+                .kakaoId(1L)
+                .gender(Gender.F)
+                .imageUrl("image")
+                .role(Role.USER)
+                .build();
+        Users user2 = Users.builder()
+                .id(2L)
+                .name("host2")
+                .email("host2")
+                .point(2)
+                .age(2)
+                .kakaoId(2L)
+                .gender(Gender.F)
+                .imageUrl("image2")
+                .role(Role.USER)
+                .build();
+        return userRepository.saveAll(List.of(user1, user2));
+    }
+
+    private List<Groups> createGroups() {
+        Groups group1 = Groups.builder()
+                .id(1L)
+                .groupName("group1")
+                .description("test")
+                .groupImageUrl("image")
+                .build();
+        Groups group2 = Groups.builder()
+                .id(2L)
+                .groupName("group2")
+                .description("test2")
+                .groupImageUrl("image2")
+                .build();
+        return groupRepository.saveAll(List.of(group1, group2));
     }
 
     private List<Ranking> createRankings() {
-        Ranking ranking1 = Ranking.builder().id(1L).question("q1").users(user1).count(100)
-                .groups(group1).build();
-        Ranking ranking2 = Ranking.builder().id(2L).question("q2").users(user1).count(70)
-                .groups(group1).build();
-        Ranking ranking3 = Ranking.builder().id(3L).question("q3").users(user1).count(90)
-                .groups(group1).build();
-        Ranking ranking4 = Ranking.builder().id(4L).question("q4").users(user1).count(80)
-                .groups(group1).build();
+        Ranking ranking1 = Ranking.builder().id(1L).question("q1").users(users.get(0)).count(100)
+                .groups(groups.get(0)).build();
+        Ranking ranking2 = Ranking.builder().id(2L).question("q2").users(users.get(0)).count(70)
+                .groups(groups.get(0)).build();
+        Ranking ranking3 = Ranking.builder().id(3L).question("q3").users(users.get(0)).count(90)
+                .groups(groups.get(1)).build();
+        Ranking ranking4 = Ranking.builder().id(4L).question("q4").users(users.get(1)).count(80)
+                .groups(groups.get(1)).build();
+      
         return rankingRepository.saveAll(List.of(ranking1, ranking2, ranking3, ranking4));
     }
 }

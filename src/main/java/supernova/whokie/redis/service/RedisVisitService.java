@@ -10,7 +10,8 @@ import supernova.whokie.redis.infrastructure.repository.RedisVisitorRepository;
 import supernova.whokie.redis.service.dto.RedisCommand;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -37,16 +38,11 @@ public class RedisVisitService {
     }
 
     public void saveVisitor(Long hostId, String visitorIp) {
-        LocalDateTime endOfDay = LocalDateTime.now().toLocalDate().atTime(23, 59, 59, 999999999); // 오늘 23:59:59.999999
-        LocalDateTime now = LocalDateTime.now();
-        long expiresIn = ChronoUnit.SECONDS.between(now, endOfDay);
-
         RedisVisitor redisVisitor = RedisVisitor.builder()
                 .id(hostId + ":" + visitorIp)
                 .hostId(hostId)
                 .visitorIp(visitorIp)
-                .visitTime(now)
-                .expiresIn(expiresIn)
+                .visitTime(LocalDateTime.now())
                 .build();
         redisVisitorRepository.save(redisVisitor);
     }
@@ -57,5 +53,27 @@ public class RedisVisitService {
                     RedisCommand.Visited command = profileVisitReadService.findVisitCountById(hostId);
                     return command.toRedisEntity();
                 });
+    }
+
+    public List<RedisVisitCount> findAllVisitCount() {
+        List<RedisVisitCount> visitCountList = new ArrayList<>();
+        redisVisitCountRepository.findAll().forEach(visitCountList::add);
+        return visitCountList;
+    }
+
+    public List<RedisVisitor> findAndDeleteAllVisitor() {
+        List<RedisVisitor> visitorList = findAllVisitor();
+        deleteAllVisitor();
+        return visitorList;
+    }
+
+    public List<RedisVisitor> findAllVisitor() {
+        List<RedisVisitor> visitorList = new ArrayList<>();
+        redisVisitorRepository.findAll().forEach(visitorList::add);
+        return visitorList;
+    }
+
+    public void deleteAllVisitor() {
+        redisVisitorRepository.deleteAll();
     }
 }

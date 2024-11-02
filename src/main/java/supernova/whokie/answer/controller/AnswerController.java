@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import supernova.whokie.answer.controller.dto.AnswerRequest;
 import supernova.whokie.answer.controller.dto.AnswerResponse;
@@ -23,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/answer")
 @RequiredArgsConstructor
+@Validated
 public class AnswerController {
 
     private final AnswerService answerService;

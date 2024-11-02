@@ -2,20 +2,14 @@ package supernova.whokie.point_record.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
@@ -25,9 +19,12 @@ import supernova.whokie.point_record.controller.dto.PointRecordResponse;
 import supernova.whokie.point_record.sevice.PointRecordReaderService;
 import supernova.whokie.point_record.sevice.dto.PointRecordCommand;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/api/point")
 @AllArgsConstructor
+@Validated
 public class PointRecordController {
 
     private final PointRecordReaderService pointRecordReaderService;
@@ -55,12 +52,4 @@ public class PointRecordController {
 
         return ResponseEntity.ok().body(PagingResponse.from(response));
     }
-
-    @PatchMapping("/earn")
-    public GlobalResponse earnPoint(
-        @RequestBody @Valid PointRecordRequest.Earn request
-    ) {
-        return GlobalResponse.builder().message("message").build();
-    }
-
 }

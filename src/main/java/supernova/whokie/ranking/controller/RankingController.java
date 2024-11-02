@@ -3,6 +3,7 @@ package supernova.whokie.ranking.controller;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import supernova.whokie.ranking.service.RankingService;
 @RestController
 @RequestMapping("/api/ranking")
 @AllArgsConstructor
+@Validated
 public class RankingController {
     private final RankingService rankingService;
 
@@ -24,11 +26,12 @@ public class RankingController {
         return RankingResponse.Ranks.from(rankingService.getUserRanking(userId));
     }
 
-    @GetMapping("")
-    public RankingResponse.Ranks getMyProfileRanking(
+    @GetMapping("/group/{group-id}")
+    public RankingResponse.Ranks getGroupRanking(
+            @PathVariable("group-id") @NotNull @Min(1) Long groupId,
             @Authenticate Long userId
     ) {
-        return RankingResponse.Ranks.from(rankingService.getUserRanking(userId));
+        return RankingResponse.Ranks.from(rankingService.getGroupRanking(userId, groupId));
     }
 
 }

@@ -49,6 +49,7 @@ class ProfileVisitorRepositoryTest {
         ProfileVisitor visitor = ProfileVisitor.builder()
                 .visitorIp("visitorIp")
                 .hostId(1L)
+                .visitTime(LocalDateTime.now())
                 .build();
 
         profileVisitorRepository.save(visitor);

@@ -6,5 +6,8 @@ import supernova.whokie.ranking.Ranking;
 import java.util.List;
 
 public interface RankingRepository extends JpaRepository<Ranking, Long> {
+
     List<Ranking> findTop3ByUsers_IdOrderByCountDesc(Long userId);
+
+    List<Ranking> findTop3ByGroups_IdOrderByCountDesc(Long groupId);
 }

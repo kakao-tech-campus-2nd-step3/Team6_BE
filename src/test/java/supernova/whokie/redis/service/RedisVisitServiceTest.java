@@ -1,5 +1,6 @@
 package supernova.whokie.redis.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,13 @@ import org.springframework.test.context.TestPropertySource;
 import supernova.config.EmbeddedRedisConfig;
 import supernova.whokie.profile.service.ProfileVisitReadService;
 import supernova.whokie.redis.entity.RedisVisitCount;
+import supernova.whokie.redis.entity.RedisVisitor;
+import supernova.whokie.redis.infrastructure.repository.RedisVisitorRepository;
 import supernova.whokie.redis.infrastructure.repository.RedisVisitCountRepository;
 import supernova.whokie.redis.service.dto.RedisCommand;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -34,6 +40,17 @@ class RedisVisitServiceTest {
     private RedisVisitCountRepository redisVisitCountRepository;
     @MockBean
     private ProfileVisitReadService profileVisitReadService;
+
+    RedisVisitCount redisVisitCount;
+    List<RedisVisitor> redisVisitors;
+    @Autowired
+    private RedisVisitorRepository redisVisitorRepository;
+
+    @BeforeEach
+    void setUp() {
+        redisVisitCount = createVisitCount();
+        redisVisitors = createRedisVisitors();
+    }
 
     @Test
     @DisplayName("방문자 수 증가 테스트")
@@ -77,6 +94,37 @@ class RedisVisitServiceTest {
         );
     }
 
+    @Test
+    @DisplayName("Visitor 전체 조회 테스트")
+    void findAllVisitorTest() {
+        // given
+        List<RedisVisitor> visitorList = redisVisitors;
+
+        // when
+        List<RedisVisitor> actuals = redisVisitService.findAllVisitor();
+
+        // then
+        assertThat(actuals).hasSize(visitorList.size());
+    }
+
+    @Test
+    @DisplayName("Visitor 리스트 전체 삭제 테스트")
+    void deleteAllVisitorTest() {
+        // given
+        List<RedisVisitor> visitorList = redisVisitors;
+        RedisVisitor remainEntity = redisVisitors.get(0);
+        visitorList.remove(remainEntity);
+
+        // when
+        redisVisitService.deleteAllVisitor();
+        List<RedisVisitor> actuals = redisVisitService.findAllVisitor();
+
+        // then
+        assertAll(
+                () -> assertThat(actuals).hasSize(0)
+        );
+    }
+
 
     private RedisVisitCount createVisitCount() {
         RedisVisitCount redisVisitCount = RedisVisitCount.builder()
@@ -86,6 +134,15 @@ class RedisVisitServiceTest {
                 .build();
         redisVisitCountRepository.save(redisVisitCount);
         return redisVisitCount;
+    }
+
+    private List<RedisVisitor> createRedisVisitors() {
+        List<RedisVisitor> redisVisitors = new ArrayList<>();
+        RedisVisitor visitor1 = RedisVisitor.builder().hostId(1L).build();
+        RedisVisitor visitor2 = RedisVisitor.builder().hostId(2L).build();
+        RedisVisitor visitor3 = RedisVisitor.builder().hostId(3L).build();
+        redisVisitorRepository.saveAll(List.of(visitor1, visitor2, visitor3)).forEach(redisVisitors::add);
+        return redisVisitors;
     }
 
 }

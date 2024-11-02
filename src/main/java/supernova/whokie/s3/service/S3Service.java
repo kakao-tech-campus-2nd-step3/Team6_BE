@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.exception.FileTypeMismatchException;
+import supernova.whokie.s3.event.S3EventDto;
 import supernova.whokie.s3.infrastructure.s3servicecaller.S3ServiceCaller;
-import supernova.whokie.s3.service.dto.S3Command;
 
 import java.util.Objects;
 
@@ -15,21 +15,21 @@ import java.util.Objects;
 public class S3Service {
     private final S3ServiceCaller s3ServiceCaller;
 
-    public String uploadFile(S3Command.Upload command) {
-        String key = createKey(command);
+    public void uploadFile(S3EventDto.Upload event) {
+        s3ServiceCaller.fileUpload(event.file(), event.key());
+    }
 
-        validateFileType(command.file(), command.fileType());
-        s3ServiceCaller.fileUpload(command.file(), key);
-        return key;
+    public void uploadFile(MultipartFile file, String key) {
+        s3ServiceCaller.fileUpload(file, key);
     }
 
     public String getSignedUrl(String key) {
         return s3ServiceCaller.getFileAsSignedUrl(key).toString();
     }
 
-    private String createKey(S3Command.Upload command) {
-        validateFileType(command.file(), command.fileType());
-        return command.folderName() + "/" + command.id() + "." + Constants.FILE_TYPE.get(command.fileType());
+    public String createKey(String folderName, Long userId, MultipartFile file, String type) {
+        validateFileType(file, type);
+        return folderName + "/" + userId + "." + Constants.FILE_TYPE.get(type);
     }
 
     private void validateFileType(MultipartFile file, String fileType) {

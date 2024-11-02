@@ -12,13 +12,15 @@ import supernova.whokie.redis.service.dto.RedisCommand;
 @Service
 @AllArgsConstructor
 public class ProfileVisitReadService {
-    private ProfileVisitCountRepository profileVisitCountRepository;
+
+    private final ProfileVisitCountRepository profileVisitCountRepository;
 
 
     @Transactional(readOnly = true)
     public RedisCommand.Visited findVisitCountById(Long hostId) {
         ProfileVisitCount visitCount = profileVisitCountRepository.findByHostId(hostId)
-                .orElseThrow(() -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
+            .orElseThrow(
+                () -> new EntityNotFoundException(MessageConstants.USER_NOT_FOUND_MESSAGE));
         return RedisCommand.Visited.from(visitCount);
     }
 

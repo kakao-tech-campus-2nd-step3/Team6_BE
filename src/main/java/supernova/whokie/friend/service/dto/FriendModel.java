@@ -13,11 +13,11 @@ public class FriendModel {
             boolean isFriend
     ) {
 
-        public static Info from(Users user, boolean isFriend) {
+        public static Info from(Users user, boolean isFriend, String imageUrl) {
             return Info.builder()
                     .friendId(user.getId())
                     .name(user.getName())
-                    .imageUrl(user.getImageUrl())
+                    .imageUrl(imageUrl)
                     .isFriend(isFriend)
                     .build();
         }

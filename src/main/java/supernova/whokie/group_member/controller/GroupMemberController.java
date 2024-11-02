@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import supernova.whokie.group_member.service.dto.GroupMemberModel;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/group")
+@Validated
 public class GroupMemberController {
 
     private final GroupMemberWriterService groupMemberWriterService;

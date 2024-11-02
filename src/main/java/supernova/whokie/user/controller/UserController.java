@@ -1,14 +1,15 @@
 package supernova.whokie.user.controller;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import supernova.whokie.global.annotation.Authenticate;
+import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.service.UserService;
 import supernova.whokie.user.service.dto.UserModel;
@@ -16,6 +17,7 @@ import supernova.whokie.user.service.dto.UserModel;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
+@Validated
 public class UserController {
 
     private final UserService userService;
@@ -31,7 +33,7 @@ public class UserController {
 
     @GetMapping("/callback")
     public ResponseEntity<UserResponse.Login> registerUser(
-            @RequestParam("code") @NotNull String code
+            @RequestParam("code") @NotBlank String code
     ) {
         UserModel.Login model = userService.register(code);
 
@@ -46,5 +48,15 @@ public class UserController {
     ) {
         UserModel.Point response = userService.getPoint(userId);
         return ResponseEntity.ok().body(UserResponse.Point.from(response));
+    }
+
+    @PatchMapping("/image")
+    public ResponseEntity<GlobalResponse> updateUserImage(
+            @Authenticate Long userId,
+            @RequestParam("type") @NotBlank String type,
+            @RequestParam("image") @NotNull MultipartFile imageFile
+    ) {
+        userService.uploadImageUrl(userId, imageFile, type);
+        return ResponseEntity.ok().body(GlobalResponse.builder().message("프로필 이미지 업데이트 성공").build());
     }
 }

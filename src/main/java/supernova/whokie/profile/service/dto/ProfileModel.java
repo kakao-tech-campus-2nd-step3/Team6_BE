@@ -10,15 +10,17 @@ public class ProfileModel {
     public record Info(
             String description,
             String backgroundImageUrl,
+            String imageUrl,
             String name,
             int todayVisited,
             int totalVisited
     ) {
 
-        public static ProfileModel.Info from(Profile profile, RedisVisitCount visitCount) {
+        public static ProfileModel.Info from(Profile profile, RedisVisitCount visitCount, String bgImageUrl, String imageUrl) {
             return Info.builder()
                     .description(profile.getDescription())
-                    .backgroundImageUrl(profile.getBackgroundImageUrl())
+                    .backgroundImageUrl(bgImageUrl)
+                    .imageUrl(imageUrl)
                     .name(profile.getUsers().getName())
                     .todayVisited(visitCount.getDailyVisited())
                     .totalVisited(visitCount.getTotalVisited())

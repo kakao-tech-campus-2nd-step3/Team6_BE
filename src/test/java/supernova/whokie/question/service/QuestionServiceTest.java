@@ -118,7 +118,6 @@ class QuestionServiceTest {
         when(groupMemberReaderService.getRandomGroupMembersByGroupId(eq(userId), eq(groupId), any(Pageable.class)))
                 .thenReturn(groupMembers);
 
-        Pageable pageable = PageRequest.of(0, Constants.QUESTION_LIMIT);
         List<QuestionModel.GroupQuestion> groupQuestionList = questionService.getGroupQuestions(
                 userId, groupId);
         QuestionResponse.GroupQuestions groupQuestions = QuestionResponse.GroupQuestions.from(
@@ -179,6 +178,7 @@ class QuestionServiceTest {
             .kakaoId(1L)
             .gender(Gender.M)
             .role(Role.USER)
+            .imageUrl("url")
             .build();
     }
 
@@ -215,6 +215,7 @@ class QuestionServiceTest {
                 .id((long) i)
                 .user(Users.builder()
                     .id((long) i)
+                    .imageUrl("url" + i)
                     .build())
                 .build());
         }

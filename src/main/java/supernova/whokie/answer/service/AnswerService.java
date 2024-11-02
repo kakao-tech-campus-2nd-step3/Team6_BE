@@ -27,6 +27,7 @@ import supernova.whokie.point_record.event.PointRecordEventDto;
 import supernova.whokie.point_record.sevice.PointRecordWriterService;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.service.QuestionReaderService;
+import supernova.whokie.s3.service.S3Service;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
 import supernova.whokie.user.service.dto.UserModel;
@@ -43,6 +44,7 @@ public class AnswerService {
     private final PointRecordWriterService pointRecordWriterService;
     private final AnswerWriterService answerWriterService;
     private final FriendReaderService friendReaderService;
+    private final S3Service s3Service;
 
     @Transactional(readOnly = true)
     public Page<AnswerModel.Record> getAnswerRecord(Pageable pageable, Long userId,
@@ -113,9 +115,14 @@ public class AnswerService {
 
         List<Friend> allFriends = friendReaderService.getAllByHostUser(user);
 
-        List<UserModel.PickedInfo> friendsInfoList = allFriends.stream().map(
-            friend -> UserModel.PickedInfo.from(friend.getFriendUser())
-        ).toList();
+        List<UserModel.PickedInfo> friendsInfoList = allFriends.stream()
+                .map(friend -> {
+                    String imageUrl = friend.getFriendUser().getImageUrl();
+                    if (user.isImageUrlStoredInS3()) {
+                        imageUrl = s3Service.getSignedUrl(imageUrl);
+                    }
+                    return UserModel.PickedInfo.from(friend.getFriendUser(), imageUrl);
+                }).toList();
 
         return AnswerModel.Refresh.from(friendsInfoList);
     }

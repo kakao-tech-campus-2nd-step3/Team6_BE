@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ import supernova.whokie.group.service.dto.GroupModel;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/group")
+@Validated
 public class GroupController {
 
     private final GroupService groupService;

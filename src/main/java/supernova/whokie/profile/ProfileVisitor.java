@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import supernova.whokie.global.entity.BaseTimeEntity;
 
+import java.time.LocalDateTime;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -22,6 +24,9 @@ public class ProfileVisitor extends BaseTimeEntity {
 
     @Column(nullable = false)
     private Long hostId;
+
+    @Column(nullable = false)
+    private LocalDateTime visitTime;
 
     public Long getId() {
         return id;
