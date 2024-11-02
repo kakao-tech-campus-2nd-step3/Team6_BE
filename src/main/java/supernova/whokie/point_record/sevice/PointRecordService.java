@@ -16,13 +16,14 @@ public class PointRecordService {
     private final PayApiCaller payApiCaller;
     private final UserReaderService userReaderService;
 
-    public PayReadyInfoResponse purchasePoint(int point){
-        PayReadyInfoResponse payReadyInfoResponse = payApiCaller.payReady(point);
-        return payReadyInfoResponse;
+    public PayReadyInfoResponse readyPurchasePoint(Long userId, int point){
+        Users user = userReaderService.getUserById(userId);
+
+        return payApiCaller.payReady(point);
     }
 
     @Transactional
-    public PayApproveInfoResponse approvePoint(Long userId, String tid, String pgToken){
+    public PayApproveInfoResponse approvePurchasePoint(Long userId, String tid, String pgToken){
         PayApproveInfoResponse payApproveInfoResponse = payApiCaller.payApprove(tid, pgToken);
 
         Users user = userReaderService.getUserById(userId);

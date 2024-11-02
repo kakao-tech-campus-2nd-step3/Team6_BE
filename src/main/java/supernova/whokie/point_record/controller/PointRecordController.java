@@ -41,7 +41,7 @@ public class PointRecordController {
             @RequestBody @Valid PointRecordRequest.Purchase request,
             HttpSession session
     ) {
-        PayReadyInfoResponse payReadyInfoResponse = pointRecordService.purchasePoint(request.point());
+        PayReadyInfoResponse payReadyInfoResponse = pointRecordService.readyPurchasePoint(userId, request.point());
 
         session.setAttribute("tid", payReadyInfoResponse.tid());
         session.setAttribute("userId", userId);
@@ -59,7 +59,7 @@ public class PointRecordController {
         String tid = (String) session.getAttribute("tid");
         Long userId = (Long) session.getAttribute("userId");
 
-        pointRecordService.approvePoint(userId, tid, pgToken);
+        pointRecordService.approvePurchasePoint(userId, tid, pgToken);
         return GlobalResponse.builder().message("포인트 결제가 완료되었습니다.").build();
     }
 
