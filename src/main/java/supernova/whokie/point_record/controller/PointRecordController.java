@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import supernova.whokie.global.annotation.Authenticate;
+import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.point_record.PointRecordOption;
 import supernova.whokie.point_record.controller.dto.PointRecordRequest;
@@ -51,15 +52,15 @@ public class PointRecordController {
     }
 
     @GetMapping("/purchase/approve")
-    public PayApproveInfoResponse payApproved(
+    public GlobalResponse payApproved(
             @RequestParam("pg_token") String pgToken,
             HttpSession session
     ) {
         String tid = (String) session.getAttribute("tid");
         Long userId = (Long) session.getAttribute("userId");
 
-        PayApproveInfoResponse payApproveInfoResponse = pointRecordService.approvePoint(userId, tid, pgToken);
-        return payApproveInfoResponse;
+        pointRecordService.approvePoint(userId, tid, pgToken);
+        return GlobalResponse.builder().message("포인트 결제가 완료되었습니다.").build();
     }
 
     @GetMapping("/record")
