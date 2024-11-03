@@ -80,6 +80,7 @@ public class PayApiCaller {
         body.put("approval_url", kakaoPayProperties.approveRedirectUrl());
         body.put("fail_url", kakaoPayProperties.failRedirectUrl());
         body.put("cancel_url", kakaoPayProperties.cancelRedirectUrl());
+        body.put("payment_method_type", "CARD"); //지불 수단 카드로 고정
 
         return body;
     }

@@ -2,7 +2,11 @@ package supernova.whokie.point_record.sevice;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import supernova.whokie.global.constants.Constants;
+import supernova.whokie.point_record.PointRecordOption;
+import supernova.whokie.point_record.event.PointRecordEventDto;
 import supernova.whokie.point_record.infrastructure.apicaller.PayApiCaller;
 import supernova.whokie.point_record.infrastructure.apicaller.dto.PayApproveInfoResponse;
 import supernova.whokie.point_record.infrastructure.apicaller.dto.PayReadyInfoResponse;
@@ -17,7 +21,9 @@ public class PointRecordService {
     private final PayApiCaller payApiCaller;
     private final UserReaderService userReaderService;
     private final PayService payService;
+    private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     public PayReadyInfoResponse readyPurchasePoint(Long userId, int point){
         Users user = userReaderService.getUserById(userId);
 
@@ -38,7 +44,13 @@ public class PointRecordService {
 
         PayApproveInfoResponse payApproveInfoResponse = payApiCaller.payApprove(tid, pgToken);
 
-        user.increasePoint(payApproveInfoResponse.amount().total());
+        int purchasedPoint = payApproveInfoResponse.amount().total();
+        user.increasePoint(purchasedPoint);
+        var event = PointRecordEventDto.Earn.toDto(userId, purchasedPoint, purchasedPoint,
+                PointRecordOption.CHARGED,
+                Constants.POINT_PURCHASE_MESSAGE);
+
+        eventPublisher.publishEvent(event);
 
         return payApproveInfoResponse;
     }

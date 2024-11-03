@@ -9,17 +9,12 @@ public record PayApproveInfoResponse(
         String aid,
         String tid,
         String cid,
-        String sid,
         String partnerOrderId,
         String partnerUserId,
         String itemName,
-        String itemCode,
-        String payload,
         int quantity,
         Amount amount,
         String paymentMethodType,
-        String cardInfo,
-        String sequentialPaymentMethods,
         String createdAt,
         String approvedAt
 ) {
