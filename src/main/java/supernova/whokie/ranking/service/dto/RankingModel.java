@@ -14,17 +14,12 @@ public class RankingModel {
             String groupName
     ) {
         public static RankingModel.Rank from(Ranking entity, int rank) {
-            String groupName = null;
-            if (entity.getGroups() != null) {
-                groupName = entity.getGroups().getGroupName();
-            }
-
             return RankingModel.Rank.builder()
                     .rankingId(entity.getId())
                     .question(entity.getQuestion())
                     .rank(rank)
                     .count(entity.getCount())
-                    .groupName(groupName)
+                    .groupName(entity.getGroups().getGroupName())
                     .build();
         }
     }
