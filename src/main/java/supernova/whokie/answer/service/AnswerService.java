@@ -21,7 +21,6 @@ import supernova.whokie.point_record.PointRecordOption;
 import supernova.whokie.point_record.event.PointRecordEventDto;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.service.QuestionReaderService;
-import supernova.whokie.ranking.service.RankingWriterService;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
 import supernova.whokie.user.service.dto.UserModel;
@@ -43,7 +42,6 @@ public class AnswerService {
     private final GroupReaderService groupReaderService;
     private final AnswerWriterService answerWriterService;
     private final FriendReaderService friendReaderService;
-    private final RankingWriterService rankingWriterService;
 
     @Transactional(readOnly = true)
     public Page<AnswerModel.Record> getAnswerRecord(Pageable pageable, Long userId,
@@ -69,7 +67,6 @@ public class AnswerService {
 
         Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
         answerWriterService.save(answer);
-        rankingWriterService.updateRanking(question.getContent(), picked, null);
 
         user.increasePoint(Constants.ANSWER_POINT);
 
@@ -96,7 +93,6 @@ public class AnswerService {
 
         Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
         answerWriterService.save(answer);
-        rankingWriterService.updateRanking(question.getContent(), picked, group);
 
         user.increasePoint(Constants.ANSWER_POINT);
 

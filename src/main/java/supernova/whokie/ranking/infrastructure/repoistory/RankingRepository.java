@@ -10,8 +10,4 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
     List<Ranking> findTop3ByUsers_IdOrderByCountDesc(Long userId);
 
     List<Ranking> findTop3ByGroups_IdOrderByCountDesc(Long groupId);
-
-    boolean existsByUsers_IdAndQuestion(Long userId, String question);
-
-    Ranking findByUsers_IdAndQuestion(Long userId, String question);
 }

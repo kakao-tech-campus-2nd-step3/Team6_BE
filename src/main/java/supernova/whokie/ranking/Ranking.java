@@ -38,10 +38,6 @@ public class Ranking {
     private Users users;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", nullable = true)
+    @JoinColumn(name = "group_id", nullable = false)
     private Groups groups;
-
-    public void updateCount() {
-        count += 1;
-    }
 }

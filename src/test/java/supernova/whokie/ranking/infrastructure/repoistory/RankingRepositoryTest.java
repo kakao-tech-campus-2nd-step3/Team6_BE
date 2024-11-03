@@ -73,21 +73,8 @@ class RankingRepositoryTest {
 
         // then
         assertAll(
-            () -> assertThat(actual).hasSize(rankings1.size())
+                () -> assertThat(actual).hasSize(rankings1.size())
         );
-    }
-
-    @Test
-    @DisplayName("UserId와 Question으로 Ranking 존재 여부 확인")
-    void ExistsByUsers_IdAndQuestionTest() {
-        // given
-        Users user = users.get(0);
-        String question = rankings.get(0).getQuestion();
-
-        // when
-        boolean actual = rankingRepository.existsByUsers_IdAndQuestion(user.getId(), question);
-
-        assertThat(actual).isTrue();
     }
 
     private List<Users> createUsers() {
