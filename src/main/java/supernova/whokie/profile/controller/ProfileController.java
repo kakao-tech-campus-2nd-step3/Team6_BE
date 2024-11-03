@@ -2,7 +2,6 @@ package supernova.whokie.profile.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -35,10 +34,9 @@ public class ProfileController {
     @PatchMapping("bg/upload")
     public GlobalResponse uploadProfileBgImage(
             @Authenticate Long userId,
-            @RequestParam("type") @NotBlank String type,
             @RequestParam("image") @NotNull MultipartFile imageFile
     ) {
-        profileService.updateImage(userId, imageFile, type);
+        profileService.updateImage(userId, imageFile);
         return GlobalResponse.builder().message("배경 이미지 업로드 성공").build();
     }
 }

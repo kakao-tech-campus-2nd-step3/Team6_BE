@@ -53,10 +53,9 @@ public class UserController {
     @PatchMapping("/image")
     public GlobalResponse updateUserImage(
             @Authenticate Long userId,
-            @RequestParam("type") @NotBlank String type,
             @RequestParam("image") @NotNull MultipartFile imageFile
     ) {
-        userService.uploadImageUrl(userId, imageFile, type);
+        userService.uploadImageUrl(userId, imageFile);
         return GlobalResponse.builder().message("프로필 이미지 업데이트 성공").build();
     }
 }
