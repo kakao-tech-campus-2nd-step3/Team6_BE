@@ -53,7 +53,6 @@ public class S3Service {
                 "resized_image.png",
                 "image/png",
                 baos.toByteArray()
-
         );
     }
 

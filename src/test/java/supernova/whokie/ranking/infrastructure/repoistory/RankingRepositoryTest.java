@@ -70,7 +70,6 @@ class RankingRepositoryTest {
         // when
         List<Ranking> actual = rankingRepository.findTop3ByGroups_IdOrderByCountDesc(group.getId());
 
-
         // then
         assertAll(
                 () -> assertThat(actual).hasSize(rankings1.size())
@@ -105,13 +104,11 @@ class RankingRepositoryTest {
 
     private List<Groups> createGroups() {
         Groups group1 = Groups.builder()
-                .id(1L)
                 .groupName("group1")
                 .description("test")
                 .groupImageUrl("image")
                 .build();
         Groups group2 = Groups.builder()
-                .id(2L)
                 .groupName("group2")
                 .description("test2")
                 .groupImageUrl("image2")
