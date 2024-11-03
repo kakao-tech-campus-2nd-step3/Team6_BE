@@ -31,7 +31,7 @@ public class AnswerModel {
         Boolean valid,
         String content
     ) {
-        public static AnswerModel.Hint from(Users user, int hintCount, boolean valid) {
+        public static AnswerModel.Hint from(Users user, int hintCount, boolean valid, String nameInitial) {
             return switch (hintCount) {
                 case 1 ->
                         Hint.builder()
@@ -49,7 +49,7 @@ public class AnswerModel {
                         Hint.builder()
                                 .hintNum(3)
                                 .valid(valid)
-                                .content(valid ? user.getName() : null)
+                                .content(valid ? nameInitial : null)
                                 .build();
                 default -> throw new InvalidEntityException("유효하지 않은 hintCount입니다.");
             };
