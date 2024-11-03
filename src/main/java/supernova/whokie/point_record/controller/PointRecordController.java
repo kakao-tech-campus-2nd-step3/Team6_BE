@@ -42,7 +42,6 @@ public class PointRecordController {
     ) {
         PayReadyInfoResponse payReadyInfoResponse = pointRecordService.readyPurchasePoint(userId, request.point());
 
-
         return ResponseEntity.status(HttpStatus.SEE_OTHER)
                 .header("location", payReadyInfoResponse.nextRedirectPcUrl())
                 .build();

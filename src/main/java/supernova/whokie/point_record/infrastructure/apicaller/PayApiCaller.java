@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import supernova.whokie.global.exception.AuthenticationException;
+import supernova.whokie.global.exception.FileTypeMismatchException;
 import supernova.whokie.global.property.KakaoPayProperties;
 import supernova.whokie.point_record.infrastructure.apicaller.dto.PayApproveInfoResponse;
 import supernova.whokie.point_record.infrastructure.apicaller.dto.PayReadyInfoResponse;
@@ -39,7 +39,7 @@ public class PayApiCaller {
                         if (response.getStatusCode().isSameCodeAs(HttpStatus.OK)) {
                             return objectMapper.readValue(response.getBody(), PayReadyInfoResponse.class);
                         }
-                        throw new AuthenticationException("유효하지 않은 시크릿코드입니다.");
+                        throw new FileTypeMismatchException("응답받은 형식과 요청 형식이 다릅니다.");
                     });
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON 변환 오류", e);
@@ -60,7 +60,7 @@ public class PayApiCaller {
                         if (response.getStatusCode().isSameCodeAs(HttpStatus.OK)) {
                             return objectMapper.readValue(response.getBody(), PayApproveInfoResponse.class);
                         }
-                        throw new AuthenticationException("유효하지 않은 시크릿코드입니다.");
+                        throw new FileTypeMismatchException("응답받은 형식과 요청 형식이 다릅니다.");
                     });
         } catch (JsonProcessingException e) {
             throw new RuntimeException("JSON 변환 오류", e);
