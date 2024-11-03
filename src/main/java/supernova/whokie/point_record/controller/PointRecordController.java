@@ -38,13 +38,10 @@ public class PointRecordController {
     @PostMapping("/purchase")
     public ResponseEntity<Void> purchasePoint(
             @Authenticate Long userId,
-            @RequestBody @Valid PointRecordRequest.Purchase request,
-            HttpSession session
+            @RequestBody @Valid PointRecordRequest.Purchase request
     ) {
         PayReadyInfoResponse payReadyInfoResponse = pointRecordService.readyPurchasePoint(userId, request.point());
 
-        session.setAttribute("tid", payReadyInfoResponse.tid());
-        session.setAttribute("userId", userId);
 
         return ResponseEntity.status(HttpStatus.SEE_OTHER)
                 .header("location", payReadyInfoResponse.nextRedirectPcUrl())
@@ -53,13 +50,10 @@ public class PointRecordController {
 
     @GetMapping("/purchase/approve")
     public GlobalResponse payApproved(
-            @RequestParam("pg_token") String pgToken,
-            HttpSession session
+            @Authenticate Long userId,
+            @RequestParam("pg_token") String pgToken
     ) {
-        String tid = (String) session.getAttribute("tid");
-        Long userId = (Long) session.getAttribute("userId");
-
-        pointRecordService.approvePurchasePoint(userId, tid, pgToken);
+        pointRecordService.approvePurchasePoint(userId, pgToken);
         return GlobalResponse.builder().message("포인트 결제가 완료되었습니다.").build();
     }
 

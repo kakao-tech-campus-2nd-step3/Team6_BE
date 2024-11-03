@@ -14,7 +14,8 @@ import org.springframework.data.redis.core.RedisHash;
 public class PayToken {
 
     @Id
-    private String tid;
+    private Long id;
 
+    private String tid;
 
 }
