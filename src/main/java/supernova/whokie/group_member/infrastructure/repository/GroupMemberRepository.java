@@ -18,8 +18,8 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
     @Query("SELECT gm FROM GroupMember gm JOIN FETCH gm.user WHERE gm.group.id = :groupId")
     List<GroupMember> findAllByGroupId(Long groupId);
 
-    @Query("SELECT g FROM GroupMember g WHERE g.user.id != :userId AND g.group.id = :groupId ORDER BY function('RAND')")
-    List<GroupMember> getRandomGroupMember(@Param("userId") Long userId,
+    @Query("SELECT g FROM GroupMember g JOIN FETCH g.user WHERE g.user.id != :userId AND g.group.id = :groupId ORDER BY function('RAND')")
+    List<GroupMember> getRandomGroupMemberJoinFetch(@Param("userId") Long userId,
                                            @Param("groupId") Long groupId, Pageable pageable);
 
     Boolean existsByUserIdAndGroupId(Long userId, Long groupId);

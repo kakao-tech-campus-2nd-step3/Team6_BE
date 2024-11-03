@@ -41,7 +41,7 @@ public class GroupMemberReaderService {
     @Transactional(readOnly = true)
     public List<GroupMember> getRandomGroupMembersByGroupId(Long userId, Long groupId,
         Pageable pageable) {
-        return groupMemberRepository.getRandomGroupMember(userId,
+        return groupMemberRepository.getRandomGroupMemberJoinFetch(userId,
             groupId, pageable);
     }
 
