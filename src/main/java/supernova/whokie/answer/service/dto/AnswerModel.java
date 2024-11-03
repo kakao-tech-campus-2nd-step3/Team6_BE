@@ -37,7 +37,7 @@ public class AnswerModel {
                         Hint.builder()
                                 .hintNum(1)
                                 .valid(valid)
-                                .content(valid ? String.valueOf(user.getGender()) : null)
+                                .content(valid ? ((String.valueOf(user.getGender())).equals("M")? "남자" : "여자") : null)
                                 .build();
                 case 2 ->
                         Hint.builder()
