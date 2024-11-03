@@ -53,12 +53,12 @@ public class GroupMemberModel {
             String imageUrl
     ) {
 
-        public static Option from(GroupMember groupMember) {
+        public static Option from(GroupMember groupMember, String imageUrl) {
             return Option.builder()
                     .groupMemberId(groupMember.getId())
                     .userId(groupMember.getUser().getId())
                     .userName(groupMember.getUser().getName())
-                    .imageUrl(groupMember.getUser().getImageUrl())
+                    .imageUrl(imageUrl)
                     .build();
         }
     }

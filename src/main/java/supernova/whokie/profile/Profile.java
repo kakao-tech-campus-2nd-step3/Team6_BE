@@ -23,4 +23,7 @@ public class Profile {
 
     private String backgroundImageUrl;
 
+    public void updateBackgroundImageUrl(String url) {
+        backgroundImageUrl = url;
+    }
 }

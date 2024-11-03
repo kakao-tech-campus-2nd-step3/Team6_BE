@@ -7,18 +7,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.service.FriendReaderService;
 import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.service.GroupMemberReaderService;
+import supernova.whokie.group_member.service.dto.GroupMemberModel;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
 import supernova.whokie.question.service.dto.QuestionCommand;
 import supernova.whokie.question.service.dto.QuestionModel;
+import supernova.whokie.s3.service.S3Service;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
+import supernova.whokie.user.service.dto.UserModel;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +33,7 @@ public class QuestionService {
     private final FriendReaderService friendReaderService;
     private final UserReaderService userReaderService;
     private final QuestionWriterService questionWriterService;
+    private final S3Service s3Service;
 
     @Transactional(readOnly = true)
     public List<QuestionModel.CommonQuestion> getCommonQuestion(Long userId, Pageable pageable) {
@@ -38,10 +43,19 @@ public class QuestionService {
         List<Question> randomQuestions = questionReaderService.getRandomQuestions(pageable);
         Pageable friendPageable = PageRequest.of(0, Constants.FRIEND_LIMIT);
 
-        //TODO 리팩토링 필요
+        List<Friend> friends = friendReaderService.findRandomFriendsByHostUser(user.getId(), friendPageable);
+        List<UserModel.PickedInfo> pickerModels = friends.stream()
+                .map(friend -> {
+                    Users friendUser = friend.getFriendUser();
+                    String imageUrl = friendUser.getImageUrl();
+                    if (friendUser.isImageUrlStoredInS3()) {
+                        imageUrl = s3Service.getSignedUrl(imageUrl);
+                    }
+                    return UserModel.PickedInfo.from(friendUser, imageUrl);
+                }).toList();
+
         return randomQuestions.stream()
-            .map(question -> QuestionModel.CommonQuestion.from(question,
-                friendReaderService.findRandomFriendsByHostUser(user.getId(), friendPageable)))
+            .map(question -> QuestionModel.CommonQuestion.from(question, pickerModels))
             .toList();
     }
 
@@ -72,11 +86,20 @@ public class QuestionService {
 
         Pageable GroupMemberpageable = PageRequest.of(0, Constants.FRIEND_LIMIT);
 
-        //TODO 리팩토링 필요
+        List<GroupMember> groupMembers = groupMemberReaderService.getRandomGroupMembersByGroupId(userId, groupId, GroupMemberpageable);
+        List<GroupMemberModel.Option> memberModels = groupMembers.stream()
+                .map(member -> {
+                    String imageUrl = member.getUser().getImageUrl();
+                    if ( member.getUser().isImageUrlStoredInS3()) {
+                        imageUrl = s3Service.getSignedUrl(imageUrl);
+                    }
+                    return GroupMemberModel.Option.from(member, imageUrl);
+                })
+                .toList();
+
         return randomQuestions.stream()
-            .map(question -> QuestionModel.GroupQuestion.from(question,
-                groupMemberReaderService.getRandomGroupMembersByGroupId(userId, groupId,
-                    GroupMemberpageable)))
+            .map(question ->
+                    QuestionModel.GroupQuestion.from(question, memberModels))
             .toList();
     }
 

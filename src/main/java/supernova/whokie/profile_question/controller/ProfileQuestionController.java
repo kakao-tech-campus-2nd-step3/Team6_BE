@@ -8,12 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
 import supernova.whokie.global.dto.PagingResponse;
@@ -23,12 +19,14 @@ import supernova.whokie.profile_question.service.ProfileQuestionService;
 import supernova.whokie.profile_question.service.dto.ProfileQuestionModel;
 
 @RestController
+@RequestMapping("/api/profile/question")
 @RequiredArgsConstructor
+@Validated
 public class ProfileQuestionController {
 
     private final ProfileQuestionService profileQuestionService;
 
-    @GetMapping("/api/profile/question/{user-id}")
+    @GetMapping("/{user-id}")
     public PagingResponse<ProfileQuestionResponse.Question> getProfileQuestions(
             @PathVariable("user-id") @NotNull @Min(1) Long userId,
             @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable
@@ -38,7 +36,7 @@ public class ProfileQuestionController {
         return PagingResponse.from(page.map(ProfileQuestionResponse.Question::from));
     }
 
-    @DeleteMapping("/api/profile/question/{profile-question-id}")
+    @DeleteMapping("/{profile-question-id}")
     public GlobalResponse deleteProfileQuestion(
             @Authenticate Long userId,
             @PathVariable("profile-question-id") @NotNull @Min(1) Long profileQuestionId
@@ -47,7 +45,7 @@ public class ProfileQuestionController {
         return GlobalResponse.builder().message("삭제가 완료되었습니다.").build();
     }
 
-    @PostMapping("/api/profile/question")
+    @PostMapping("")
     public GlobalResponse createProfileQuestion(
             @Authenticate Long userId,
             @RequestBody @Valid ProfileQuestionRequest.Create request

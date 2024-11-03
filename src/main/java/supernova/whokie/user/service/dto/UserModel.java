@@ -15,11 +15,11 @@ public class UserModel {
             String name,
             String imageUrl
     ) {
-        public static PickedInfo from(Users user) {
+        public static PickedInfo from(Users user, String imageUrl) {
             return PickedInfo.builder()
                     .userId(user.getId())
                     .name(user.getName())
-                    .imageUrl(user.getImageUrl())
+                    .imageUrl(imageUrl)
                     .build();
         }
 
@@ -32,16 +32,18 @@ public class UserModel {
             int age,
             String name,
             Role role,
+            String imageUrl,
             LocalDate createdAt
     ) {
 
-        public static UserModel.Info from(Users user) {
+        public static UserModel.Info from(Users user, String url) {
             return UserModel.Info.builder()
                     .email(user.getEmail())
                     .gender(user.getGender())
                     .age(user.getAge())
                     .name(user.getName())
                     .role(user.getRole())
+                    .imageUrl(url)
                     .createdAt(user.getCreatedAt().toLocalDate())
                     .build();
         }
