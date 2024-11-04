@@ -52,6 +52,7 @@ public final class UrlProviderUtil {
 
         byte[] decodedBytes = Base64.getUrlDecoder().decode(encryptedData);
         byte[] decryptedBytes = cipher.doFinal(decodedBytes);
+
         return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
 
@@ -62,6 +63,11 @@ public final class UrlProviderUtil {
             Long groupId = Long.parseLong(parts[0]);
             LocalDateTime startDateTime = LocalDateTime.parse(parts[1]);
             LocalDateTime endDateTime = LocalDateTime.parse(parts[2]);
+
+            // 만료 시간 검사
+            if (endDateTime.isBefore(LocalDateTime.now())) {
+                throw new IllegalArgumentException("The invite code has expired.");
+            }
 
             return UrlData.builder()
                 .groupId(groupId)
