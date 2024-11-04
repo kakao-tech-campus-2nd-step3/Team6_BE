@@ -154,10 +154,9 @@ public class AnswerService {
         List<AnswerModel.Hint> allHints = new ArrayList<>();
 
         Users picker = answer.getPicker();
-        String parsedNameInitial = getInitials(picker.getName()); //이름 초성으로 변환
         for (int i = 1; i <= Constants.MAX_HINT_COUNT; i++) {
             boolean valid = (i <= answer.getHintCount());
-            allHints.add(AnswerModel.Hint.from(picker, i, valid, parsedNameInitial));
+            allHints.add(AnswerModel.Hint.from(picker, i, valid, getInitials(picker.getName())));
         }
 
         return allHints;
