@@ -12,6 +12,7 @@ import supernova.whokie.redis.entity.RedisVisitCount;
 import supernova.whokie.redis.service.RedisVisitService;
 import supernova.whokie.s3.event.S3EventDto;
 import supernova.whokie.s3.service.S3Service;
+import supernova.whokie.s3.util.S3Util;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class ProfileService {
 
     @Transactional
     public void updateImage(Long userId, MultipartFile imageFile) {
-        String key = s3Service.createKey(Constants.PROFILE_BG_IMAGE_FOLRDER, userId);
+        String key = S3Util.createKey(Constants.PROFILE_BG_IMAGE_FOLRDER, userId);
         S3EventDto.Upload event = S3EventDto.Upload.toDto(imageFile, key, Constants.PROFILE_BG_IMAGE_WIDTH, Constants.PROFILE_BG_IMAGE_HEIGHT);
         eventPublisher.publishEvent(event);
 

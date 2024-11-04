@@ -11,7 +11,7 @@ import supernova.whokie.profile.service.ProfileVisitWriterService;
 import supernova.whokie.profile.service.ProfileWriterService;
 import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.s3.event.S3EventDto;
-import supernova.whokie.s3.service.S3Service;
+import supernova.whokie.s3.util.S3Util;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.apicaller.UserApiCaller;
 import supernova.whokie.user.infrastructure.apicaller.dto.KakaoAccount;
@@ -31,7 +31,6 @@ public class UserService {
     private final UserReaderService userReaderService;
     private final KakaoTokenService kakaoTokenService;
     private final ApplicationEventPublisher eventPublisher;
-    private final S3Service s3Service;
 
     public String getCodeUrl() {
         return userApiCaller.createCodeUrl();
@@ -70,7 +69,7 @@ public class UserService {
 
     @Transactional
     public void uploadImageUrl(Long userId, MultipartFile imageFile) {
-        String key = s3Service.createKey(Constants.USER_IMAGE_FOLRDER, userId);
+        String key = S3Util.createKey(Constants.USER_IMAGE_FOLRDER, userId);
         S3EventDto.Upload event = S3EventDto.Upload.toDto(imageFile, key, Constants.PROFILE_IMAGE_WIDTH, Constants.PROFILE_IMAGE_HEIGHT);
         eventPublisher.publishEvent(event);
 
