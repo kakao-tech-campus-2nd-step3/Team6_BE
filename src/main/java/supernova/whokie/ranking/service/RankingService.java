@@ -1,6 +1,6 @@
 package supernova.whokie.ranking.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RankingService {
     private final RankingReaderService rankingReaderService;
     private final GroupMemberReaderService groupMemberReaderService;

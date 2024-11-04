@@ -1,6 +1,6 @@
 package supernova.whokie.pointrecord.event;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -8,7 +8,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import supernova.whokie.pointrecord.sevice.PointRecordService;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PointRecordEventHandler {
 
     private final PointRecordService pointRecordService;

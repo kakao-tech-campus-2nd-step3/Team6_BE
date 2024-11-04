@@ -1,13 +1,13 @@
 package supernova.whokie.s3.event;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import supernova.whokie.s3.service.S3Service;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class S3EventHandler {
     private final S3Service s3Service;
 

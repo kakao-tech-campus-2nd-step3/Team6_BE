@@ -1,6 +1,6 @@
 package supernova.whokie.ranking.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import supernova.whokie.ranking.Ranking;
 import supernova.whokie.ranking.infrastructure.repoistory.RankingRepository;
@@ -8,7 +8,7 @@ import supernova.whokie.ranking.infrastructure.repoistory.RankingRepository;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RankingReaderService {
     private final RankingRepository rankingRepository;
 

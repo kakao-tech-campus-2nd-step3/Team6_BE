@@ -1,6 +1,6 @@
 package supernova.whokie.profile.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
@@ -10,7 +10,7 @@ import supernova.whokie.profile.infrastructure.repository.ProfileVisitCountRepos
 import supernova.whokie.redis.service.dto.RedisCommand;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProfileVisitReadService {
 
     private final ProfileVisitCountRepository profileVisitCountRepository;

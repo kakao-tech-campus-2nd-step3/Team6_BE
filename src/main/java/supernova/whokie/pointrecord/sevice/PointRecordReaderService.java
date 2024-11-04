@@ -1,7 +1,6 @@
 package supernova.whokie.pointrecord.sevice;
 
-import java.time.LocalTime;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,9 +10,11 @@ import supernova.whokie.pointrecord.infrastructure.repository.PointRecordReposit
 import supernova.whokie.pointrecord.sevice.dto.PointRecordCommand;
 import supernova.whokie.pointrecord.sevice.dto.PointRecordModel;
 
+import java.time.LocalTime;
+
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PointRecordReaderService {
 
     private final PointRecordRepository pointRecordRepository;

@@ -1,6 +1,6 @@
 package supernova.whokie.friend.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.friend.Friend;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FriendService {
 
     private final FriendKakaoApiCaller apiCaller;

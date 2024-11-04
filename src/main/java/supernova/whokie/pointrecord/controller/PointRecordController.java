@@ -2,7 +2,7 @@ package supernova.whokie.pointrecord.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -22,7 +22,7 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/point")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Validated
 public class PointRecordController {
 
