@@ -1,8 +1,7 @@
 package supernova.whokie.profile.service;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,11 +13,11 @@ import supernova.whokie.redis.service.RedisVisitService;
 
 import java.util.List;
 
+@Slf4j
 @Profile("redis")
 @Service
 @RequiredArgsConstructor
 public class ProfileSchedulerService {
-    private final Logger log = LoggerFactory.getLogger(ProfileSchedulerService.class);
 
     private final ProfileVisitCountWriterService profileVisitCountWriterService;
     private final ProfileVisitorWriterService profileVisitorWriterService;
