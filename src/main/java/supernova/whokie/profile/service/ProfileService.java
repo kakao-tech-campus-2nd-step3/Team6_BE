@@ -36,9 +36,9 @@ public class ProfileService {
     }
 
     @Transactional
-    public void updateImage(Long userId, MultipartFile imageFile, String type) {
-        String key = s3Service.createKey(Constants.PROFILE_BG_IMAGE_FOLRDER, userId, imageFile, type);
-        S3EventDto.Upload event = S3EventDto.Upload.toDto(imageFile, key);
+    public void updateImage(Long userId, MultipartFile imageFile) {
+        String key = s3Service.createKey(Constants.PROFILE_BG_IMAGE_FOLRDER, userId);
+        S3EventDto.Upload event = S3EventDto.Upload.toDto(imageFile, key, Constants.PROFILE_BG_IMAGE_WIDTH, Constants.PROFILE_BG_IMAGE_HEIGHT);
         eventPublisher.publishEvent(event);
 
         Profile profile = profileReaderService.getByUserId(userId);

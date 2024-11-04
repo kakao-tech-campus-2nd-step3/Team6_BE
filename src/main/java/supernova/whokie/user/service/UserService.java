@@ -7,15 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.constants.Constants;
-import supernova.whokie.global.constants.MessageConstants;
-import supernova.whokie.profile.infrastructure.downloader.ImageDownloader;
 import supernova.whokie.profile.service.ProfileVisitWriterService;
 import supernova.whokie.profile.service.ProfileWriterService;
 import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.s3.event.S3EventDto;
 import supernova.whokie.s3.service.S3Service;
 import supernova.whokie.user.Users;
-import supernova.whokie.user.event.UserEventDto;
 import supernova.whokie.user.infrastructure.apicaller.UserApiCaller;
 import supernova.whokie.user.infrastructure.apicaller.dto.KakaoAccount;
 import supernova.whokie.user.infrastructure.apicaller.dto.TokenInfoResponse;
@@ -33,7 +30,6 @@ public class UserService {
     private final UserWriterService userWriterService;
     private final UserReaderService userReaderService;
     private final KakaoTokenService kakaoTokenService;
-    private final ImageDownloader imageDownloader;
     private final ApplicationEventPublisher eventPublisher;
     private final S3Service s3Service;
 
@@ -58,11 +54,6 @@ public class UserService {
                 profileWriterService.saveFromKaKao(newUser);
                 profileVisitWriterService.save(newUser.getId());
 
-                // 프로필 이미지 다운로드 및 업로드
-                var event = UserEventDto.UploadImage.toDto(
-                        kakaoAccount.profile().profileImageUrl(), Constants.USER_IMAGE_FOLRDER, newUser.getId());
-                eventPublisher.publishEvent(event);
-
                 return newUser;
             });
 
@@ -77,18 +68,10 @@ public class UserService {
         return UserModel.Point.from(user);
     }
 
-    public MultipartFile downloadImageFile(String url) {
-        try {
-            return imageDownloader.downloadImageAsMultipartFile(url);
-        } catch (Exception e) {
-            throw new RuntimeException(MessageConstants.PROFILE_IMAGE_ERROR_MESSAGE);
-        }
-    }
-
     @Transactional
-    public void uploadImageUrl(Long userId, MultipartFile imageFile, String type) {
-        String key = s3Service.createKey(Constants.USER_IMAGE_FOLRDER, userId, imageFile, type);
-        S3EventDto.Upload event = S3EventDto.Upload.toDto(imageFile, key);
+    public void uploadImageUrl(Long userId, MultipartFile imageFile) {
+        String key = s3Service.createKey(Constants.USER_IMAGE_FOLRDER, userId);
+        S3EventDto.Upload event = S3EventDto.Upload.toDto(imageFile, key, Constants.PROFILE_IMAGE_WIDTH, Constants.PROFILE_IMAGE_HEIGHT);
         eventPublisher.publishEvent(event);
 
         updateImageUrl(userId, key);
