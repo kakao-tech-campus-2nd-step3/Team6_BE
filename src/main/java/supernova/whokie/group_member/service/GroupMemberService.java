@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.ForbiddenException;
-import supernova.whokie.global.url_provider_util.UrlData;
+import supernova.whokie.global.invite_code_util.CodeData;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.service.GroupReaderService;
 import supernova.whokie.group_member.GroupMember;
@@ -55,14 +55,14 @@ public class GroupMemberService {
 
     @Transactional
     public void joinGroup(GroupMemberCommand.Join command, Long userId) {
-        UrlData urlData = command.getUrlData();
+        CodeData codeData = command.getUrlData();
 
-        if (groupMemberReaderService.isGroupMemberExist(userId, urlData.groupId())) {
+        if (groupMemberReaderService.isGroupMemberExist(userId, codeData.groupId())) {
             throw new ForbiddenException(MessageConstants.ALREADY_GROUP_MEMBER_MESSAGE);
         }
 
         Users user = userReaderService.getUserById(userId);
-        Groups group = groupReaderService.getGroupById(urlData.groupId());
+        Groups group = groupReaderService.getGroupById(codeData.groupId());
         GroupMember groupMember = command.toEntity(user, group);
         groupMemberWriterService.save(groupMember);
     }

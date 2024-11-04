@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.ForbiddenException;
-import supernova.whokie.global.url_provider_util.UrlProviderUtil;
+import supernova.whokie.global.invite_code_util.InviteCodeUtil;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.infrastructure.repository.dto.GroupInfoWithMemberCount;
 import supernova.whokie.group.service.dto.GroupCommand;
@@ -81,7 +81,7 @@ public class GroupService {
         if (!groupMemberReaderService.isGroupMemberExist(userId, groupId)) {
             throw new ForbiddenException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE);
         }
-        String inviteCode = UrlProviderUtil.createUrl(groupId, LocalDateTime.now(),
+        String inviteCode = InviteCodeUtil.createCode(groupId, LocalDateTime.now(),
             LocalDateTime.now().plusDays(7));
         return GroupModel.InviteCode.from(inviteCode);
     }

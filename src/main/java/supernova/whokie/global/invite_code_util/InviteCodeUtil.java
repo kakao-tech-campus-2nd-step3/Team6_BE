@@ -1,26 +1,27 @@
-package supernova.whokie.global.url_provider_util;
+package supernova.whokie.global.invite_code_util;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import supernova.whokie.global.exception.InviteCodeException;
 
-public final class UrlProviderUtil {
+public final class InviteCodeUtil {
 
     private static final String URL_SECRET_KEY = "dummy-key-123456"; // 16-byte key for AES
 
-    private UrlProviderUtil() {
+    private InviteCodeUtil() {
         // 인스턴스화 방지
     }
 
-    public static String createUrl(Long groupId, LocalDateTime startDateTime,
+    public static String createCode(Long groupId, LocalDateTime startDateTime,
         LocalDateTime endDateTime) {
         String data = groupId + "|" + startDateTime + "|" + endDateTime;
         try {
             return encrypt(data);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to encrypt URL", e);
+            throw new InviteCodeException("URL 제작에 실패했습니다.");
         }
     }
 
@@ -40,7 +41,7 @@ public final class UrlProviderUtil {
             return decryptedData;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to decrypt URL", e);
+            throw new InviteCodeException("코드가 옳바르지 않습니다.");
         }
     }
 
@@ -56,7 +57,7 @@ public final class UrlProviderUtil {
         return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
 
-    public static UrlData parseUrlData(String encryptedUrl) {
+    public static CodeData parseCodeData(String encryptedUrl) {
         try {
             String decryptedData = decrypt(encryptedUrl);
             String[] parts = decryptedData.split("\\|");
@@ -66,17 +67,17 @@ public final class UrlProviderUtil {
 
             // 만료 시간 검사
             if (endDateTime.isBefore(LocalDateTime.now())) {
-                throw new IllegalArgumentException("The invite code has expired.");
+                throw new InviteCodeException("코드가 만료되었습니다.");
             }
 
-            return UrlData.builder()
+            return CodeData.builder()
                 .groupId(groupId)
                 .startDateTime(startDateTime)
                 .endDateTime(endDateTime)
                 .build();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to parse decrypted URL data", e);
+            throw new InviteCodeException("코드가 옳바르지 않습니다.");
         }
     }
 

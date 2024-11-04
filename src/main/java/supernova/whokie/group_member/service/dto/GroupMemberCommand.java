@@ -1,8 +1,8 @@
 package supernova.whokie.group_member.service.dto;
 
 import lombok.Builder;
-import supernova.whokie.global.url_provider_util.UrlData;
-import supernova.whokie.global.url_provider_util.UrlProviderUtil;
+import supernova.whokie.global.invite_code_util.CodeData;
+import supernova.whokie.global.invite_code_util.InviteCodeUtil;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.GroupRole;
@@ -42,8 +42,8 @@ public class GroupMemberCommand {
                 .build();
         }
 
-        public UrlData getUrlData() {
-            return UrlProviderUtil.parseUrlData(inviteCode);
+        public CodeData getUrlData() {
+            return InviteCodeUtil.parseCodeData(inviteCode);
         }
     }
 
