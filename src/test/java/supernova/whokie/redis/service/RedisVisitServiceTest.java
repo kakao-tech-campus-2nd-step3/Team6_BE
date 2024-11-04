@@ -96,12 +96,12 @@ class RedisVisitServiceTest {
 
     @Test
     @DisplayName("Visitor 전체 조회 테스트")
-    void findAllVisitorTest() {
+    void findAllVisitorsTest() {
         // given
         List<RedisVisitor> visitorList = redisVisitors;
 
         // when
-        List<RedisVisitor> actuals = redisVisitService.findAllVisitor();
+        List<RedisVisitor> actuals = redisVisitService.findAllVisitors();
 
         // then
         assertThat(actuals).hasSize(visitorList.size());
@@ -109,19 +109,19 @@ class RedisVisitServiceTest {
 
     @Test
     @DisplayName("Visitor 리스트 전체 삭제 테스트")
-    void deleteAllVisitorTest() {
+    void deleteAllVisitorsTest() {
         // given
         List<RedisVisitor> visitorList = redisVisitors;
         RedisVisitor remainEntity = redisVisitors.get(0);
         visitorList.remove(remainEntity);
 
         // when
-        redisVisitService.deleteAllVisitor();
-        List<RedisVisitor> actuals = redisVisitService.findAllVisitor();
+        redisVisitService.deleteAllVisitors(visitorList);
+        List<RedisVisitor> actuals = redisVisitService.findAllVisitors();
 
         // then
         assertAll(
-                () -> assertThat(actuals).hasSize(0)
+                () -> assertThat(actuals).hasSize(1)
         );
     }
 

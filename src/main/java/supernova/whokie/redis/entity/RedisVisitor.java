@@ -22,6 +22,10 @@ public class RedisVisitor {
     @NotNull
     private LocalDateTime visitTime;
 
+    public String getId() {
+        return id;
+    }
+
     public Long getHostId() {
         return hostId;
     }

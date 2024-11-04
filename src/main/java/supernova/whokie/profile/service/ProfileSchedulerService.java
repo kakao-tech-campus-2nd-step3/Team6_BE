@@ -26,7 +26,7 @@ public class ProfileSchedulerService {
 
     @Scheduled(cron = "0 0 * * * *")    // 매 정시(1시간 간격)마다 실행
     public void syncVisitCountToDB() {
-        List<RedisVisitCount> redisEntities = redisVisitService.findAllVisitCount();
+        List<RedisVisitCount> redisEntities = redisVisitService.findAllVisitCounts();
         List<ProfileVisitCount> dbEntities = redisEntities.stream()
                 .map(redis -> ProfileVisitCount.builder()
                         .hostId(redis.getHostId())
@@ -40,7 +40,7 @@ public class ProfileSchedulerService {
 
     @Scheduled(cron = "0 0 0 * * *")    // 매 자정(0시)마다 실행
     public void syncVisitorCountToDB() {
-        List<RedisVisitor> redisEntities = redisVisitService.findAndDeleteAllVisitor();
+        List<RedisVisitor> redisEntities = redisVisitService.findAllVisitors();
         List<ProfileVisitor> dbEntities = redisEntities.stream()
                 .map(redis -> ProfileVisitor.builder()
                         .visitorIp(redis.getVisitorIp())
@@ -49,6 +49,8 @@ public class ProfileSchedulerService {
                         .build())
                 .toList();
         profileVisitorWriterService.saveAll(dbEntities);
+        redisVisitService.deleteAllVisitors(redisEntities);
+
         logProcessedCount(dbEntities.size());
     }
 

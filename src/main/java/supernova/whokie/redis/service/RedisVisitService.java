@@ -55,25 +55,20 @@ public class RedisVisitService {
                 });
     }
 
-    public List<RedisVisitCount> findAllVisitCount() {
+    public List<RedisVisitCount> findAllVisitCounts() {
         List<RedisVisitCount> visitCountList = new ArrayList<>();
         redisVisitCountRepository.findAll().forEach(visitCountList::add);
         return visitCountList;
     }
 
-    public List<RedisVisitor> findAndDeleteAllVisitor() {
-        List<RedisVisitor> visitorList = findAllVisitor();
-        deleteAllVisitor();
-        return visitorList;
-    }
-
-    public List<RedisVisitor> findAllVisitor() {
+    public List<RedisVisitor> findAllVisitors() {
         List<RedisVisitor> visitorList = new ArrayList<>();
         redisVisitorRepository.findAll().forEach(visitorList::add);
         return visitorList;
     }
 
-    public void deleteAllVisitor() {
-        redisVisitorRepository.deleteAll();
+    public void deleteAllVisitors(List<RedisVisitor> visitors) {
+        List<String> ids = visitors.stream().map(RedisVisitor::getId).toList();
+        redisVisitorRepository.deleteAllById(ids);
     }
 }
