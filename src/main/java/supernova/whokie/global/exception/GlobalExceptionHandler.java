@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ProblemDetail> ConstraintViolationException(
+    public ResponseEntity<ProblemDetail> constraintViolationException(
         ConstraintViolationException e
     ) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -52,17 +52,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ProblemDetail> entityNotFoundException(EntityNotFoundException e) {
-        ProblemDetail problemDetail = ProblemDetail.forStatus(e.getStatus());
-        problemDetail.setTitle(e.getTitle());
-        problemDetail.setDetail(e.getMessage());
+        ProblemDetail problemDetail = setCustomProblemDetail(e);
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ProblemDetail> authenticationException(AuthenticationException e) {
-        ProblemDetail problemDetail = ProblemDetail.forStatus(e.getStatus());
-        problemDetail.setTitle(e.getTitle());
-        problemDetail.setDetail(e.getMessage());
+        ProblemDetail problemDetail = setCustomProblemDetail(e);
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
 
@@ -77,33 +73,32 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ProblemDetail> forbiddenException(ForbiddenException e) {
-        ProblemDetail problemDetail = ProblemDetail.forStatus(e.getStatus());
-        problemDetail.setTitle(e.getTitle());
-        problemDetail.setDetail(e.getMessage());
+        ProblemDetail problemDetail = setCustomProblemDetail(e);
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
 
     @ExceptionHandler(InvalidEntityException.class)
-    public ResponseEntity<ProblemDetail> InvalidEntityException(InvalidEntityException e) {
-        ProblemDetail problemDetail = ProblemDetail.forStatus(e.getStatus());
-        problemDetail.setTitle(e.getTitle());
-        problemDetail.setDetail(e.getMessage());
+    public ResponseEntity<ProblemDetail> invalidEntityException(InvalidEntityException e) {
+        ProblemDetail problemDetail = setCustomProblemDetail(e);
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
 
     @ExceptionHandler(FileTypeMismatchException.class)
-    public ResponseEntity<ProblemDetail> FileTypeMismatchException(FileTypeMismatchException e) {
-        ProblemDetail problemDetail = ProblemDetail.forStatus(e.getStatus());
-        problemDetail.setTitle(e.getTitle());
-        problemDetail.setDetail(e.getMessage());
+    public ResponseEntity<ProblemDetail> fileTypeMismatchException(FileTypeMismatchException e) {
+        ProblemDetail problemDetail = setCustomProblemDetail(e);
         return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
     }
 
     @ExceptionHandler(InviteCodeException.class)
-    public ResponseEntity<ProblemDetail> InviteCodeException(InviteCodeException e) {
+    public ResponseEntity<ProblemDetail> inviteCodeException(InviteCodeException e) {
+        ProblemDetail problemDetail = setCustomProblemDetail(e);
+        return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
+    }
+
+    private ProblemDetail setCustomProblemDetail(CustomException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(e.getStatus());
         problemDetail.setTitle(e.getTitle());
         problemDetail.setDetail(e.getMessage());
-        return ResponseEntity.status(problemDetail.getStatus()).body(problemDetail);
+        return problemDetail;
     }
 }
