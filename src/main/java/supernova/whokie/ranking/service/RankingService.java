@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
-import supernova.whokie.group_member.service.GroupMemberReaderService;
+import supernova.whokie.groupmember.service.GroupMemberReaderService;
 import supernova.whokie.ranking.Ranking;
 import supernova.whokie.ranking.service.dto.RankingModel;
 

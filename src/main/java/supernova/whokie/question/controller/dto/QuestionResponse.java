@@ -2,7 +2,7 @@ package supernova.whokie.question.controller.dto;
 
 import lombok.Builder;
 import org.springframework.data.domain.Page;
-import supernova.whokie.group_member.controller.dto.GroupMemberResponse;
+import supernova.whokie.groupmember.controller.dto.GroupMemberResponse;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
 import supernova.whokie.question.service.dto.QuestionModel;

@@ -13,7 +13,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.Groups;
-import supernova.whokie.group_member.service.GroupMemberReaderService;
+import supernova.whokie.groupmember.service.GroupMemberReaderService;
 import supernova.whokie.ranking.Ranking;
 import supernova.whokie.ranking.service.dto.RankingModel;
 import supernova.whokie.user.Users;

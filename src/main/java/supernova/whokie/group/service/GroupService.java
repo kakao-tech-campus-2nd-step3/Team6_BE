@@ -8,15 +8,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.ForbiddenException;
-import supernova.whokie.global.invite_code_util.InviteCodeUtil;
+import supernova.whokie.groupmember.util.InviteCodeUtil;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.infrastructure.repository.dto.GroupInfoWithMemberCount;
 import supernova.whokie.group.service.dto.GroupCommand;
 import supernova.whokie.group.service.dto.GroupModel;
 import supernova.whokie.group.service.dto.GroupModel.InfoWithMemberCount;
-import supernova.whokie.group_member.GroupMember;
-import supernova.whokie.group_member.service.GroupMemberReaderService;
-import supernova.whokie.group_member.service.GroupMemberWriterService;
+import supernova.whokie.groupmember.GroupMember;
+import supernova.whokie.groupmember.service.GroupMemberReaderService;
+import supernova.whokie.groupmember.service.GroupMemberWriterService;
 import supernova.whokie.user.service.UserReaderService;
 
 @Service

@@ -1,7 +1,7 @@
 package supernova.whokie.question.service.dto;
 
 import lombok.Builder;
-import supernova.whokie.group_member.service.dto.GroupMemberModel;
+import supernova.whokie.groupmember.service.dto.GroupMemberModel;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
 import supernova.whokie.user.service.dto.UserModel;
