@@ -19,7 +19,7 @@ public class AnswerReaderService {
 
     public Page<Answer> getAnswerList(Pageable pageable, Users user, LocalDateTime startDate,
         LocalDateTime endDate) {
-        return answerRepository.findAllByPickerAndCreatedAtBetween(pageable, user, startDate,
+        return answerRepository.findAllByPickedAndCreatedAtBetween(pageable, user, startDate,
             endDate);
     }
 

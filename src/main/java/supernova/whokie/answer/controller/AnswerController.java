@@ -58,7 +58,7 @@ public class AnswerController {
     @GetMapping("/record")
     public PagingResponse<AnswerResponse.Record> getAnswerRecord(
         @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable,
-        @RequestParam(name = "date", defaultValue = "1900-01-01") LocalDate date,
+        @RequestParam(name = "date", required = false) LocalDate date,
         @Authenticate Long userId
     ) {
 
