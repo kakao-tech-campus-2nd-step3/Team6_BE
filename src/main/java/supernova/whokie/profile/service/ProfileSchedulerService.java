@@ -1,6 +1,6 @@
 package supernova.whokie.profile.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -16,13 +16,13 @@ import java.util.List;
 
 @Profile("redis")
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProfileSchedulerService {
-    private static final Logger log = LoggerFactory.getLogger(ProfileSchedulerService.class);
+    private final Logger log = LoggerFactory.getLogger(ProfileSchedulerService.class);
 
-    private ProfileVisitCountWriterService profileVisitCountWriterService;
-    private ProfileVisitorWriterService profileVisitorWriterService;
-    private RedisVisitService redisVisitService;
+    private final ProfileVisitCountWriterService profileVisitCountWriterService;
+    private final ProfileVisitorWriterService profileVisitorWriterService;
+    private final RedisVisitService redisVisitService;
 
     @Scheduled(cron = "0 0 * * * *")    // 매 정시(1시간 간격)마다 실행
     public void syncVisitCountToDB() {
@@ -35,11 +35,12 @@ public class ProfileSchedulerService {
                         .build())
                 .toList();
         profileVisitCountWriterService.saveAll(dbEntities);
+
         logProcessedCount(dbEntities.size());
     }
 
     @Scheduled(cron = "0 0 0 * * *")    // 매 자정(0시)마다 실행
-    public void syncVisitorCountToDB() {
+    public void syncVisitorToDB() {
         List<RedisVisitor> redisEntities = redisVisitService.findAllVisitors();
         List<ProfileVisitor> dbEntities = redisEntities.stream()
                 .map(redis -> ProfileVisitor.builder()
@@ -52,6 +53,14 @@ public class ProfileSchedulerService {
         redisVisitService.deleteAllVisitors(redisEntities);
 
         logProcessedCount(dbEntities.size());
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")    // 매 자정(0시)마다 실행
+    public void updateVisitCount() {
+        List<RedisVisitCount> redisEntities = redisVisitService.findAllVisitCounts();
+        redisVisitService.updateAllVisitCounts(redisEntities);
+
+        logProcessedCount(redisEntities.size());
     }
 
     private void logProcessedCount(int cnt) {

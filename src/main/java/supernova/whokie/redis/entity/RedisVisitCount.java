@@ -33,4 +33,9 @@ public class RedisVisitCount {
     public int getTotalVisited() {
         return totalVisited;
     }
+
+    public void updateVisited() {
+        totalVisited += dailyVisited;
+        dailyVisited = 0;
+    }
 }
