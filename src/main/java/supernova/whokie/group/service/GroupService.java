@@ -1,5 +1,6 @@
 package supernova.whokie.group.service;
 
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.ForbiddenException;
+import supernova.whokie.global.url_provider_util.UrlProviderUtil;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.infrastructure.repository.dto.GroupInfoWithMemberCount;
 import supernova.whokie.group.service.dto.GroupCommand;
@@ -68,5 +70,17 @@ public class GroupService {
         Page<GroupInfoWithMemberCount> groupPage = groupReaderService.getGroupPaging(userId,
             pageable);
         return groupPage.map(InfoWithMemberCount::from);
+    }
+
+    @Transactional
+    public String inviteGroup(Long userId, Long groupId) {
+        if (!groupReaderService.isGroupExist(groupId)) {
+            throw new ForbiddenException(MessageConstants.GROUP_NOT_FOUND_MESSAGE);
+        }
+        if (!groupMemberReaderService.isGroupMemberExist(userId, groupId)) {
+            throw new ForbiddenException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE);
+        }
+        return UrlProviderUtil.createUrl(groupId, LocalDateTime.now(),
+            LocalDateTime.now().plusDays(7));
     }
 }
