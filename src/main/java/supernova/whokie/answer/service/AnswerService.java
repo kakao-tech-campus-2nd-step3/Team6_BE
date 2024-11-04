@@ -49,7 +49,10 @@ public class AnswerService {
     @Transactional(readOnly = true)
     public Page<AnswerModel.Record> getAnswerRecord(Pageable pageable, Long userId,
         LocalDate date) {
-        date = (date != null) ? date : LocalDate.now();
+
+        if(date != null){
+            date = LocalDate.now();
+        }
         Users user = userReaderService.getUserById(userId);
 
         LocalDateTime startDate = date.atStartOfDay();
@@ -165,9 +168,6 @@ public class AnswerService {
 
     // 초성만 추출하는 메서드
     private String getInitials(String name) {
-        char[] CHO_SUNG = {
-                'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
-        };
 
         StringBuilder initials = new StringBuilder();
 
@@ -175,7 +175,7 @@ public class AnswerService {
             if (ch >= '가' && ch <= '힣') {  // 한글인지 확인
                 int unicode = ch - '가';
                 int choSungIndex = unicode / (21 * 28);  // 초성 인덱스 계산
-                initials.append(CHO_SUNG[choSungIndex]);
+                initials.append(Constants.CHO_SUNG[choSungIndex]);
             } else {
                 initials.append(ch);  // 한글이 아니면 그대로 추가
             }

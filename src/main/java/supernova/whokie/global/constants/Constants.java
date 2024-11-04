@@ -20,6 +20,10 @@ public final class Constants {
     public static final String DEFAULT_PROFILE_BACKGROUND_IMAGE_URL = PROFILE_BG_IMAGE_FOLRDER + "/default.png";
     public static final String DEFAULT_PROFILE_IMAGE_FILENAME = PROFILE_BG_IMAGE_FOLRDER + "default.jpeg";
 
+    public static final char[] CHO_SUNG = {
+            'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
+    };
+
     private Constants() {
     }
 }
