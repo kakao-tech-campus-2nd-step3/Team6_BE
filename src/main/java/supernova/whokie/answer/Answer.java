@@ -69,7 +69,7 @@ public class Answer extends BaseTimeEntity {
         return !(this.picked.getId().equals(user.getId()));
     }
 
-    public String getPickerInfoByHintCount(boolean valid){
+    public String getPickerInfoByHintCount(int hintCount, boolean valid){
         if(valid){
             String gender;
             if((String.valueOf(this.picker.getGender())).equals("M")){
@@ -77,7 +77,7 @@ public class Answer extends BaseTimeEntity {
             }else{
                 gender = "여자";
             }
-            switch(this.hintCount){
+            switch(hintCount){
                 case 1 -> {
                     return gender;
                 }

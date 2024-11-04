@@ -156,31 +156,12 @@ public class AnswerService {
 
         List<AnswerModel.Hint> allHints = new ArrayList<>();
 
-        Users picker = answer.getPicker();
         for (int i = 1; i <= Constants.MAX_HINT_COUNT; i++) {
             boolean valid = (i <= answer.getHintCount());
-            allHints.add(AnswerModel.Hint.from(picker, i, valid, getInitials(picker.getName())));
+            allHints.add(AnswerModel.Hint.from(answer, i, valid));
         }
 
         return allHints;
-    }
-
-
-    // 초성만 추출하는 메서드
-    private String getInitials(String name) {
-
-        StringBuilder initials = new StringBuilder();
-
-        for (char ch : name.toCharArray()) {
-            if (ch >= '가' && ch <= '힣') {  // 한글인지 확인
-                int unicode = ch - '가';
-                int choSungIndex = unicode / (21 * 28);  // 초성 인덱스 계산
-                initials.append(Constants.CHO_SUNG[choSungIndex]);
-            } else {
-                initials.append(ch);  // 한글이 아니면 그대로 추가
-            }
-        }
-        return initials.toString();
     }
 
 }
