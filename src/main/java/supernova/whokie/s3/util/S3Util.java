@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class S3Util {
+public final class S3Util {
     public static final String S3_FILE_TYPE = "png";
 
     public static String createKey(String folderName, Long userId) {

@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.alarm.event.AlarmEventDto;
 import supernova.whokie.answer.Answer;
+import supernova.whokie.answer.constants.AnswerConstants;
 import supernova.whokie.answer.service.dto.AnswerCommand;
 import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.service.FriendReaderService;
-import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.InvalidEntityException;
 import supernova.whokie.group.Groups;
@@ -67,20 +67,20 @@ public class AnswerService {
         Question question = questionReaderService.getQuestionById(command.questionId());
         Users picked = userReaderService.getUserById(command.pickedId());
 
-        Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
+        Answer answer = command.toEntity(question, user, picked, AnswerConstants.DEFAULT_HINT_COUNT);
         answerWriterService.save(answer);
 
         // Ranking Count 증가
 
-        user.increasePoint(Constants.ANSWER_POINT);
+        user.increasePoint(AnswerConstants.ANSWER_POINT);
 
         AlarmEventDto.Alarm alarmEvent = AlarmEventDto.Alarm.toDto(picked.getId(), question.getContent());
         eventPublisher.publishEvent(alarmEvent);
 
         eventPublisher.publishEvent(
-            PointRecordEventDto.Earn.toDto(userId, Constants.ANSWER_POINT, 0,
+            PointRecordEventDto.Earn.toDto(userId, AnswerConstants.ANSWER_POINT, 0,
                 PointRecordOption.CHARGED,
-                Constants.POINT_EARN_MESSAGE));
+                    AnswerConstants.POINT_EARN_MESSAGE));
     }
 
     @Transactional
@@ -94,19 +94,19 @@ public class AnswerService {
             throw new InvalidEntityException(MessageConstants.GROUP_NOT_FOUND_MESSAGE);
         }
 
-        Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
+        Answer answer = command.toEntity(question, user, picked, AnswerConstants.DEFAULT_HINT_COUNT);
         answerWriterService.save(answer);
 
         // Ranking Count 증가
 
-        user.increasePoint(Constants.ANSWER_POINT);
+        user.increasePoint(AnswerConstants.ANSWER_POINT);
 
         AlarmEventDto.Alarm alarmEvent = AlarmEventDto.Alarm.toDto(picked.getId(), question.getContent());
         eventPublisher.publishEvent(alarmEvent);
 
-        var event = PointRecordEventDto.Earn.toDto(userId, Constants.ANSWER_POINT, 0,
+        var event = PointRecordEventDto.Earn.toDto(userId, AnswerConstants.ANSWER_POINT, 0,
             PointRecordOption.CHARGED,
-            Constants.POINT_EARN_MESSAGE);
+                AnswerConstants.POINT_EARN_MESSAGE);
         eventPublisher.publishEvent(event);
     }
 
@@ -153,7 +153,7 @@ public class AnswerService {
 
         List<AnswerModel.Hint> allHints = new ArrayList<>();
 
-        for (int i = 1; i <= Constants.MAX_HINT_COUNT; i++) {
+        for (int i = 1; i <= AnswerConstants.MAX_HINT_COUNT; i++) {
             boolean valid = (i <= answer.getHintCount());
             allHints.add(AnswerModel.Hint.from(answer.getPicker(), i, valid));
         }

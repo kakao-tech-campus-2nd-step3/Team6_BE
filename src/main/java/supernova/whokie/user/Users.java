@@ -15,10 +15,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import supernova.whokie.answer.Answer;
-import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.global.exception.InvalidEntityException;
+import supernova.whokie.user.constants.UserConstants;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -70,16 +70,16 @@ public class Users extends BaseTimeEntity {
     public void decreasePointsByHintCount(Answer answer) {
         switch (answer.getHintCount()) {
             case 1:
-                checkUserHasNotEnoughPoint(Constants.FIRST_HINT_PURCHASE_POINT);
-                decreasePoint(Constants.FIRST_HINT_PURCHASE_POINT);
+                checkUserHasNotEnoughPoint(UserConstants.FIRST_HINT_PURCHASE_POINT);
+                decreasePoint(UserConstants.FIRST_HINT_PURCHASE_POINT);
                 break;
             case 2:
-                checkUserHasNotEnoughPoint(Constants.SECOND_HINT_PURCHASE_POINT);
-                decreasePoint(Constants.SECOND_HINT_PURCHASE_POINT);
+                checkUserHasNotEnoughPoint(UserConstants.SECOND_HINT_PURCHASE_POINT);
+                decreasePoint(UserConstants.SECOND_HINT_PURCHASE_POINT);
                 break;
             case 3:
-                checkUserHasNotEnoughPoint(Constants.THIRD_HINT_PURCHASE_POINT);
-                decreasePoint(Constants.THIRD_HINT_PURCHASE_POINT);
+                checkUserHasNotEnoughPoint(UserConstants.THIRD_HINT_PURCHASE_POINT);
+                decreasePoint(UserConstants.THIRD_HINT_PURCHASE_POINT);
                 break;
         }
     }
@@ -89,7 +89,7 @@ public class Users extends BaseTimeEntity {
     }
 
     public boolean isImageUrlStoredInS3() {
-        return imageUrl.equals(Constants.USER_IMAGE_FOLRDER + "/" + id + ".png");
+        return imageUrl.equals(UserConstants.USER_IMAGE_FOLRDER + "/" + id + ".png");
     }
 
     public String getImageUrl() {

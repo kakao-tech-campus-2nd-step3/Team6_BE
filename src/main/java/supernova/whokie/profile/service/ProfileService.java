@@ -5,8 +5,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import supernova.whokie.global.constants.Constants;
 import supernova.whokie.profile.Profile;
+import supernova.whokie.profile.constants.ProfileConstants;
 import supernova.whokie.profile.service.dto.ProfileModel;
 import supernova.whokie.redis.entity.RedisVisitCount;
 import supernova.whokie.redis.service.RedisVisitService;
@@ -38,8 +38,8 @@ public class ProfileService {
 
     @Transactional
     public void updateImage(Long userId, MultipartFile imageFile) {
-        String key = S3Util.createKey(Constants.PROFILE_BG_IMAGE_FOLRDER, userId);
-        S3EventDto.Upload event = S3EventDto.Upload.toDto(imageFile, key, Constants.PROFILE_BG_IMAGE_WIDTH, Constants.PROFILE_BG_IMAGE_HEIGHT);
+        String key = S3Util.createKey(ProfileConstants.PROFILE_BG_IMAGE_FOLRDER, userId);
+        S3EventDto.Upload event = S3EventDto.Upload.toDto(imageFile, key, ProfileConstants.PROFILE_BG_IMAGE_WIDTH, ProfileConstants.PROFILE_BG_IMAGE_HEIGHT);
         eventPublisher.publishEvent(event);
 
         Profile profile = profileReaderService.getByUserId(userId);

@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import supernova.whokie.global.auth.JwtProvider;
-import supernova.whokie.global.constants.Constants;
 import supernova.whokie.profile.service.ProfileVisitWriterService;
 import supernova.whokie.profile.service.ProfileWriterService;
 import supernova.whokie.redis.service.KakaoTokenService;
 import supernova.whokie.s3.event.S3EventDto;
 import supernova.whokie.s3.util.S3Util;
 import supernova.whokie.user.Users;
+import supernova.whokie.user.constants.UserConstants;
 import supernova.whokie.user.infrastructure.apicaller.UserApiCaller;
 import supernova.whokie.user.infrastructure.apicaller.dto.KakaoAccount;
 import supernova.whokie.user.infrastructure.apicaller.dto.TokenInfoResponse;
@@ -69,8 +69,8 @@ public class UserService {
 
     @Transactional
     public void uploadImageUrl(Long userId, MultipartFile imageFile) {
-        String key = S3Util.createKey(Constants.USER_IMAGE_FOLRDER, userId);
-        S3EventDto.Upload event = S3EventDto.Upload.toDto(imageFile, key, Constants.PROFILE_IMAGE_WIDTH, Constants.PROFILE_IMAGE_HEIGHT);
+        String key = S3Util.createKey(UserConstants.USER_IMAGE_FOLRDER, userId);
+        S3EventDto.Upload event = S3EventDto.Upload.toDto(imageFile, key, UserConstants.USER_IMAGE_WIDTH, UserConstants.USER_IMAGE_HEIGHT);
         eventPublisher.publishEvent(event);
 
         updateImageUrl(userId, key);
