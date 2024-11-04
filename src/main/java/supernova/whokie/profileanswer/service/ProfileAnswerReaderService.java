@@ -24,8 +24,8 @@ public class ProfileAnswerReaderService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProfileAnswer> getAllByUserId(Long userId, Pageable pageable) {
-        return profileAnswerRepository.findAllByUserId(userId, pageable);
+    public Page<ProfileAnswer> getAllByUserIdAndQuestionId(Long userId, Long questionId, Pageable pageable) {
+        return profileAnswerRepository.findAllByUserIdAndQuestionId(userId, questionId, pageable);
     }
 
 }

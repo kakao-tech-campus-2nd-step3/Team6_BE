@@ -25,9 +25,9 @@ public class ProfileAnswerService {
 
 
     @Transactional(readOnly = true)
-    public Page<ProfileAnswerModel.Info> getProfileAnswers(Long userId, Pageable pageable) {
-        Page<ProfileAnswer> profileAnswers = profileAnswerReaderService.getAllByUserId(userId,
-            pageable);
+    public Page<ProfileAnswerModel.Info> getProfileAnswers(Long userId, Long questionId, Pageable pageable) {
+        Page<ProfileAnswer> profileAnswers = profileAnswerReaderService.getAllByUserIdAndQuestionId(
+                userId, questionId, pageable);
         return profileAnswers.map(ProfileAnswerModel.Info::from);
     }
 
