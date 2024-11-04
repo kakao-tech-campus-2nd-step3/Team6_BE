@@ -118,7 +118,7 @@ public class QuestionService {
     public void approveQuestion(Long userId, QuestionCommand.Approve command) {
         GroupMember groupMember = groupMemberReaderService.getByUserIdAndGroupId(userId,
             command.groupId());
-        groupMember.validateLeader();
+        groupMember.validateLeaderApprovalAuthority();
 
         Question question = questionReaderService.getQuestionByIdAndGroupId(command.questionId(),
             command.groupId());

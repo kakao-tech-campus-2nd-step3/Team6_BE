@@ -14,12 +14,12 @@ public class GroupModel {
         Long groupMemberCount
     ) {
 
-        public static InfoWithMemberCount from(GroupInfoWithMemberCount groupInfoWithMemberCount) {
+        public static InfoWithMemberCount from(GroupInfoWithMemberCount groupInfoWithMemberCount, String imageUrl) {
             return InfoWithMemberCount.builder()
                 .groupId(groupInfoWithMemberCount.getGroupId())
                 .groupName(groupInfoWithMemberCount.getGroupName())
                 .groupDescription(groupInfoWithMemberCount.getDescription())
-                .groupImageUrl(groupInfoWithMemberCount.getGroupImageUrl())
+                .groupImageUrl(imageUrl)
                 .groupMemberCount(groupInfoWithMemberCount.getGroupMemberCount())
                 .build();
         }

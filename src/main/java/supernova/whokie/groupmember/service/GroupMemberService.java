@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
+import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.global.exception.ForbiddenException;
 import supernova.whokie.groupmember.util.CodeData;
 import supernova.whokie.group.Groups;
@@ -31,7 +32,7 @@ public class GroupMemberService {
         GroupMember leader = groupMemberReaderService.getByUserIdAndGroupId(command.pastLeaderId(),
             command.groupId());
 
-        leader.validateLeader();
+        leader.validateDelegateLeader();
 
         GroupMember newLeader = groupMemberReaderService.getByUserIdAndGroupId(
             command.newLeaderId(), command.groupId());
@@ -52,7 +53,6 @@ public class GroupMemberService {
         newLeader.changeRole();
     }
 
-
     @Transactional
     public void joinGroup(GroupMemberCommand.Join command, Long userId) {
         CodeData codeData = command.getUrlData();
@@ -72,5 +72,36 @@ public class GroupMemberService {
     public Members getGroupMembers(Long userId, Long groupId) {
         List<GroupMember> groupMembers = groupMemberReaderService.getGroupMembers(userId, groupId);
         return Members.from(groupMembers);
+    }
+
+    @Transactional
+    public void expelMember(Long userId, GroupMemberCommand.Expel command) {
+        GroupMember leader = groupMemberReaderService.getByUserIdAndGroupId(userId, command.groupId());
+        leader.validateLeaderExpelAutority();
+        checkGroupMemberExist(command.userId(), command.groupId());
+        groupMemberWriterService.expelMember(command.userId(), command.groupId());
+    }
+
+    @Transactional(readOnly = true)
+    public void checkGroupMemberExist(Long userId, Long groupId) {
+        if(!groupMemberReaderService.isGroupMemberExist(userId, groupId)) {
+            throw new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE);
+        }
+    }
+
+    /**
+     * 1. 일반 멤버는 탈퇴 가능 2. 리더는 그룹에 속한 멤버가 본인 한명일 경우에 탈퇴 가능
+     */
+    @Transactional
+    public void exitGroup(GroupMemberCommand.Exit command, Long userId) {
+        GroupMember member = groupMemberReaderService.getByUserIdAndGroupId(userId, command.groupId());
+
+        if (member.isLeader()) {
+            Long groupMemberSize = groupMemberReaderService.groupMemberCountByGroupId(command.groupId());
+            if (groupMemberSize > 1) {
+                throw new ForbiddenException("그룹에 속한 멤버가 본인 한명일 경우에 탈퇴 가능합니다.");
+            }
+        }
+        groupMemberWriterService.deleteByUserIdAndGroupId(command.groupId(), userId);
     }
 }

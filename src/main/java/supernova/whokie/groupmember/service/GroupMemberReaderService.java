@@ -45,4 +45,8 @@ public class GroupMemberReaderService {
             groupId, pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Long groupMemberCountByGroupId(Long groupId) {
+        return groupMemberRepository.countByGroupId(groupId);
+    }
 }
