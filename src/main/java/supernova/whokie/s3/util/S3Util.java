@@ -10,10 +10,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public final class S3Util {
-    public static final String S3_FILE_TYPE = "png";
+    private static final String S3_FILE_TYPE = "png";
+    private static final String S3_KEY_FORMAT = "%s/%d.%s";
 
-    public static String createKey(String folderName, Long userId) {
-        return folderName + "/" + userId + "." + S3_FILE_TYPE;
+    private S3Util() {}
+
+    public static String generateS3Key(String folderName, Long userId) {
+        return String.format(S3_KEY_FORMAT, folderName, userId, S3_FILE_TYPE);
     }
     public static MultipartFile resizeImage(BufferedImage bufferedImage, int originalWidth, int originalHeight, int maxWidth, int maxHeight) throws IOException {
         double minRatio = calcRatio(originalWidth, originalHeight, maxWidth, maxHeight);

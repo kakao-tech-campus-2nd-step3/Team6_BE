@@ -8,6 +8,7 @@ import supernova.whokie.redis.entity.RedisVisitor;
 import supernova.whokie.redis.infrastructure.repository.RedisVisitCountRepository;
 import supernova.whokie.redis.infrastructure.repository.RedisVisitorRepository;
 import supernova.whokie.redis.service.dto.RedisCommand;
+import supernova.whokie.redis.util.RedisUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,12 +54,15 @@ public class RedisVisitService {
     }
 
     public boolean checkVisited(Long hostId, String visitorIp) {
-        return redisVisitorRepository.existsById(hostId + ":" + visitorIp);
+        String id = RedisUtil.generateVisitorId(hostId, visitorIp);
+        return redisVisitorRepository.existsById(id);
     }
 
     public void saveVisitor(Long hostId, String visitorIp) {
+        String id = RedisUtil.generateVisitorId(hostId, visitorIp);
+
         RedisVisitor redisVisitor = RedisVisitor.builder()
-                .id(hostId + ":" + visitorIp)
+                .id(id)
                 .hostId(hostId)
                 .visitorIp(visitorIp)
                 .visitTime(LocalDateTime.now())

@@ -69,7 +69,7 @@ public class UserService {
 
     @Transactional
     public void uploadImageUrl(Long userId, MultipartFile imageFile) {
-        String key = S3Util.createKey(UserConstants.USER_IMAGE_FOLRDER, userId);
+        String key = S3Util.generateS3Key(UserConstants.USER_IMAGE_FOLRDER, userId);
         S3EventDto.Upload event = S3EventDto.Upload.toDto(imageFile, key, UserConstants.USER_IMAGE_WIDTH, UserConstants.USER_IMAGE_HEIGHT);
         eventPublisher.publishEvent(event);
 
