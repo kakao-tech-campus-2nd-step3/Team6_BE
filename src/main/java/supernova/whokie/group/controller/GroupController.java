@@ -42,11 +42,13 @@ public class GroupController {
     }
 
     @GetMapping("/{group-id}/invite")
-    public String inviteGroup(
+    public GroupResponse.InviteCode inviteGroup(
         @Authenticate Long userId,
         @PathVariable("group-id") @NotNull @Min(1) Long groupId
     ) {
-        return groupService.inviteGroup(userId, groupId);
+        GroupModel.InviteCode model = groupService.inviteGroup(userId, groupId);
+        return GroupResponse.InviteCode.from(model);
+
     }
 
     @GetMapping("/my")
