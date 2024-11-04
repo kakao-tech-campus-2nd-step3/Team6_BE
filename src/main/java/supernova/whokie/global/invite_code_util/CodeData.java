@@ -1,10 +1,10 @@
-package supernova.whokie.global.url_provider_util;
+package supernova.whokie.global.invite_code_util;
 
 import java.time.LocalDateTime;
 import lombok.Builder;
 
 @Builder
-public record UrlData(
+public record CodeData(
     Long groupId,
     LocalDateTime startDateTime,
     LocalDateTime endDateTime
