@@ -12,6 +12,7 @@ import supernova.whokie.global.url_provider_util.UrlProviderUtil;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.infrastructure.repository.dto.GroupInfoWithMemberCount;
 import supernova.whokie.group.service.dto.GroupCommand;
+import supernova.whokie.group.service.dto.GroupModel;
 import supernova.whokie.group.service.dto.GroupModel.InfoWithMemberCount;
 import supernova.whokie.group_member.GroupMember;
 import supernova.whokie.group_member.service.GroupMemberReaderService;
@@ -73,14 +74,15 @@ public class GroupService {
     }
 
     @Transactional
-    public String inviteGroup(Long userId, Long groupId) {
+    public GroupModel.InviteCode inviteGroup(Long userId, Long groupId) {
         if (!groupReaderService.isGroupExist(groupId)) {
             throw new ForbiddenException(MessageConstants.GROUP_NOT_FOUND_MESSAGE);
         }
         if (!groupMemberReaderService.isGroupMemberExist(userId, groupId)) {
             throw new ForbiddenException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE);
         }
-        return UrlProviderUtil.createUrl(groupId, LocalDateTime.now(),
+        String inviteCode = UrlProviderUtil.createUrl(groupId, LocalDateTime.now(),
             LocalDateTime.now().plusDays(7));
+        return GroupModel.InviteCode.from(inviteCode);
     }
 }
