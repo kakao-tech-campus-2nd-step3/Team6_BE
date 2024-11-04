@@ -1,6 +1,5 @@
 package supernova.whokie.groupmember.service;
 
-import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,15 +7,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.group.Groups;
 import supernova.whokie.groupmember.GroupMember;
 import supernova.whokie.groupmember.GroupRole;
 import supernova.whokie.groupmember.GroupStatus;
-import supernova.whokie.groupmember.infrastructure.repository.GroupMemberRepository;
 import supernova.whokie.groupmember.service.dto.GroupMemberCommand;
 import supernova.whokie.groupmember.service.dto.GroupMemberModel;
 import supernova.whokie.user.Gender;
@@ -26,29 +21,23 @@ import supernova.whokie.user.Users;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-@MockBean({S3Client.class, S3Template.class, S3Presigner.class})
 public class GroupMemberServiceTest {
 
     @InjectMocks
     private GroupMemberService groupMemberService;
 
-    @InjectMocks
+    @Mock
     private GroupMemberWriterService groupMemberWriterService;
 
     @Mock
     private GroupMemberReaderService groupMemberReaderService;
-
-    @Mock
-    private GroupMemberRepository groupMemberRepository;
 
     private GroupMember leader;
     private GroupMember member;
@@ -104,20 +93,17 @@ public class GroupMemberServiceTest {
     void expelMember() {
         // given
         GroupMemberCommand.Expel command = new GroupMemberCommand.Expel(groupId, member.getId());
-        given(groupMemberRepository.findByUserIdAndGroupId(leader.getId(), groupId))
-            .willReturn(Optional.of(leader));
+        given(groupMemberReaderService.getByUserIdAndGroupId(leader.getId(), groupId))
+            .willReturn(leader);
 
-        given(groupMemberRepository.findByUserIdAndGroupId(member.getId(), groupId))
-            .willReturn(Optional.of(member));
-
-        doNothing().when(groupMemberRepository)
-            .deleteByUserIdAndGroupId(member.getId(), command.groupId());
+        given(groupMemberReaderService.isGroupMemberExist(member.getId(), groupId))
+            .willReturn(true);
 
         // when
-        groupMemberWriterService.expelMember(leader.getId(), command);
+        groupMemberService.expelMember(leader.getId(), command);
 
         // then
-        verify(groupMemberRepository).deleteByUserIdAndGroupId(member.getId(), command.groupId());
+        verify(groupMemberWriterService).expelMember(member.getId(), command.groupId());
     }
 
     @Test
