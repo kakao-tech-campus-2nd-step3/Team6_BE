@@ -48,7 +48,6 @@ class PointRecordServiceTest {
         Long userId = 1L;
         int point = 100;
         PayReadyInfoResponse mockResponse = new PayReadyInfoResponse("test-tid", "testUrl");
-
         when(payApiCaller.payReady(point, PointConstants.PRODUCT_NAME_POINT)).thenReturn(mockResponse);
 
         // when
