@@ -1,6 +1,6 @@
 package supernova.whokie.redis.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import supernova.whokie.global.exception.AuthenticationException;
 import supernova.whokie.redis.entity.KakaoAccessToken;
@@ -12,7 +12,7 @@ import supernova.whokie.user.infrastructure.apicaller.dto.RefreshedTokenInfoResp
 import supernova.whokie.user.infrastructure.apicaller.dto.TokenInfoResponse;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class KakaoTokenService {
     private final AccessTokenRepository accessTokenRepository;
     private final RefreshTokenRepository refreshTokenRepository;

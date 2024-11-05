@@ -1,10 +1,11 @@
 package supernova.whokie.ranking.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
-import supernova.whokie.group_member.service.GroupMemberReaderService;
+import supernova.whokie.groupmember.service.GroupMemberReaderService;
 import supernova.whokie.ranking.Ranking;
 import supernova.whokie.ranking.service.dto.RankingModel;
 
@@ -12,12 +13,12 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RankingService {
     private final RankingReaderService rankingReaderService;
     private final GroupMemberReaderService groupMemberReaderService;
 
-
+    @Transactional(readOnly = true)
     public List<RankingModel.Rank> getUserRanking(Long userId) {
         List<Ranking> entities = rankingReaderService.getTop3RankingByUserId(userId);
         return IntStream.range(0, entities.size())
@@ -25,6 +26,7 @@ public class RankingService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<RankingModel.Rank> getGroupRanking(Long userId, Long groupId) {
         if (!groupMemberReaderService.isGroupMemberExist(userId, groupId)) {
             throw new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE);

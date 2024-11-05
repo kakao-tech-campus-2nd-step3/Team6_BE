@@ -1,6 +1,7 @@
 package supernova.whokie.answer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Constants;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,17 +9,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.alarm.event.AlarmEventDto;
 import supernova.whokie.answer.Answer;
+import supernova.whokie.answer.constants.AnswerConstants;
 import supernova.whokie.answer.service.dto.AnswerCommand;
 import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.service.FriendReaderService;
-import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.InvalidEntityException;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.service.GroupReaderService;
-import supernova.whokie.point_record.PointRecordOption;
-import supernova.whokie.point_record.event.PointRecordEventDto;
+import supernova.whokie.pointrecord.PointRecordOption;
+import supernova.whokie.pointrecord.constants.PointConstants;
+import supernova.whokie.pointrecord.event.PointRecordEventDto;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.service.QuestionReaderService;
 import supernova.whokie.ranking.service.RankingWriterService;
@@ -48,71 +50,39 @@ public class AnswerService {
     private final RankingWriterService rankingWriterService;
 
     @Transactional(readOnly = true)
-    public Page<AnswerModel.Record> getAnswerRecord(Pageable pageable, Long userId,
-        LocalDate date) {
+    public Page<AnswerModel.Record> getAnswerRecord(Pageable pageable, Long userId, LocalDate date) {
         Users user = userReaderService.getUserById(userId);
 
-        LocalDateTime startDate = date.atStartOfDay();
-        LocalDateTime endDate = date.withDayOfMonth(date.lengthOfMonth()).atTime(LocalTime.MAX);
+        LocalDateTime startDate;
+        LocalDateTime endDate;
 
-        // 해당 월의 데이터를 조회
-        Page<Answer> answers = answerReaderService.getAnswerList(pageable, user, startDate,
-            endDate);
+        if (date == null) {
+            startDate = AnswerConstants.DEFAULT_START_DATE;
+            endDate = LocalDateTime.now();
+        } else {
+            startDate = date.atStartOfDay();
+            endDate = date.withDayOfMonth(date.lengthOfMonth()).atTime(LocalTime.MAX);
+        }
 
+        // 지정된 기간 내의 데이터를 조회
+        Page<Answer> answers = answerReaderService.getAnswerList(pageable, user, startDate, endDate);
         return answers.map(AnswerModel.Record::from);
-
     }
-
     @Transactional
     public void answerToCommonQuestion(Long userId, AnswerCommand.CommonAnswer command) {
-        Users user = userReaderService.getUserById(userId);
         Question question = questionReaderService.getQuestionById(command.questionId());
-        Users picked = userReaderService.getUserById(command.pickedId());
-        Groups group = groupReaderService.getGroupById(1L);
 
-        Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
-        answerWriterService.save(answer);
-
-        // Ranking Count 증가
-        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question.getContent(), group);
-
-        user.increasePoint(Constants.ANSWER_POINT);
-
-        AlarmEventDto.Alarm alarmEvent = AlarmEventDto.Alarm.toDto(picked.getId(), question.getContent());
-        eventPublisher.publishEvent(alarmEvent);
-
-        eventPublisher.publishEvent(
-            PointRecordEventDto.Earn.toDto(userId, Constants.ANSWER_POINT, 0,
-                PointRecordOption.CHARGED,
-                Constants.POINT_EARN_MESSAGE));
+        answerToQuestion(userId, command.pickedId(), question);
     }
 
     @Transactional
     public void answerToGroupQuestion(Long userId, AnswerCommand.Group command) {
-        Users user = userReaderService.getUserById(userId);
         Question question = questionReaderService.getQuestionById(command.questionId());
-        Users picked = userReaderService.getUserById(command.pickedId());
-        Groups group = groupReaderService.getGroupById(command.groupId());
-
-        if(question.isNotCorrectGroupQuestion(group.getId())){
+        if(question.isNotCorrectGroupQuestion(command.groupId())) {
             throw new InvalidEntityException(MessageConstants.GROUP_NOT_FOUND_MESSAGE);
         }
 
-        Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
-        answerWriterService.save(answer);
-
-        // Ranking Count 증가
-        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question.getContent(), group);
-
-        user.increasePoint(Constants.ANSWER_POINT);
-
-        AlarmEventDto.Alarm alarmEvent = AlarmEventDto.Alarm.toDto(picked.getId(), question.getContent());
-        eventPublisher.publishEvent(alarmEvent);
-
-        var event = PointRecordEventDto.Earn.toDto(userId, Constants.ANSWER_POINT, 0,
-            PointRecordOption.CHARGED,
-            Constants.POINT_EARN_MESSAGE);
-        eventPublisher.publishEvent(event);
+        answerToQuestion(userId, command.pickedId(), question);
     }
 
     @Transactional(readOnly = true)
@@ -158,12 +128,33 @@ public class AnswerService {
 
         List<AnswerModel.Hint> allHints = new ArrayList<>();
 
-        for (int i = 1; i <= Constants.MAX_HINT_COUNT; i++) {
+        for (int i = 1; i <= AnswerConstants.MAX_HINT_COUNT; i++) {
             boolean valid = (i <= answer.getHintCount());
-            allHints.add(AnswerModel.Hint.from(answer.getPicker(), i, valid));
+            allHints.add(AnswerModel.Hint.from(answer, i, valid));
         }
 
         return allHints;
     }
 
+    private void answerToQuestion(Long userId, Long pickedId, Question question) {
+        Users user = userReaderService.getUserById(userId);
+        Users picked = userReaderService.getUserById(pickedId);
+        Groups group = groupReaderService.getGroupById(question.getGroupId());
+
+        Answer answer = Answer.create(question, user, picked, AnswerConstants.DEFAULT_HINT_COUNT);
+        answerWriterService.save(answer);
+
+        // Ranking Count 증가
+        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question.getContent(), group);
+        user.increasePoint(AnswerConstants.ANSWER_POINT);
+
+        // 웹 알림 전송
+        AlarmEventDto.Alarm alarmEvent = AlarmEventDto.Alarm.toDto(picked.getId(), question.getContent());
+        eventPublisher.publishEvent(alarmEvent);
+
+        // 포인트 기록
+        PointRecordEventDto.Earn pointEvent = PointRecordEventDto.Earn.toDto(userId, AnswerConstants.ANSWER_POINT, 0,
+                PointRecordOption.CHARGED, PointConstants.POINT_EARN_MESSAGE);
+        eventPublisher.publishEvent(pointEvent);
+    }
 }

@@ -2,7 +2,7 @@ package supernova.whokie.ranking.controller;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +14,7 @@ import supernova.whokie.ranking.service.RankingService;
 
 @RestController
 @RequestMapping("/api/ranking")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Validated
 public class RankingController {
     private final RankingService rankingService;

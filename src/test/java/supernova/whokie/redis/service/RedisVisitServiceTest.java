@@ -56,11 +56,11 @@ class RedisVisitServiceTest {
     @DisplayName("방문자 수 증가 테스트")
     void visitProfileTest() {
         // given
-        RedisVisitCount redisVisitCount = createVisitCount();
-        Long hostId = redisVisitCount.getHostId();
+        RedisVisitCount redisVisitCount1 = redisVisitCount;
+        Long hostId = redisVisitCount1.getHostId();
         String visitorIp = "visitorIp";
-        int oldDailyVisited = redisVisitCount.getDailyVisited();
-        int oldTotalVisited = redisVisitCount.getTotalVisited();
+        int oldDailyVisited = redisVisitCount1.getDailyVisited();
+        int oldTotalVisited = redisVisitCount1.getTotalVisited();
 
         // when
         RedisVisitCount actual = redisVisitService.visitProfile(hostId, visitorIp);
@@ -96,12 +96,12 @@ class RedisVisitServiceTest {
 
     @Test
     @DisplayName("Visitor 전체 조회 테스트")
-    void findAllVisitorTest() {
+    void findAllVisitorsTest() {
         // given
         List<RedisVisitor> visitorList = redisVisitors;
 
         // when
-        List<RedisVisitor> actuals = redisVisitService.findAllVisitor();
+        List<RedisVisitor> actuals = redisVisitService.findAllVisitors();
 
         // then
         assertThat(actuals).hasSize(visitorList.size());
@@ -109,19 +109,37 @@ class RedisVisitServiceTest {
 
     @Test
     @DisplayName("Visitor 리스트 전체 삭제 테스트")
-    void deleteAllVisitorTest() {
+    void deleteAllVisitorsTest() {
         // given
         List<RedisVisitor> visitorList = redisVisitors;
         RedisVisitor remainEntity = redisVisitors.get(0);
         visitorList.remove(remainEntity);
 
         // when
-        redisVisitService.deleteAllVisitor();
-        List<RedisVisitor> actuals = redisVisitService.findAllVisitor();
+        redisVisitService.deleteAllVisitors(visitorList);
+        List<RedisVisitor> actuals = redisVisitService.findAllVisitors();
 
         // then
         assertAll(
-                () -> assertThat(actuals).hasSize(0)
+                () -> assertThat(actuals).hasSize(1)
+        );
+    }
+
+    @Test
+    @DisplayName("VisitCount 업데이트 테스트")
+    void updateAllVisitCountsTest() {
+        // given
+        RedisVisitCount redisVisitCount1 = redisVisitCount;
+
+        // when
+        redisVisitService.updateAllVisitCounts(List.of(redisVisitCount1));
+        RedisVisitCount actual = redisVisitCountRepository.findById(redisVisitCount1.getHostId()).orElse(null);
+
+        // then
+        int expectedTotalVisited = redisVisitCount1.getTotalVisited() + redisVisitCount1.getDailyVisited();
+        assertAll(
+                () -> assertThat(actual.getDailyVisited()).isEqualTo(0),
+                () -> assertThat(actual.getTotalVisited()).isEqualTo(expectedTotalVisited)
         );
     }
 

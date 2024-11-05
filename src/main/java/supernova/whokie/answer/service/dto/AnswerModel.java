@@ -31,20 +31,9 @@ public class AnswerModel {
         Boolean valid,
         String content
     ) {
-
-        public static AnswerModel.Hint from(Users user, int hintCount, boolean valid) {
-            return switch (hintCount) {
-                case 1 ->
-                    Hint.builder().hintNum(1).valid(valid).content(String.valueOf(user.getGender()))
-                        .build();
-                case 2 ->
-                    Hint.builder().hintNum(2).valid(valid).content(String.valueOf(user.getAge()))
-                        .build();
-                case 3 -> Hint.builder().hintNum(3).valid(valid).content(user.getName()).build();
-                default -> throw new InvalidEntityException("유효하지 않은 hintCount입니다. ");
-            };
+        public static AnswerModel.Hint from(Answer answer, int hintCount, boolean valid) {
+            return Hint.builder().hintNum(hintCount).valid(valid).content(answer.getPickerInfoByHintCount(hintCount, valid)).build();
         }
-
     }
 
     @Builder

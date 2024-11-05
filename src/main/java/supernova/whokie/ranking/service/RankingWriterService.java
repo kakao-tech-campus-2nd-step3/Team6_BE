@@ -3,10 +3,9 @@ package supernova.whokie.ranking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import supernova.whokie.global.annotation.RedissonLock;
-import supernova.whokie.global.constants.Constants;
 import supernova.whokie.group.Groups;
 import supernova.whokie.ranking.Ranking;
+import supernova.whokie.ranking.constants.RankingConstants;
 import supernova.whokie.ranking.infrastructure.repoistory.RankingRepository;
 import supernova.whokie.user.Users;
 
@@ -24,7 +23,7 @@ public class RankingWriterService {
     public Ranking createRanking(Users user, String question, Groups groups) {
         Ranking ranking = Ranking.builder()
                 .question(question)
-                .count(Constants.DEFAULT_RANKING_COUNT)
+                .count(RankingConstants.DEFAULT_RANKING_COUNT)
                 .users(user)
                 .groups(groups)
                 .build();
@@ -32,11 +31,9 @@ public class RankingWriterService {
     }
 
     @Transactional
-    //@RedissonLock(value = "'group:' + #group.id + 'question' + #question + 'user:' + #user.id")  이건 왜 안되는걸까
     public void increaseRankingCountByUserAndQuestionAndGroups(Users user, String question, Groups group) {
         Ranking ranking = rankingRepository.findByUsersAndQuestionAndGroups(user, question, group)
                 .orElseGet(() -> createRanking(user, question, group));
-        rankingRepository.incrementCount(ranking.getId());
-        rankingRepository.save(ranking);
+        ranking.increaseCount();
     }
 }

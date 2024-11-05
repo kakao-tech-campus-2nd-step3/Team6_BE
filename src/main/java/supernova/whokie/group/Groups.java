@@ -1,16 +1,7 @@
 package supernova.whokie.group;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import supernova.whokie.global.entity.BaseTimeEntity;
 
 @Entity
@@ -37,5 +28,9 @@ public class Groups extends BaseTimeEntity {
     public void modify(String groupName, String description) {
         this.groupName = groupName;
         this.description = description;
+    }
+
+    public void modifyImageUrl(String imageUrl) {
+        this.groupImageUrl = imageUrl;
     }
 }

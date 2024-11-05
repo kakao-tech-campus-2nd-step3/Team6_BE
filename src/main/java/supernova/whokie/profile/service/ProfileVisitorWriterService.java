@@ -1,6 +1,6 @@
 package supernova.whokie.profile.service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.profile.ProfileVisitor;
@@ -9,9 +9,9 @@ import supernova.whokie.profile.infrastructure.repository.ProfileVisitorReposito
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProfileVisitorWriterService {
-    private ProfileVisitorRepository profileVisitorRepository;
+    private final ProfileVisitorRepository profileVisitorRepository;
 
     @Transactional
     public void saveAll(List<ProfileVisitor> list) {

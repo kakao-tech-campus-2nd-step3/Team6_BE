@@ -1,12 +1,8 @@
 package supernova.whokie.friend.controller;
 
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 import supernova.whokie.friend.controller.dto.FriendRequest;
 import supernova.whokie.friend.controller.dto.FriendResponse;
 import supernova.whokie.friend.service.FriendService;
@@ -18,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/friend")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FriendController {
     private final FriendService friendService;
 

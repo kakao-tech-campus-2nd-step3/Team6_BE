@@ -9,14 +9,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.service.FriendReaderService;
-import supernova.whokie.global.constants.Constants;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
-import supernova.whokie.group_member.GroupMember;
-import supernova.whokie.group_member.service.GroupMemberReaderService;
-import supernova.whokie.group_member.service.dto.GroupMemberModel;
+import supernova.whokie.groupmember.GroupMember;
+import supernova.whokie.groupmember.service.GroupMemberReaderService;
+import supernova.whokie.groupmember.service.dto.GroupMemberModel;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
+import supernova.whokie.question.constants.QuestionConstants;
 import supernova.whokie.question.service.dto.QuestionCommand;
 import supernova.whokie.question.service.dto.QuestionModel;
 import supernova.whokie.s3.service.S3Service;
@@ -41,7 +41,7 @@ public class QuestionService {
         Users user = userReaderService.getUserById(userId);
 
         List<Question> randomQuestions = questionReaderService.getRandomQuestions(pageable);
-        Pageable friendPageable = PageRequest.of(0, Constants.FRIEND_LIMIT);
+        Pageable friendPageable = PageRequest.of(0, QuestionConstants.FRIEND_LIMIT);
 
         List<Friend> friends = friendReaderService.findRandomFriendsByHostUser(user.getId(), friendPageable);
         List<UserModel.PickedInfo> pickerModels = friends.stream()
@@ -80,11 +80,11 @@ public class QuestionService {
             throw new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE);
         }
 
-        Pageable pageable = PageRequest.of(0, Constants.QUESTION_LIMIT);
+        Pageable pageable = PageRequest.of(0, QuestionConstants.QUESTION_LIMIT);
         List<Question> randomQuestions = questionReaderService.getRandomGroupQuestions(groupId,
             pageable);
 
-        Pageable GroupMemberpageable = PageRequest.of(0, Constants.FRIEND_LIMIT);
+        Pageable GroupMemberpageable = PageRequest.of(0, QuestionConstants.FRIEND_LIMIT);
 
         List<GroupMember> groupMembers = groupMemberReaderService.getRandomGroupMembersByGroupId(userId, groupId, GroupMemberpageable);
         List<GroupMemberModel.Option> memberModels = groupMembers.stream()
@@ -118,7 +118,7 @@ public class QuestionService {
     public void approveQuestion(Long userId, QuestionCommand.Approve command) {
         GroupMember groupMember = groupMemberReaderService.getByUserIdAndGroupId(userId,
             command.groupId());
-        groupMember.validateLeader();
+        groupMember.validateLeaderApprovalAuthority();
 
         Question question = questionReaderService.getQuestionByIdAndGroupId(command.questionId(),
             command.groupId());

@@ -1,13 +1,13 @@
 package supernova.whokie.friend.infrastructure.apicaller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import supernova.whokie.friend.infrastructure.apicaller.dto.KakaoDto;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class FriendKakaoApiCaller {
     private final RestClient restClient;
     private final ObjectMapper objectMapper;

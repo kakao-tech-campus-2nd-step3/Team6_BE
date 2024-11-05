@@ -2,21 +2,27 @@ package supernova.whokie.group.service;
 
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.ForbiddenException;
-import supernova.whokie.global.invite_code_util.InviteCodeUtil;
+import supernova.whokie.group.constants.GroupConstants;
+import supernova.whokie.groupmember.util.InviteCodeUtil;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.infrastructure.repository.dto.GroupInfoWithMemberCount;
 import supernova.whokie.group.service.dto.GroupCommand;
 import supernova.whokie.group.service.dto.GroupModel;
 import supernova.whokie.group.service.dto.GroupModel.InfoWithMemberCount;
-import supernova.whokie.group_member.GroupMember;
-import supernova.whokie.group_member.service.GroupMemberReaderService;
-import supernova.whokie.group_member.service.GroupMemberWriterService;
+import supernova.whokie.groupmember.GroupMember;
+import supernova.whokie.groupmember.service.GroupMemberReaderService;
+import supernova.whokie.groupmember.service.GroupMemberWriterService;
+import supernova.whokie.s3.event.S3EventDto;
+import supernova.whokie.s3.service.S3Service;
+import supernova.whokie.s3.util.S3Util;
 import supernova.whokie.user.service.UserReaderService;
 
 @Service
@@ -28,6 +34,8 @@ public class GroupService {
     private final UserReaderService userReaderService;
     private final GroupMemberWriterService groupMemberWriterService;
     private final GroupMemberReaderService groupMemberReaderService;
+    private final ApplicationEventPublisher eventPublisher;
+    private final S3Service s3Service;
 
     /**
      * 그룹 생성후, 그룹장을 생성한 유저로 지정한다.
@@ -58,19 +66,35 @@ public class GroupService {
         group.modify(command.groupName(), command.description());
     }
 
+    @Transactional
+    public void modifyGroupImage(Long userId, Long groupId, MultipartFile image) {
+        GroupMember leader = groupMemberReaderService.getByUserIdAndGroupId(userId, groupId);
+        leader.validateLeader();
+        String key = S3Util.generateS3Key(GroupConstants.GROUP_IMAGE_FOLDER, groupId);
+        S3EventDto.Upload event = S3EventDto.Upload.toDto(image, key, GroupConstants.GROUP_IMAGE_WIDTH, GroupConstants.GROUP_IMAGE_HEIGHT);
+        eventPublisher.publishEvent(event);
+
+        Groups group = groupReaderService.getGroupById(groupId);
+        group.modifyImageUrl(key);
+    }
+
     @Transactional(readOnly = true)
     public InfoWithMemberCount getGroupInfo(Long groupId) {
 
         GroupInfoWithMemberCount groupInfo = groupReaderService.getGroupInfoWithMemberCountByGroupId(
             groupId);
-        return InfoWithMemberCount.from(groupInfo);
+        String imageUrl = s3Service.getSignedUrl(groupInfo.getGroupImageUrl());
+        return InfoWithMemberCount.from(groupInfo, imageUrl);
     }
 
     @Transactional(readOnly = true)
     public Page<InfoWithMemberCount> getGroupPaging(Long userId, Pageable pageable) {
         Page<GroupInfoWithMemberCount> groupPage = groupReaderService.getGroupPaging(userId,
             pageable);
-        return groupPage.map(InfoWithMemberCount::from);
+        return groupPage.map(group -> {
+            String imageUrl = s3Service.getSignedUrl(group.getGroupImageUrl());
+            return InfoWithMemberCount.from(group, imageUrl);
+        });
     }
 
     @Transactional

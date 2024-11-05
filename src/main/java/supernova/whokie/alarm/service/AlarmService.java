@@ -3,8 +3,8 @@ package supernova.whokie.alarm.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import supernova.whokie.alarm.constants.AlarmConstants;
 import supernova.whokie.alarm.event.AlarmEventDto;
-import supernova.whokie.global.constants.Constants;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,7 +15,7 @@ public class AlarmService {
     private final ConcurrentHashMap<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter connect(Long userId) {
-        SseEmitter emitter = new SseEmitter(Constants.SSE_TIMEOUT);
+        SseEmitter emitter = new SseEmitter(AlarmConstants.SSE_TIMEOUT);
         emitters.put(userId, emitter);
 
         // SseEmitter가 complate 됐을 경우
