@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
@@ -43,11 +42,13 @@ public class GroupController {
     }
 
     @GetMapping("/{group-id}/invite")
-    public String inviteGroup(
-        @RequestParam("user-id") @NotNull @Min(1) Long userId,
+    public GroupResponse.InviteCode inviteGroup(
+        @Authenticate Long userId,
         @PathVariable("group-id") @NotNull @Min(1) Long groupId
     ) {
-        return "dummy-url";
+        GroupModel.InviteCode model = groupService.inviteGroup(userId, groupId);
+        return GroupResponse.InviteCode.from(model);
+
     }
 
     @GetMapping("/my")

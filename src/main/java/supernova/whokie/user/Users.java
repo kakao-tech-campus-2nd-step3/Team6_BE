@@ -89,7 +89,7 @@ public class Users extends BaseTimeEntity {
     }
 
     public boolean isImageUrlStoredInS3() {
-        return imageUrl.contains(Constants.USER_IMAGE_FOLRDER + "/" + id);
+        return imageUrl.equals(Constants.USER_IMAGE_FOLRDER + "/" + id + ".png");
     }
 
     public String getImageUrl() {

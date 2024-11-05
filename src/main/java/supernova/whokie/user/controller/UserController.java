@@ -43,20 +43,19 @@ public class UserController {
     }
 
     @GetMapping("/point")
-    public ResponseEntity<UserResponse.Point> getUserPoint(
+    public UserResponse.Point getUserPoint(
             @Authenticate Long userId
     ) {
         UserModel.Point response = userService.getPoint(userId);
-        return ResponseEntity.ok().body(UserResponse.Point.from(response));
+        return UserResponse.Point.from(response);
     }
 
     @PatchMapping("/image")
-    public ResponseEntity<GlobalResponse> updateUserImage(
+    public GlobalResponse updateUserImage(
             @Authenticate Long userId,
-            @RequestParam("type") @NotBlank String type,
             @RequestParam("image") @NotNull MultipartFile imageFile
     ) {
-        userService.uploadImageUrl(userId, imageFile, type);
-        return ResponseEntity.ok().body(GlobalResponse.builder().message("프로필 이미지 업데이트 성공").build());
+        userService.uploadImageUrl(userId, imageFile);
+        return GlobalResponse.builder().message("프로필 이미지 업데이트 성공").build();
     }
 }
