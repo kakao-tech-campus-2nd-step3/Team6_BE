@@ -20,6 +20,7 @@ public final class Constants {
     public static final String DEFAULT_GROUP_IMAGE_URL = GROUP_IMAGE_FOLDER + "/default.png";
     public static final String DEFAULT_PROFILE_BACKGROUND_IMAGE_URL = PROFILE_BG_IMAGE_FOLRDER + "/default.png";
     public static final String DEFAULT_PROFILE_IMAGE_FILENAME = PROFILE_BG_IMAGE_FOLRDER + "default.jpeg";
+    public static final String PRODUCT_NAME_POINT = "포인트";
 
     private Constants() {
     }
