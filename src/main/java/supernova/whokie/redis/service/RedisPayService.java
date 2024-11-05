@@ -8,7 +8,7 @@ import supernova.whokie.redis.infrastructure.repository.PayRepository;
 
 @Service
 @RequiredArgsConstructor
-public class PayService {
+public class RedisPayService {
 
     private final PayRepository payRepository;
 

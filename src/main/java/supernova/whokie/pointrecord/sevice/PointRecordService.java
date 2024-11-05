@@ -15,7 +15,7 @@ import supernova.whokie.pointrecord.infrastructure.apicaller.dto.PayApproveInfoR
 import supernova.whokie.pointrecord.infrastructure.apicaller.dto.PayReadyInfoResponse;
 import supernova.whokie.pointrecord.sevice.dto.PointRecordCommand;
 import supernova.whokie.pointrecord.sevice.dto.PointRecordModel;
-import supernova.whokie.redis.service.PayService;
+import supernova.whokie.redis.service.RedisPayService;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
 
@@ -28,7 +28,7 @@ public class PointRecordService {
     private final PointRecordWriterService pointRecordWriterService;
     private final PayApiCaller payApiCaller;
     private final UserReaderService userReaderService;
-    private final PayService payService;
+    private final RedisPayService redisPayService;
     private final ApplicationEventPublisher eventPublisher;
     private final PointRecordReaderService pointRecordReaderService;
 
@@ -39,11 +39,9 @@ public class PointRecordService {
         pointRecordWriterService.save(pointRecord);
     }
     public PointRecordModel.ReadyInfo readyPurchasePoint(Long userId, int point){
-        Users user = userReaderService.getUserById(userId);
-
         PayReadyInfoResponse payReadyInfoResponse = payApiCaller.payReady(point, PointConstants.PRODUCT_NAME_POINT);
 
-        payService.saveTid(userId, payReadyInfoResponse.tid());
+        redisPayService.saveTid(userId, payReadyInfoResponse.tid());
 
         return PointRecordModel.ReadyInfo.from(payReadyInfoResponse);
     }
@@ -52,9 +50,8 @@ public class PointRecordService {
     public void approvePurchasePoint(Long userId, String pgToken){
         Users user = userReaderService.getUserById(userId);
 
-        // 레디스db에서 tid를 읽어오고 바로 삭제
-        String tid = payService.getTid(userId);
-        payService.deleteByUserId(userId);
+        // 레디스db에서 tid를 읽어오기
+        String tid = redisPayService.getTid(userId);
 
         PayApproveInfoResponse payApproveInfoResponse = payApiCaller.payApprove(tid, pgToken);
 
@@ -65,6 +62,9 @@ public class PointRecordService {
                 PointConstants.POINT_PURCHASE_MESSAGE);
 
         eventPublisher.publishEvent(event);
+
+        // 레디스 DB에서 tid 삭제
+        redisPayService.deleteByUserId(userId);
     }
 
     @Transactional(readOnly = true)

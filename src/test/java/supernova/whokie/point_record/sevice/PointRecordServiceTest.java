@@ -13,7 +13,7 @@ import supernova.whokie.pointrecord.infrastructure.apicaller.dto.PayApproveInfoR
 import supernova.whokie.pointrecord.infrastructure.apicaller.dto.PayReadyInfoResponse;
 import supernova.whokie.pointrecord.sevice.PointRecordService;
 import supernova.whokie.pointrecord.sevice.dto.PointRecordModel;
-import supernova.whokie.redis.service.PayService;
+import supernova.whokie.redis.service.RedisPayService;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
@@ -33,7 +33,7 @@ class PointRecordServiceTest {
     private PayApiCaller payApiCaller;
 
     @Mock
-    private PayService payService;
+    private RedisPayService redisPayService;
 
     @Mock
     private ApplicationEventPublisher eventPublisher;
@@ -47,17 +47,15 @@ class PointRecordServiceTest {
         // given
         Long userId = 1L;
         int point = 100;
-        Users user = createUser();
         PayReadyInfoResponse mockResponse = new PayReadyInfoResponse("test-tid", "testUrl");
 
-        when(userReaderService.getUserById(userId)).thenReturn(user);
         when(payApiCaller.payReady(point, PointConstants.PRODUCT_NAME_POINT)).thenReturn(mockResponse);
 
         // when
         PointRecordModel.ReadyInfo result = pointService.readyPurchasePoint(userId, point);
 
         // then
-        verify(payService).saveTid(userId, "test-tid");
+        verify(redisPayService).saveTid(userId, "test-tid");
         assertThat(result).isNotNull();
         assertThat(result.nextRedirectPcUrl()).isEqualTo("testUrl");
     }
@@ -78,14 +76,14 @@ class PointRecordServiceTest {
         );
 
         when(userReaderService.getUserById(userId)).thenReturn(user);
-        when(payService.getTid(userId)).thenReturn("test-tid");
+        when(redisPayService.getTid(userId)).thenReturn("test-tid");
         when(payApiCaller.payApprove("test-tid", pgToken)).thenReturn(mockApproveResponse);
 
         // when
         pointService.approvePurchasePoint(userId, pgToken);
 
         // then
-        verify(payService).deleteByUserId(userId);
+        verify(redisPayService).deleteByUserId(userId);
         assertThat(user.getPoint()).isEqualTo(1100);
     }
 

@@ -36,7 +36,6 @@ public class UserService {
         return userApiCaller.createCodeUrl();
     }
 
-    //TODO 리팩 필요
     @Transactional
     public UserModel.Login register(String code) {
         // 토큰 발급
@@ -62,6 +61,7 @@ public class UserService {
         return UserModel.Login.from(jwt, user.getId());
     }
 
+    @Transactional(readOnly = true)
     public UserModel.Point getPoint(Long userId) {
         Users user = userReaderService.getUserById(userId);
         return UserModel.Point.from(user);

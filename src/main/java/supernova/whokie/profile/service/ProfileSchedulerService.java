@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.profile.ProfileVisitCount;
 import supernova.whokie.profile.ProfileVisitor;
 import supernova.whokie.redis.entity.RedisVisitCount;
@@ -24,6 +25,7 @@ public class ProfileSchedulerService {
     private final RedisVisitService redisVisitService;
 
     @Scheduled(cron = "0 0 * * * *")    // 매 정시(1시간 간격)마다 실행
+    @Transactional
     public void syncVisitCountToDB() {
         List<RedisVisitCount> redisEntities = redisVisitService.findAllVisitCounts();
         List<ProfileVisitCount> dbEntities = redisEntities.stream()
@@ -39,6 +41,7 @@ public class ProfileSchedulerService {
     }
 
     @Scheduled(cron = "0 0 0 * * *")    // 매 자정(0시)마다 실행
+    @Transactional
     public void syncVisitorToDB() {
         List<RedisVisitor> redisEntities = redisVisitService.findAllVisitors();
         List<ProfileVisitor> dbEntities = redisEntities.stream()
