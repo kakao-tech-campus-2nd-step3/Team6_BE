@@ -71,52 +71,19 @@ public class AnswerService {
 
     @Transactional
     public void answerToCommonQuestion(Long userId, AnswerCommand.CommonAnswer command) {
-        Users user = userReaderService.getUserById(userId);
         Question question = questionReaderService.getQuestionById(command.questionId());
-        Users picked = userReaderService.getUserById(command.pickedId());
-        Groups group = groupReaderService.getGroupById(question.getGroupId());
 
-        Answer answer = command.toEntity(question, user, picked, AnswerConstants.DEFAULT_HINT_COUNT);
-        answerWriterService.save(answer);
-
-        // Ranking Count 증가
-        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question.getContent(), group);
-        user.increasePoint(AnswerConstants.ANSWER_POINT);
-
-        AlarmEventDto.Alarm alarmEvent = AlarmEventDto.Alarm.toDto(picked.getId(), question.getContent());
-        eventPublisher.publishEvent(alarmEvent);
-
-        eventPublisher.publishEvent(
-            PointRecordEventDto.Earn.toDto(userId, AnswerConstants.ANSWER_POINT, 0,
-                PointRecordOption.CHARGED,
-                    PointConstants.POINT_EARN_MESSAGE));
+        answerToQuestion(userId, command.pickedId(), question);
     }
 
     @Transactional
     public void answerToGroupQuestion(Long userId, AnswerCommand.Group command) {
-        Users user = userReaderService.getUserById(userId);
         Question question = questionReaderService.getQuestionById(command.questionId());
-        Users picked = userReaderService.getUserById(command.pickedId());
-        Groups group = groupReaderService.getGroupById(command.groupId());
-
-        if(question.isNotCorrectGroupQuestion(group.getId())){
+        if(question.isNotCorrectGroupQuestion(command.groupId())) {
             throw new InvalidEntityException(MessageConstants.GROUP_NOT_FOUND_MESSAGE);
         }
 
-        Answer answer = command.toEntity(question, user, picked, AnswerConstants.DEFAULT_HINT_COUNT);
-        answerWriterService.save(answer);
-
-        // Ranking Count 증가
-        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question.getContent(), group);
-        user.increasePoint(AnswerConstants.ANSWER_POINT);
-
-        AlarmEventDto.Alarm alarmEvent = AlarmEventDto.Alarm.toDto(picked.getId(), question.getContent());
-        eventPublisher.publishEvent(alarmEvent);
-
-        var event = PointRecordEventDto.Earn.toDto(userId, AnswerConstants.ANSWER_POINT, 0,
-            PointRecordOption.CHARGED,
-                PointConstants.POINT_EARN_MESSAGE);
-        eventPublisher.publishEvent(event);
+        answerToQuestion(userId, command.pickedId(), question);
     }
 
     @Transactional(readOnly = true)
@@ -170,4 +137,25 @@ public class AnswerService {
         return allHints;
     }
 
+    private void answerToQuestion(Long userId, Long pickedId, Question question) {
+        Users user = userReaderService.getUserById(userId);
+        Users picked = userReaderService.getUserById(pickedId);
+        Groups group = groupReaderService.getGroupById(question.getGroupId());
+
+        Answer answer = Answer.create(question, user, picked, AnswerConstants.DEFAULT_HINT_COUNT);
+        answerWriterService.save(answer);
+
+        // Ranking Count 증가
+        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question.getContent(), group);
+        user.increasePoint(AnswerConstants.ANSWER_POINT);
+
+        // 웹 알림 전송
+        AlarmEventDto.Alarm alarmEvent = AlarmEventDto.Alarm.toDto(picked.getId(), question.getContent());
+        eventPublisher.publishEvent(alarmEvent);
+
+        // 포인트 기록
+        PointRecordEventDto.Earn pointEvent = PointRecordEventDto.Earn.toDto(userId, AnswerConstants.ANSWER_POINT, 0,
+                PointRecordOption.CHARGED, PointConstants.POINT_EARN_MESSAGE);
+        eventPublisher.publishEvent(pointEvent);
+    }
 }
