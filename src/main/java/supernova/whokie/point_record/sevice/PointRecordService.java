@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import supernova.whokie.global.constants.Constants;
+import supernova.whokie.point_record.PointRecord;
 import supernova.whokie.point_record.PointRecordOption;
 import supernova.whokie.point_record.event.PointRecordEventDto;
 import supernova.whokie.point_record.infrastructure.apicaller.PayApiCaller;
@@ -19,12 +20,18 @@ import supernova.whokie.user.service.UserReaderService;
 @RequiredArgsConstructor
 public class PointRecordService {
 
+    private final PointRecordWriterService pointRecordWriterService;
     private final PayApiCaller payApiCaller;
     private final UserReaderService userReaderService;
     private final PayService payService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
+    public void recordEarnPoint(PointRecordEventDto.Earn event) {
+        PointRecord pointRecord = PointRecord.create(event.userId(), event.point(), event.amount(),
+                event.option(), event.message());
+        pointRecordWriterService.save(pointRecord);
+    }
     public PointRecordModel.ReadyInfo readyPurchasePoint(Long userId, int point){
         Users user = userReaderService.getUserById(userId);
 

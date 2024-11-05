@@ -58,7 +58,7 @@ public class PointRecordController {
     }
 
     @GetMapping("/record")
-    public ResponseEntity<PagingResponse<PointRecordResponse.Record>> getChargedList(
+    public PagingResponse<PointRecordResponse.Record> getChargedList(
         @Authenticate Long userId,
         @RequestParam(name = "start-date", defaultValue = "1900-01-01") LocalDate startDate,
         @RequestParam(name = "end-date", defaultValue = "2100-01-01") LocalDate endDate,
@@ -71,6 +71,6 @@ public class PointRecordController {
                 userId, command, pageable)
             .map(PointRecordResponse.Record::from);
 
-        return ResponseEntity.ok().body(PagingResponse.from(response));
+        return PagingResponse.from(response);
     }
 }

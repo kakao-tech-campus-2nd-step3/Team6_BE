@@ -82,4 +82,4 @@ jobs:
               -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
               -e AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
               -e S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }} \
-              momnpa333/whokie:latest
+              ${{ secrets.DOCKER_REPO }}
