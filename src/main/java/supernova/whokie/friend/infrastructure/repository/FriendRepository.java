@@ -17,7 +17,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     List<Friend> findRandomFriendsByHostUser(@Param("userId") Long userId, Pageable pageable);
 
     @Query("SELECT f FROM Friend f JOIN FETCH f.friendUser WHERE f.hostUser = :hostUser")
-    List<Friend> findAllByHostUser(Users user);
+    List<Friend> findAllByHostUser(@Param("hostUser") Users hostUser);
 
     void deleteAllByHostUser(Users user);
 }
