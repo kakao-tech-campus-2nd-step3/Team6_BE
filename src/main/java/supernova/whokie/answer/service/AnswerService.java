@@ -1,6 +1,7 @@
 package supernova.whokie.answer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Constants;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,26 +50,24 @@ public class AnswerService {
     private final RankingWriterService rankingWriterService;
 
     @Transactional(readOnly = true)
-    public Page<AnswerModel.Record> getAnswerRecord(Pageable pageable, Long userId,
-        LocalDate date) {
-
-        if(date == null){
-            date = LocalDate.now();
-        }
-
+    public Page<AnswerModel.Record> getAnswerRecord(Pageable pageable, Long userId, LocalDate date) {
         Users user = userReaderService.getUserById(userId);
 
-        LocalDateTime startDate = date.atStartOfDay();
-        LocalDateTime endDate = date.withDayOfMonth(date.lengthOfMonth()).atTime(LocalTime.MAX);
+        LocalDateTime startDate;
+        LocalDateTime endDate;
 
-        // 해당 월의 데이터를 조회
-        Page<Answer> answers = answerReaderService.getAnswerList(pageable, user, startDate,
-            endDate);
+        if (date == null) {
+            startDate = AnswerConstants.DEFAULT_START_DATE;
+            endDate = LocalDateTime.now();
+        } else {
+            startDate = date.atStartOfDay();
+            endDate = date.withDayOfMonth(date.lengthOfMonth()).atTime(LocalTime.MAX);
+        }
 
+        // 지정된 기간 내의 데이터를 조회
+        Page<Answer> answers = answerReaderService.getAnswerList(pageable, user, startDate, endDate);
         return answers.map(AnswerModel.Record::from);
-
     }
-
     @Transactional
     public void answerToCommonQuestion(Long userId, AnswerCommand.CommonAnswer command) {
         Question question = questionReaderService.getQuestionById(command.questionId());
