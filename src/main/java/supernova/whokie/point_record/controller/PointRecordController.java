@@ -23,6 +23,7 @@ import supernova.whokie.point_record.infrastructure.apicaller.dto.PayReadyInfoRe
 import supernova.whokie.point_record.sevice.PointRecordReaderService;
 import supernova.whokie.point_record.sevice.PointRecordService;
 import supernova.whokie.point_record.sevice.dto.PointRecordCommand;
+import supernova.whokie.point_record.sevice.dto.PointRecordModel;
 
 import java.time.LocalDate;
 
@@ -40,10 +41,10 @@ public class PointRecordController {
             @Authenticate Long userId,
             @RequestBody @Valid PointRecordRequest.Purchase request
     ) {
-        PayReadyInfoResponse payReadyInfoResponse = pointRecordService.readyPurchasePoint(userId, request.point());
+        PointRecordModel.ReadyInfo readyInfo = pointRecordService.readyPurchasePoint(userId, request.point());
 
         return ResponseEntity.status(HttpStatus.SEE_OTHER)
-                .header("location", payReadyInfoResponse.nextRedirectPcUrl())
+                .header("location", readyInfo.nextRedirectPcUrl())
                 .build();
     }
 

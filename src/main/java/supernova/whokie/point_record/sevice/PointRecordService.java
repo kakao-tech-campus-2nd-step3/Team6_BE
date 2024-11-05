@@ -10,6 +10,7 @@ import supernova.whokie.point_record.event.PointRecordEventDto;
 import supernova.whokie.point_record.infrastructure.apicaller.PayApiCaller;
 import supernova.whokie.point_record.infrastructure.apicaller.dto.PayApproveInfoResponse;
 import supernova.whokie.point_record.infrastructure.apicaller.dto.PayReadyInfoResponse;
+import supernova.whokie.point_record.sevice.dto.PointRecordModel;
 import supernova.whokie.redis.service.PayService;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
@@ -24,18 +25,18 @@ public class PointRecordService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public PayReadyInfoResponse readyPurchasePoint(Long userId, int point){
+    public PointRecordModel.ReadyInfo readyPurchasePoint(Long userId, int point){
         Users user = userReaderService.getUserById(userId);
 
         PayReadyInfoResponse payReadyInfoResponse = payApiCaller.payReady(point);
 
         payService.saveTid(userId, payReadyInfoResponse.tid());
 
-        return payReadyInfoResponse;
+        return PointRecordModel.ReadyInfo.from(payReadyInfoResponse);
     }
 
     @Transactional
-    public PayApproveInfoResponse approvePurchasePoint(Long userId, String pgToken){
+    public void approvePurchasePoint(Long userId, String pgToken){
         Users user = userReaderService.getUserById(userId);
 
         // 레디스db에서 tid를 읽어오고 바로 삭제
@@ -51,7 +52,5 @@ public class PointRecordService {
                 Constants.POINT_PURCHASE_MESSAGE);
 
         eventPublisher.publishEvent(event);
-
-        return payApproveInfoResponse;
     }
 }
