@@ -50,7 +50,7 @@ public class AnswerService {
     public Page<AnswerModel.Record> getAnswerRecord(Pageable pageable, Long userId,
         LocalDate date) {
 
-        if(date != null){
+        if(date == null){
             date = LocalDate.now();
         }
         Users user = userReaderService.getUserById(userId);
