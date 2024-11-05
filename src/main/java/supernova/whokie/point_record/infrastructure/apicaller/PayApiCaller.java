@@ -25,9 +25,9 @@ public class PayApiCaller {
     private final RestClient restClient;
     private final KakaoPayProperties kakaoPayProperties;;
 
-    public PayReadyInfoResponse payReady(int point) {
+    public PayReadyInfoResponse payReady(int point, String productName) {
         String url = kakaoPayProperties.readyUrl();
-        Map<String, String> body = createPayReadyBody(point);
+        Map<String, String> body = createPayReadyBody(point, productName);
         try {
             String jsonBody = objectMapper.writeValueAsString(body);
             return restClient.post()
@@ -68,12 +68,12 @@ public class PayApiCaller {
     }
 
 
-    public @NotNull HashMap<String, String> createPayReadyBody(int point) {
+    public @NotNull HashMap<String, String> createPayReadyBody(int point, String productName) {
         var body = new HashMap<String, String>();
         body.put("cid", "TC0ONETIME");
         body.put("partner_order_id", "partner_order_id");
         body.put("partner_user_id", "partner_user_id");
-        body.put("item_name", "포인트");
+        body.put("item_name", productName);
         body.put("quantity", String.valueOf(point));
         body.put("total_amount", String.valueOf(point));
         body.put("tax_free_amount", "0");

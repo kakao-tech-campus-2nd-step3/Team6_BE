@@ -28,7 +28,7 @@ public class PointRecordService {
     public PointRecordModel.ReadyInfo readyPurchasePoint(Long userId, int point){
         Users user = userReaderService.getUserById(userId);
 
-        PayReadyInfoResponse payReadyInfoResponse = payApiCaller.payReady(point);
+        PayReadyInfoResponse payReadyInfoResponse = payApiCaller.payReady(point, "포인트");
 
         payService.saveTid(userId, payReadyInfoResponse.tid());
 
