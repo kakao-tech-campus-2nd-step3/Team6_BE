@@ -34,6 +34,7 @@ public class RankingWriterService {
     public void increaseRankingCountByUserAndQuestionAndGroups(Users user, String question, Groups group) {
         Ranking ranking = rankingRepository.findByUsersAndQuestionAndGroups(user, question, group)
                 .orElseGet(() -> createRanking(user, question, group));
-        ranking.increaseCount();
+        rankingRepository.incrementCount(ranking.getId());
+        rankingRepository.save(ranking);
     }
 }
