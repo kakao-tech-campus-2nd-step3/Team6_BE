@@ -101,4 +101,6 @@ public class Users extends BaseTimeEntity {
             throw new InvalidEntityException(MessageConstants.NOT_ENOUGH_POINT_MESSAGE);
         }
     }
+
+
 }

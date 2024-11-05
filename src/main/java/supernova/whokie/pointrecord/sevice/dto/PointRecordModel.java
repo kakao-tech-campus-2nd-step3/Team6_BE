@@ -1,4 +1,4 @@
-package supernova.whokie.pointrecord.sevice.dto;
+package supernova.whokie.point_record.sevice.dto;
 
 import lombok.Builder;
 import supernova.whokie.pointrecord.PointRecord;
@@ -23,5 +23,14 @@ public class PointRecordModel {
                     .createdAt(LocalDate.from(entity.getCreatedAt()))
                     .build();
         }
+    }
+    @Builder
+    public record ReadyInfo(
+            String nextRedirectPcUrl
+    ){
+        public static PointRecordModel.ReadyInfo from(PayReadyInfoResponse payReadyInfoResponse){
+            return ReadyInfo.builder().nextRedirectPcUrl(payReadyInfoResponse.nextRedirectPcUrl()).build();
+        }
+
     }
 }

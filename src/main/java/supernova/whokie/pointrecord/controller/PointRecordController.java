@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import supernova.whokie.global.annotation.Authenticate;
@@ -26,13 +28,28 @@ import java.time.LocalDate;
 @Validated
 public class PointRecordController {
 
+    private final PointRecordService pointRecordService;
     private final PointRecordReaderService pointRecordReaderService;
 
     @PostMapping("/purchase")
-    public GlobalResponse purchasePoint(
-        @RequestBody @Valid PointRecordRequest.Purchase request
+    public ResponseEntity<Void> purchasePoint(
+            @Authenticate Long userId,
+            @RequestBody @Valid PointRecordRequest.Purchase request
     ) {
-        return GlobalResponse.builder().message("message").build();
+        PointRecordModel.ReadyInfo readyInfo = pointRecordService.readyPurchasePoint(userId, request.point());
+
+        return ResponseEntity.status(HttpStatus.SEE_OTHER)
+                .header("location", readyInfo.nextRedirectPcUrl())
+                .build();
+    }
+
+    @GetMapping("/purchase/approve")
+    public GlobalResponse payApproved(
+            @Authenticate Long userId,
+            @RequestParam("pg_token") String pgToken
+    ) {
+        pointRecordService.approvePurchasePoint(userId, pgToken);
+        return GlobalResponse.builder().message("포인트 결제가 완료되었습니다.").build();
     }
 
     @GetMapping("/record")
