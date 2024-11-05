@@ -21,6 +21,7 @@ import supernova.whokie.point_record.PointRecordOption;
 import supernova.whokie.point_record.event.PointRecordEventDto;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.service.QuestionReaderService;
+import supernova.whokie.ranking.service.RankingWriterService;
 import supernova.whokie.s3.service.S3Service;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
@@ -44,6 +45,7 @@ public class AnswerService {
     private final AnswerWriterService answerWriterService;
     private final FriendReaderService friendReaderService;
     private final S3Service s3Service;
+    private final RankingWriterService rankingWriterService;
 
     @Transactional(readOnly = true)
     public Page<AnswerModel.Record> getAnswerRecord(Pageable pageable, Long userId,
@@ -71,12 +73,13 @@ public class AnswerService {
         Users user = userReaderService.getUserById(userId);
         Question question = questionReaderService.getQuestionById(command.questionId());
         Users picked = userReaderService.getUserById(command.pickedId());
+        Groups group = groupReaderService.getGroupById(question.getGroupId());
 
         Answer answer = command.toEntity(question, user, picked, Constants.DEFAULT_HINT_COUNT);
         answerWriterService.save(answer);
 
         // Ranking Count 증가
-
+        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question.getContent(), group);
         user.increasePoint(Constants.ANSWER_POINT);
 
         AlarmEventDto.Alarm alarmEvent = AlarmEventDto.Alarm.toDto(picked.getId(), question.getContent());
@@ -103,7 +106,7 @@ public class AnswerService {
         answerWriterService.save(answer);
 
         // Ranking Count 증가
-
+        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question.getContent(), group);
         user.increasePoint(Constants.ANSWER_POINT);
 
         AlarmEventDto.Alarm alarmEvent = AlarmEventDto.Alarm.toDto(picked.getId(), question.getContent());
@@ -160,7 +163,7 @@ public class AnswerService {
 
         for (int i = 1; i <= Constants.MAX_HINT_COUNT; i++) {
             boolean valid = (i <= answer.getHintCount());
-            allHints.add(AnswerModel.Hint.from(answer.getPicker(), i, valid));
+            allHints.add(AnswerModel.Hint.from(answer, i, valid));
         }
 
         return allHints;
