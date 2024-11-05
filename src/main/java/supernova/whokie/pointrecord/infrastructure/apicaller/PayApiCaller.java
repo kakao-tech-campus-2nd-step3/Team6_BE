@@ -1,4 +1,4 @@
-package supernova.whokie.point_record.infrastructure.apicaller;
+package supernova.whokie.pointrecord.infrastructure.apicaller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import supernova.whokie.global.exception.FileTypeMismatchException;
 import supernova.whokie.global.property.KakaoPayProperties;
-import supernova.whokie.point_record.infrastructure.apicaller.dto.PayApproveInfoResponse;
-import supernova.whokie.point_record.infrastructure.apicaller.dto.PayReadyInfoResponse;
+import supernova.whokie.pointrecord.infrastructure.apicaller.dto.PayApproveInfoResponse;
+import supernova.whokie.pointrecord.infrastructure.apicaller.dto.PayReadyInfoResponse;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class PayApiCaller {
 
     private final ObjectMapper objectMapper;
     private final RestClient restClient;
-    private final KakaoPayProperties kakaoPayProperties;;
+    private final KakaoPayProperties kakaoPayProperties;
 
     public PayReadyInfoResponse payReady(int point, String productName) {
         String url = kakaoPayProperties.readyUrl();

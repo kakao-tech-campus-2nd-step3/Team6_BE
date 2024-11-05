@@ -5,12 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import supernova.whokie.pointrecord.PointRecord;
 import supernova.whokie.pointrecord.PointRecordOption;
 import supernova.whokie.pointrecord.infrastructure.repository.PointRecordRepository;
-import supernova.whokie.pointrecord.sevice.dto.PointRecordCommand;
-import supernova.whokie.pointrecord.sevice.dto.PointRecordModel;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 
 @Service
@@ -20,19 +19,25 @@ public class PointRecordReaderService {
     private final PointRecordRepository pointRecordRepository;
 
     @Transactional(readOnly = true)
-    public Page<PointRecordModel.Record> getRecordsPaging(
+    public Page<PointRecord> getRecordsByUserId(
         Long userId,
-        PointRecordCommand.Record command,
+        LocalDateTime startTime,
+        LocalDateTime endTime,
         Pageable pageable
     ) {
-        if (command.option() == PointRecordOption.ALL) {
-            return pointRecordRepository.findByUserIdPaging(
-                    userId, command.startDateTime(), command.endDate().atTime(LocalTime.MAX), pageable)
-                .map(PointRecordModel.Record::from);
-        }
+        return pointRecordRepository.findByUserIdPaging(
+                userId, startTime, endTime, pageable);
+    }
 
+    @Transactional(readOnly = true)
+    public Page<PointRecord> getRecordsByUserIdAndOption(
+            Long userId,
+            PointRecordOption option,
+            LocalDateTime startTime,
+            LocalDateTime endTime,
+            Pageable pageable
+    ) {
         return pointRecordRepository.findByUserIdAndOptionPaging(
-                userId, command.option(), command.startDateTime(), command.endDateTime(), pageable)
-            .map(PointRecordModel.Record::from);
+                        userId, option, startTime, endTime, pageable);
     }
 }

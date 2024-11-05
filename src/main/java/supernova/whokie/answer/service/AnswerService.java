@@ -18,6 +18,7 @@ import supernova.whokie.global.exception.InvalidEntityException;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.service.GroupReaderService;
 import supernova.whokie.pointrecord.PointRecordOption;
+import supernova.whokie.pointrecord.constants.PointConstants;
 import supernova.whokie.pointrecord.event.PointRecordEventDto;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.service.QuestionReaderService;
@@ -80,8 +81,6 @@ public class AnswerService {
 
         // Ranking Count 증가
         rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question.getContent(), group);
-        user.increasePoint(Constants.ANSWER_POINT);
-
         user.increasePoint(AnswerConstants.ANSWER_POINT);
 
         AlarmEventDto.Alarm alarmEvent = AlarmEventDto.Alarm.toDto(picked.getId(), question.getContent());
@@ -90,7 +89,7 @@ public class AnswerService {
         eventPublisher.publishEvent(
             PointRecordEventDto.Earn.toDto(userId, AnswerConstants.ANSWER_POINT, 0,
                 PointRecordOption.CHARGED,
-                    AnswerConstants.POINT_EARN_MESSAGE));
+                    PointConstants.POINT_EARN_MESSAGE));
     }
 
     @Transactional
@@ -109,8 +108,6 @@ public class AnswerService {
 
         // Ranking Count 증가
         rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question.getContent(), group);
-        user.increasePoint(Constants.ANSWER_POINT);
-
         user.increasePoint(AnswerConstants.ANSWER_POINT);
 
         AlarmEventDto.Alarm alarmEvent = AlarmEventDto.Alarm.toDto(picked.getId(), question.getContent());
@@ -118,7 +115,7 @@ public class AnswerService {
 
         var event = PointRecordEventDto.Earn.toDto(userId, AnswerConstants.ANSWER_POINT, 0,
             PointRecordOption.CHARGED,
-                AnswerConstants.POINT_EARN_MESSAGE);
+                PointConstants.POINT_EARN_MESSAGE);
         eventPublisher.publishEvent(event);
     }
 

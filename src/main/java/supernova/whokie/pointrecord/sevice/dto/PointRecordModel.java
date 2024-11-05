@@ -1,8 +1,9 @@
-package supernova.whokie.point_record.sevice.dto;
+package supernova.whokie.pointrecord.sevice.dto;
 
 import lombok.Builder;
 import supernova.whokie.pointrecord.PointRecord;
 import supernova.whokie.pointrecord.PointRecordOption;
+import supernova.whokie.pointrecord.infrastructure.apicaller.dto.PayReadyInfoResponse;
 
 import java.time.LocalDate;
 

@@ -1,4 +1,4 @@
-package supernova.whokie.point_record.infrastructure.apicaller.dto;
+package supernova.whokie.pointrecord.infrastructure.apicaller.dto;
 
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

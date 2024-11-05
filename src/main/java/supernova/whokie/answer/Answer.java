@@ -1,21 +1,10 @@
 package supernova.whokie.answer;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import supernova.whokie.global.constants.Constants;
+import lombok.*;
+import supernova.whokie.answer.constants.AnswerConstants;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.question.Question;
 import supernova.whokie.user.Users;
@@ -101,7 +90,7 @@ public class Answer extends BaseTimeEntity {
             if (ch >= '가' && ch <= '힣') {  // 한글인지 확인
                 int unicode = ch - '가';
                 int choSungIndex = unicode / (21 * 28);  // 초성 인덱스 계산
-                initials.append(Constants.CHO_SUNG[choSungIndex]);
+                initials.append(AnswerConstants.CHO_SUNG[choSungIndex]);
             } else {
                 initials.append(ch);  // 한글이 아니면 그대로 추가
             }

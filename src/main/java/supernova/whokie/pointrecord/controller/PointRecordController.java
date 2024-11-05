@@ -17,8 +17,9 @@ import supernova.whokie.global.dto.PagingResponse;
 import supernova.whokie.pointrecord.PointRecordOption;
 import supernova.whokie.pointrecord.controller.dto.PointRecordRequest;
 import supernova.whokie.pointrecord.controller.dto.PointRecordResponse;
-import supernova.whokie.pointrecord.sevice.PointRecordReaderService;
+import supernova.whokie.pointrecord.sevice.PointRecordService;
 import supernova.whokie.pointrecord.sevice.dto.PointRecordCommand;
+import supernova.whokie.pointrecord.sevice.dto.PointRecordModel;
 
 import java.time.LocalDate;
 
@@ -29,7 +30,6 @@ import java.time.LocalDate;
 public class PointRecordController {
 
     private final PointRecordService pointRecordService;
-    private final PointRecordReaderService pointRecordReaderService;
 
     @PostMapping("/purchase")
     public ResponseEntity<Void> purchasePoint(
@@ -62,7 +62,7 @@ public class PointRecordController {
     ) {
         PointRecordCommand.Record command = new PointRecordCommand.Record(startDate, endDate,
             option);
-        Page<PointRecordResponse.Record> response = pointRecordReaderService.getRecordsPaging(
+        Page<PointRecordResponse.Record> response = pointRecordService.getRecordsPaging(
                 userId, command, pageable)
             .map(PointRecordResponse.Record::from);
 

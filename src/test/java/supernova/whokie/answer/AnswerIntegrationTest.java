@@ -247,7 +247,6 @@ class AnswerIntegrationTest {
                 .picked(picked)
                 .hintCount(2)
                 .build();
-//        ReflectionTestUtils.setField(answer, "createdAt", LocalDateTime.of(2024, 9, 19, 0, 0));
         answerRepository.save(answer);
     }
 

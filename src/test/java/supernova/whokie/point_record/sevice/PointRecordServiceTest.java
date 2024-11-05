@@ -7,11 +7,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import supernova.whokie.global.constants.Constants;
-import supernova.whokie.point_record.infrastructure.apicaller.PayApiCaller;
-import supernova.whokie.point_record.infrastructure.apicaller.dto.PayApproveInfoResponse;
-import supernova.whokie.point_record.infrastructure.apicaller.dto.PayReadyInfoResponse;
-import supernova.whokie.point_record.sevice.dto.PointRecordModel;
+import supernova.whokie.pointrecord.constants.PointConstants;
+import supernova.whokie.pointrecord.infrastructure.apicaller.PayApiCaller;
+import supernova.whokie.pointrecord.infrastructure.apicaller.dto.PayApproveInfoResponse;
+import supernova.whokie.pointrecord.infrastructure.apicaller.dto.PayReadyInfoResponse;
+import supernova.whokie.pointrecord.sevice.PointRecordService;
+import supernova.whokie.pointrecord.sevice.dto.PointRecordModel;
 import supernova.whokie.redis.service.PayService;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
@@ -50,7 +51,7 @@ class PointRecordServiceTest {
         PayReadyInfoResponse mockResponse = new PayReadyInfoResponse("test-tid", "testUrl");
 
         when(userReaderService.getUserById(userId)).thenReturn(user);
-        when(payApiCaller.payReady(point, Constants.PRODUCT_NAME_POINT)).thenReturn(mockResponse);
+        when(payApiCaller.payReady(point, PointConstants.PRODUCT_NAME_POINT)).thenReturn(mockResponse);
 
         // when
         PointRecordModel.ReadyInfo result = pointService.readyPurchasePoint(userId, point);

@@ -1,10 +1,25 @@
 package supernova.whokie.pointrecord.sevice;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.pointrecord.PointRecord;
+import supernova.whokie.pointrecord.PointRecordOption;
+import supernova.whokie.pointrecord.constants.PointConstants;
 import supernova.whokie.pointrecord.event.PointRecordEventDto;
+import supernova.whokie.pointrecord.infrastructure.apicaller.PayApiCaller;
+import supernova.whokie.pointrecord.infrastructure.apicaller.dto.PayApproveInfoResponse;
+import supernova.whokie.pointrecord.infrastructure.apicaller.dto.PayReadyInfoResponse;
+import supernova.whokie.pointrecord.sevice.dto.PointRecordCommand;
+import supernova.whokie.pointrecord.sevice.dto.PointRecordModel;
+import supernova.whokie.redis.service.PayService;
+import supernova.whokie.user.Users;
+import supernova.whokie.user.service.UserReaderService;
+
+import java.time.LocalTime;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +30,7 @@ public class PointRecordService {
     private final UserReaderService userReaderService;
     private final PayService payService;
     private final ApplicationEventPublisher eventPublisher;
+    private final PointRecordReaderService pointRecordReaderService;
 
     @Transactional
     public void recordEarnPoint(PointRecordEventDto.Earn event) {
@@ -25,7 +41,7 @@ public class PointRecordService {
     public PointRecordModel.ReadyInfo readyPurchasePoint(Long userId, int point){
         Users user = userReaderService.getUserById(userId);
 
-        PayReadyInfoResponse payReadyInfoResponse = payApiCaller.payReady(point, Constants.PRODUCT_NAME_POINT);
+        PayReadyInfoResponse payReadyInfoResponse = payApiCaller.payReady(point, PointConstants.PRODUCT_NAME_POINT);
 
         payService.saveTid(userId, payReadyInfoResponse.tid());
 
@@ -46,8 +62,25 @@ public class PointRecordService {
         user.increasePoint(purchasedPoint);
         var event = PointRecordEventDto.Earn.toDto(userId, purchasedPoint, purchasedPoint,
                 PointRecordOption.CHARGED,
-                Constants.POINT_PURCHASE_MESSAGE);
+                PointConstants.POINT_PURCHASE_MESSAGE);
 
         eventPublisher.publishEvent(event);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PointRecordModel.Record> getRecordsPaging(
+            Long userId,
+            PointRecordCommand.Record command,
+            Pageable pageable
+    ) {
+        if (command.option() == PointRecordOption.ALL) {
+            return pointRecordReaderService.getRecordsByUserId(
+                            userId, command.startDateTime(), command.endDate().atTime(LocalTime.MAX), pageable)
+                    .map(PointRecordModel.Record::from);
+        }
+
+        return pointRecordReaderService.getRecordsByUserIdAndOption(
+                        userId, command.option(), command.startDateTime(), command.endDateTime(), pageable)
+                .map(PointRecordModel.Record::from);
     }
 }
