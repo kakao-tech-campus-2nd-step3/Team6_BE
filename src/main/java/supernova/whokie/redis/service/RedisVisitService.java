@@ -86,7 +86,7 @@ public class RedisVisitService {
         redisVisitorRepository.deleteAll();
     }
 
-    @RedissonLock(value = "#hostId")
+    @RedissonLock(value = "'visitCount:host:' + #hostId")
     public void increaseVisitCount(Long hostId) {
         RedisVisitCount redisVisitCount = findVisitCountByHostId(hostId);
         redisVisitCount.visit();
