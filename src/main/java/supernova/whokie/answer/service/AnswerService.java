@@ -49,7 +49,11 @@ public class AnswerService {
     @Transactional(readOnly = true)
     public Page<AnswerModel.Record> getAnswerRecord(Pageable pageable, Long userId,
         LocalDate date) {
-        date = (date != null) ? date : LocalDate.now();
+
+        if(date == null){
+            date = LocalDate.now();
+        }
+
         Users user = userReaderService.getUserById(userId);
 
         LocalDateTime startDate = date.atStartOfDay();
