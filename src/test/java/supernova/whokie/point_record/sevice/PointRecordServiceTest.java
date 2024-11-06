@@ -48,7 +48,7 @@ class PointRecordServiceTest {
         Long userId = 1L;
         int point = 100;
         PayReadyInfoResponse mockResponse = new PayReadyInfoResponse("test-tid", "testUrl");
-        when(payApiCaller.payReady(point, PointConstants.PRODUCT_NAME_POINT)).thenReturn(mockResponse);
+        when(payApiCaller.payReady(point, userId, PointConstants.PRODUCT_NAME_POINT)).thenReturn(mockResponse);
 
         // when
         PointRecordModel.ReadyInfo result = pointService.readyPurchasePoint(userId, point);
@@ -76,7 +76,7 @@ class PointRecordServiceTest {
 
         when(userReaderService.getUserById(userId)).thenReturn(user);
         when(redisPayService.getTid(userId)).thenReturn("test-tid");
-        when(payApiCaller.payApprove("test-tid", pgToken)).thenReturn(mockApproveResponse);
+        when(payApiCaller.payApprove("test-tid", userId, pgToken)).thenReturn(mockApproveResponse);
 
         // when
         pointService.approvePurchasePoint(userId, pgToken);

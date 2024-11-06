@@ -25,9 +25,9 @@ public class PayApiCaller {
     private final RestClient restClient;
     private final KakaoPayProperties kakaoPayProperties;
 
-    public PayReadyInfoResponse payReady(int point, String productName) {
+    public PayReadyInfoResponse payReady(int point, Long userId, String productName) {
         String url = kakaoPayProperties.readyUrl();
-        Map<String, String> body = createPayReadyBody(point, productName);
+        Map<String, String> body = createPayReadyBody(point, userId, productName);
         try {
             String jsonBody = objectMapper.writeValueAsString(body);
             return restClient.post()
@@ -36,6 +36,9 @@ public class PayApiCaller {
                     .header("Authorization", "SECRET_KEY "+ kakaoPayProperties.secretKey())
                     .body(jsonBody)
                     .exchange((request, response) -> {
+                        if (response.getStatusCode().is4xxClientError()) {
+                            System.out.println(objectMapper.readValue(response.getBody(), Map.class));
+                        }
                         if (response.getStatusCode().isSameCodeAs(HttpStatus.OK)) {
                             return objectMapper.readValue(response.getBody(), PayReadyInfoResponse.class);
                         }
@@ -46,9 +49,9 @@ public class PayApiCaller {
         }
     }
 
-    public PayApproveInfoResponse payApprove(String tid, String pgToken) {
+    public PayApproveInfoResponse payApprove(String tid, Long userId, String pgToken) {
         String url = kakaoPayProperties.approveUrl();
-        Map<String, String> body = createPayApproveBody(tid, pgToken);
+        Map<String, String> body = createPayApproveBody(tid, userId, pgToken);
         try {
             String jsonBody = objectMapper.writeValueAsString(body);
             return restClient.post()
@@ -68,11 +71,11 @@ public class PayApiCaller {
     }
 
 
-    public @NotNull HashMap<String, String> createPayReadyBody(int point, String productName) {
+    public @NotNull HashMap<String, String> createPayReadyBody(int point, Long userId, String productName) {
         var body = new HashMap<String, String>();
         body.put("cid", "TC0ONETIME");
         body.put("partner_order_id", "partner_order_id");
-        body.put("partner_user_id", "partner_user_id");
+        body.put("partner_user_id", String.valueOf(userId));
         body.put("item_name", productName);
         body.put("quantity", String.valueOf(point));
         body.put("total_amount", String.valueOf(point));
@@ -85,12 +88,12 @@ public class PayApiCaller {
         return body;
     }
 
-    public @NotNull HashMap<String, String> createPayApproveBody(String tid, String pgToken) {
+    public @NotNull HashMap<String, String> createPayApproveBody(String tid, Long userId, String pgToken) {
         var body = new HashMap<String, String>();
         body.put("cid", "TC0ONETIME");
         body.put("tid", tid);
         body.put("partner_order_id", "partner_order_id");
-        body.put("partner_user_id", "partner_user_id");
+        body.put("partner_user_id", String.valueOf(userId));
         body.put("pg_token", pgToken);
 
         return body;

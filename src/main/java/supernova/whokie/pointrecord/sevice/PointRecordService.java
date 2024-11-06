@@ -41,7 +41,7 @@ public class PointRecordService {
 
     @Transactional
     public PointRecordModel.ReadyInfo readyPurchasePoint(Long userId, int point){
-        PayReadyInfoResponse payReadyInfoResponse = payApiCaller.payReady(point, PointConstants.PRODUCT_NAME_POINT);
+        PayReadyInfoResponse payReadyInfoResponse = payApiCaller.payReady(point, userId, PointConstants.PRODUCT_NAME_POINT);
 
         redisPayService.saveTid(userId, payReadyInfoResponse.tid());
 
@@ -55,7 +55,7 @@ public class PointRecordService {
         // 레디스db에서 tid를 읽어오기
         String tid = redisPayService.getTid(userId);
 
-        PayApproveInfoResponse payApproveInfoResponse = payApiCaller.payApprove(tid, pgToken);
+        PayApproveInfoResponse payApproveInfoResponse = payApiCaller.payApprove(tid, userId, pgToken);
 
         int purchasedPoint = payApproveInfoResponse.amount().total();
         user.increasePoint(purchasedPoint);
