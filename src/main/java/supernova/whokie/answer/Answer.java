@@ -1,11 +1,13 @@
 package supernova.whokie.answer;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import supernova.whokie.answer.constants.AnswerConstants;
 import supernova.whokie.global.entity.BaseTimeEntity;
+import supernova.whokie.global.exception.InvalidEntityException;
 import supernova.whokie.question.Question;
 import supernova.whokie.user.Users;
 
@@ -51,7 +53,11 @@ public class Answer extends BaseTimeEntity {
     }
 
     public void increaseHintCount() {
-        this.hintCount++;
+        if(hintCount < AnswerConstants.MAX_HINT_COUNT){
+            this.hintCount++;
+            return;
+        }
+        throw new InvalidEntityException("힌트 카운트는 최대 3까지 가능합니다.");
     }
 
     public boolean isNotPicked(Users user){
