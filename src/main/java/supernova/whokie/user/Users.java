@@ -67,23 +67,28 @@ public class Users extends BaseTimeEntity {
         this.point -= point;
     }
 
-    public void decreasePointsByHintCount(Answer answer) {
+    public int decreasePointsByHintCount(Answer answer) {
+        int decreasedPoint = 0;
         switch (answer.getHintCount()) {
             case 0:
-                checkUserHasNotEnoughPoint(UserConstants.FIRST_HINT_PURCHASE_POINT);
-                decreasePoint(UserConstants.FIRST_HINT_PURCHASE_POINT);
+                decreasedPoint = UserConstants.FIRST_HINT_PURCHASE_POINT;
+                checkUserHasNotEnoughPoint(decreasedPoint);
+                decreasePoint(decreasedPoint);
                 break;
             case 1:
-                checkUserHasNotEnoughPoint(UserConstants.SECOND_HINT_PURCHASE_POINT);
-                decreasePoint(UserConstants.SECOND_HINT_PURCHASE_POINT);
+                decreasedPoint = UserConstants.SECOND_HINT_PURCHASE_POINT;
+                checkUserHasNotEnoughPoint(decreasedPoint);
+                decreasePoint(decreasedPoint);
                 break;
             case 2:
-                checkUserHasNotEnoughPoint(UserConstants.THIRD_HINT_PURCHASE_POINT);
-                decreasePoint(UserConstants.THIRD_HINT_PURCHASE_POINT);
+                decreasedPoint = UserConstants.THIRD_HINT_PURCHASE_POINT;
+                checkUserHasNotEnoughPoint(decreasedPoint);
+                decreasePoint(decreasedPoint);
                 break;
             default:
                 throw new InvalidEntityException(MessageConstants.ALL_HINT_USED_MESSAGE);
         }
+        return decreasedPoint;
     }
 
     public void updateImageUrl(String imageUrl) {
