@@ -27,14 +27,14 @@ public class RankingService {
     }
 
     @Transactional(readOnly = true)
-    public List<RankingModel.Rank> getGroupRanking(Long userId, Long groupId) {
+    public List<RankingModel.GroupRank> getGroupRanking(Long userId, Long groupId) {
         if (!groupMemberReaderService.isGroupMemberExist(userId, groupId)) {
             throw new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE);
         }
 
         List<Ranking> entities = rankingReaderService.getTop3RankingByGroupId(groupId);
         return IntStream.range(0, entities.size())
-                .mapToObj(i -> RankingModel.Rank.from(entities.get(i), i + 1))
+                .mapToObj(i -> RankingModel.GroupRank.from(entities.get(i), i + 1))
                 .toList();
     }
 }

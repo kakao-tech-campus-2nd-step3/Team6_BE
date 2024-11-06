@@ -1,7 +1,6 @@
 package supernova.whokie.answer.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Constants;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -151,7 +150,7 @@ public class AnswerService {
         answerWriterService.save(answer);
 
         // Ranking Count 증가
-        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question.getContent(), group);
+        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(picked, question.getContent(), group);
         user.increasePoint(AnswerConstants.ANSWER_POINT);
 
         // 웹 알림 전송

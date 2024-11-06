@@ -25,6 +25,10 @@ jobs:
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
       AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
       S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+      KAKAO_PAY_SECRET_KEY: ${{ secrets.KAKAO_PAY_SECRET_KEY }}
+      KAKAO_PAY_APPROVE_REDIRECT_URL: ${{ secrets.KAKAO_PAY_APPROVE_REDIRECT_URL }}
+      KAKAO_PAY_FAIL_REDIRECT_URL: ${{ secrets.KAKAO_PAY_FAIL_REDIRECT_URL }}
+      KAKAO_PAY_CANCEL_REDIRECT_URL: ${{ secrets.KAKAO_PAY_CANCEL_REDIRECT_URL }}
 
     runs-on: ubuntu-latest
 
@@ -84,6 +88,10 @@ jobs:
             -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
             -e AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
             -e S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }} \
+            -e KAKAO_PAY_SECRET_KEY=${{ secrets.KAKAO_PAY_SECRET_KEY }} \
+            -e KAKAO_PAY_APPROVE_REDIRECT_URL=${{ secrets.KAKAO_PAY_APPROVE_REDIRECT_URL }} \
+            -e KAKAO_PAY_FAIL_REDIRECT_URL=${{ secrets.KAKAO_PAY_FAIL_REDIRECT_URL }} \
+            -e KAKAO_PAY_CANCEL_REDIRECT_URL=${{ secrets.KAKAO_PAY_CANCEL_REDIRECT_URL }} \
             ${{ secrets.DOCKER_REPO }}
             
             sudo docker run -d -p 8081:8080 -e \
@@ -100,5 +108,9 @@ jobs:
             -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
             -e AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
             -e S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }} \
+            -e KAKAO_PAY_SECRET_KEY=${{ secrets.KAKAO_PAY_SECRET_KEY }} \
+            -e KAKAO_PAY_APPROVE_REDIRECT_URL=${{ secrets.KAKAO_PAY_APPROVE_REDIRECT_URL }} \
+            -e KAKAO_PAY_FAIL_REDIRECT_URL=${{ secrets.KAKAO_PAY_FAIL_REDIRECT_URL }} \
+            -e KAKAO_PAY_CANCEL_REDIRECT_URL=${{ secrets.KAKAO_PAY_CANCEL_REDIRECT_URL }} \
             ${{ secrets.DOCKER_REPO }}
             

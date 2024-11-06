@@ -27,11 +27,11 @@ public class RankingController {
     }
 
     @GetMapping("/group/{group-id}")
-    public RankingResponse.Ranks getGroupRanking(
+    public RankingResponse.GroupRanks getGroupRanking(
             @PathVariable("group-id") @NotNull @Min(1) Long groupId,
             @Authenticate Long userId
     ) {
-        return RankingResponse.Ranks.from(rankingService.getGroupRanking(userId, groupId));
+        return RankingResponse.GroupRanks.from(rankingService.getGroupRanking(userId, groupId));
     }
 
 }
