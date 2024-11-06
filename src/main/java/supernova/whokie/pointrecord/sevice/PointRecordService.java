@@ -38,6 +38,8 @@ public class PointRecordService {
                 event.option(), event.message());
         pointRecordWriterService.save(pointRecord);
     }
+
+    @Transactional
     public PointRecordModel.ReadyInfo readyPurchasePoint(Long userId, int point){
         PayReadyInfoResponse payReadyInfoResponse = payApiCaller.payReady(point, PointConstants.PRODUCT_NAME_POINT);
 
