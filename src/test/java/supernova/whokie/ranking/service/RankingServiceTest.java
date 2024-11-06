@@ -15,6 +15,7 @@ import supernova.whokie.ranking.service.dto.RankingModel;
 import supernova.whokie.user.Users;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -31,12 +32,12 @@ class RankingServiceTest {
     private GroupMemberReaderService groupMemberReaderService;
 
     private List<Ranking> rankings;
-    private Users user1;
+    private List<Users> users;
     private Groups group1;
 
     @BeforeEach
     void setUp() {
-        user1 = createUser();
+        users = createUser();
         group1 = createGroup();
         rankings = createRankings();
     }
@@ -45,12 +46,13 @@ class RankingServiceTest {
     @DisplayName("특정 유저 랭킹 조회")
     void getUserRankingTest() {
         // given
-        Users user = user1;
+        Users user = users.get(0);
         Ranking ranking1 = rankings.get(0);
         Ranking ranking2 = rankings.get(1);
         Ranking ranking3 = rankings.get(2);
+        List<Ranking> rankingList = List.of(ranking1, ranking2, ranking3);
         given(rankingReaderService.getTop3RankingByUserId(user.getId()))
-                .willReturn(rankings);
+                .willReturn(rankingList);
 
         // when
         List<RankingModel.Rank> actual = rankingService.getUserRanking(user.getId());
@@ -68,7 +70,7 @@ class RankingServiceTest {
     @DisplayName("특정 그룹 랭킹 조회 실패")
     void getGroupRankingTest() {
         // given
-        Long userId = user1.getId();
+        Long userId = users.get(0).getId();
         Long groupId = group1.getId();
         given(groupMemberReaderService.isGroupMemberExist(userId, groupId))
                 .willReturn(false);
@@ -79,18 +81,41 @@ class RankingServiceTest {
                 .isThrownBy(() -> rankingService.getGroupRanking(userId, groupId));
     }
 
+    @Test
+    @DisplayName("그룹 내에서 count가 높은 3명 뽑기 테스트")
+    void getTop3UsersFromGroupTest() {
+        // given
+        List<Ranking> rankingList = rankings;
+        int finalCount = rankingList.get(0).getCount() + rankingList.get(1).getCount() + rankingList.get(2).getCount();
+        int finalCount1 = rankingList.get(3).getCount();
+
+        // when
+        List<Map.Entry<String, Integer>> actuals = rankingService.getTop3UsersFromGroup(rankingList);
+
+        assertAll(
+                () -> assertThat(actuals).hasSize(2),
+                () -> assertThat(actuals.get(0).getKey()).isEqualTo(users.get(0).getName()),
+                () -> assertThat(actuals.get(0).getValue()).isEqualTo(finalCount),
+                () -> assertThat(actuals.get(1).getKey()).isEqualTo(users.get(1).getName()),
+                () -> assertThat(actuals.get(1).getValue()).isEqualTo(finalCount1)
+        );
+    }
+
     private Groups createGroup() {
         return Groups.builder().id(1L).build();
     }
 
     private List<Ranking> createRankings() {
-        Ranking ranking1 = Ranking.builder().users(user1).count(100).groups(group1).build();
-        Ranking ranking2 = Ranking.builder().users(user1).count(90).groups(group1).build();
-        Ranking ranking3 = Ranking.builder().users(user1).count(80).groups(group1).build();
-        return List.of(ranking1, ranking2, ranking3);
+        Ranking ranking1 = Ranking.builder().users(users.get(0)).count(100).groups(group1).build();
+        Ranking ranking2 = Ranking.builder().users(users.get(0)).count(90).groups(group1).build();
+        Ranking ranking3 = Ranking.builder().users(users.get(0)).count(80).groups(group1).build();
+        Ranking ranking4 = Ranking.builder().users(users.get(1)).count(80).groups(group1).build();
+        return List.of(ranking1, ranking2, ranking3, ranking4);
     }
 
-    private Users createUser() {
-        return Users.builder().id(1L).build();
+    private List<Users> createUser() {
+        Users user1 =  Users.builder().id(1L).name("name1").build();
+        Users user2 =  Users.builder().id(2L).name("name2").build();
+        return List.of(user1, user2);
     }
 }

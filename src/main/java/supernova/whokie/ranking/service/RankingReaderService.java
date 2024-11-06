@@ -20,6 +20,6 @@ public class RankingReaderService {
 
     @Transactional(readOnly = true)
     public List<Ranking> getTop3RankingByGroupId(Long groupId) {
-        return rankingRepository.findTop3ByGroups_IdOrderByCountDesc(groupId);
+        return rankingRepository.findAllByGroupIdFetchJoinUsers(groupId);
     }
 }

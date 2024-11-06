@@ -1,9 +1,5 @@
 package supernova.whokie.ranking.infrastructure.repoistory;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +13,11 @@ import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -45,29 +46,26 @@ class RankingRepositoryTest {
     void findByUsers_IdOrderByCountDescTest() {
         // given
         Users user = users.get(0);
-        List<Ranking> rankings1 = rankings.stream()
-            .filter(ranking -> ranking.getUsers() == user)
-            .toList();
 
         // when
         List<Ranking> actual = rankingRepository.findTop3ByUsers_IdOrderByCountDesc(user.getId());
 
         // then
         assertAll(
-            () -> assertThat(actual).hasSize(rankings1.size())
+            () -> assertThat(actual).hasSize(3)
         );
     }
 
     @Test
     @DisplayName("groupId로 랭킹 조회")
-    void findTop3ByGroups_IdOrderByCountDescTest() {
+    void findAllByGroupIdFetchJoinUsersTest() {
         // given
         Groups group = groups.get(0);
         List<Ranking> rankings1 = rankings.stream()
             .filter(ranking -> ranking.getGroups() == group)
             .toList();
         // when
-        List<Ranking> actual = rankingRepository.findTop3ByGroups_IdOrderByCountDesc(group.getId());
+        List<Ranking> actual = rankingRepository.findAllByGroupIdFetchJoinUsers(group.getId());
 
         // then
         assertAll(
@@ -124,7 +122,9 @@ class RankingRepositoryTest {
             .groups(groups.get(1)).build();
         Ranking ranking4 = Ranking.builder().id(4L).question("q4").users(users.get(1)).count(80)
             .groups(groups.get(1)).build();
+        Ranking ranking5 = Ranking.builder().id(5L).question("q5").users(users.get(0)).count(70)
+                .groups(groups.get(0)).build();
 
-        return rankingRepository.saveAll(List.of(ranking1, ranking2, ranking3, ranking4));
+        return rankingRepository.saveAll(List.of(ranking1, ranking2, ranking3, ranking4, ranking5));
     }
 }

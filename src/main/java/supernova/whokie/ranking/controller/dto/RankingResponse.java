@@ -36,4 +36,30 @@ public class RankingResponse {
                     .build();
         }
     }
+
+    @Builder
+    public record GroupRanks(
+            List<GroupRank> ranks
+    ) {
+        public static RankingResponse.GroupRanks from(List<RankingModel.GroupRank> models) {
+            return GroupRanks.builder()
+                    .ranks(models.stream().map(RankingResponse.GroupRank::from).toList())
+                    .build();
+        }
+    }
+
+    @Builder
+    public record GroupRank(
+            int rank,
+            int count,
+            String memberName
+    ) {
+        public static RankingResponse.GroupRank from(RankingModel.GroupRank model) {
+            return RankingResponse.GroupRank.builder()
+                    .rank(model.rank())
+                    .count(model.count())
+                    .memberName(model.memberName())
+                    .build();
+        }
+    }
 }

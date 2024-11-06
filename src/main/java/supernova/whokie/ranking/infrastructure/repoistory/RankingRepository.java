@@ -15,7 +15,8 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
 
     List<Ranking> findTop3ByUsers_IdOrderByCountDesc(Long userId);
 
-    List<Ranking> findTop3ByGroups_IdOrderByCountDesc(Long groupId);
+    @Query("SELECT r FROM Ranking r JOIN FETCH r.users WHERE r.groups.id = :groupId")
+    List<Ranking> findAllByGroupIdFetchJoinUsers(Long groupId);
 
     Optional<Ranking> findByUsersAndQuestionAndGroups(Users users, String question, Groups groups);
 

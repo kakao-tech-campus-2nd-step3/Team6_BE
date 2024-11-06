@@ -4,9 +4,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 import supernova.whokie.answer.Answer;
@@ -14,7 +16,10 @@ import supernova.whokie.answer.service.dto.AnswerCommand;
 import supernova.whokie.answer.service.dto.AnswerModel;
 import supernova.whokie.friend.Friend;
 import supernova.whokie.friend.service.FriendReaderService;
+import supernova.whokie.pointrecord.event.PointRecordEventDto;
 import supernova.whokie.question.Question;
+import supernova.whokie.user.Gender;
+import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
 
@@ -22,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -37,6 +43,9 @@ class AnswerServiceTest {
 
     @Mock
     private FriendReaderService friendReaderService;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private AnswerService answerService;
@@ -112,12 +121,16 @@ class AnswerServiceTest {
         when(answerReaderService.getAnswerById(answerId)).thenReturn(dummyAnswer);
         when(dummyAnswer.isNotPicked(dummyUser)).thenReturn(false);
 
+        int decreasedPoint = 100;
+        when(dummyUser.decreasePointsByHintCount(dummyAnswer)).thenReturn(decreasedPoint);
+
         // when
         answerService.purchaseHint(userId, command);
 
         // then
         verify(dummyUser, times(1)).decreasePointsByHintCount(dummyAnswer);
         verify(dummyAnswer, times(1)).increaseHintCount();
+        verify(eventPublisher, times(1)).publishEvent(any(PointRecordEventDto.Earn.class));
     }
 
     private Users createUser() {

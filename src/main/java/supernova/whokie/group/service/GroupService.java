@@ -10,9 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.ForbiddenException;
-import supernova.whokie.group.constants.GroupConstants;
-import supernova.whokie.groupmember.util.InviteCodeUtil;
 import supernova.whokie.group.Groups;
+import supernova.whokie.group.constants.GroupConstants;
 import supernova.whokie.group.infrastructure.repository.dto.GroupInfoWithMemberCount;
 import supernova.whokie.group.service.dto.GroupCommand;
 import supernova.whokie.group.service.dto.GroupModel;
@@ -20,6 +19,7 @@ import supernova.whokie.group.service.dto.GroupModel.InfoWithMemberCount;
 import supernova.whokie.groupmember.GroupMember;
 import supernova.whokie.groupmember.service.GroupMemberReaderService;
 import supernova.whokie.groupmember.service.GroupMemberWriterService;
+import supernova.whokie.groupmember.util.InviteCodeUtil;
 import supernova.whokie.s3.event.S3EventDto;
 import supernova.whokie.s3.service.S3Service;
 import supernova.whokie.s3.util.S3Util;
@@ -41,7 +41,7 @@ public class GroupService {
      * 그룹 생성후, 그룹장을 생성한 유저로 지정한다.
      */
     @Transactional
-    public void createGroup(GroupCommand.Create command, Long userId) {
+    public GroupModel.Info createGroup(GroupCommand.Create command, Long userId) {
 
         var group = command.toEntity();
         groupWriterService.save(group);
@@ -50,6 +50,7 @@ public class GroupService {
 
         GroupMember leader = GroupMember.CreateLeader(user, group);
         groupMemberWriterService.save(leader);
+        return GroupModel.Info.from(group);
     }
 
 
@@ -71,7 +72,8 @@ public class GroupService {
         GroupMember leader = groupMemberReaderService.getByUserIdAndGroupId(userId, groupId);
         leader.validateLeader();
         String key = S3Util.generateS3Key(GroupConstants.GROUP_IMAGE_FOLDER, groupId);
-        S3EventDto.Upload event = S3EventDto.Upload.toDto(image, key, GroupConstants.GROUP_IMAGE_WIDTH, GroupConstants.GROUP_IMAGE_HEIGHT);
+        S3EventDto.Upload event = S3EventDto.Upload.toDto(image, key,
+            GroupConstants.GROUP_IMAGE_WIDTH, GroupConstants.GROUP_IMAGE_HEIGHT);
         eventPublisher.publishEvent(event);
 
         Groups group = groupReaderService.getGroupById(groupId);

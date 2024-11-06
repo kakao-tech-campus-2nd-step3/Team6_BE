@@ -111,9 +111,15 @@ public class AnswerService {
             throw new InvalidEntityException(MessageConstants.NOT_PICKED_USER_MESSAGE);
         }
 
-        user.decreasePointsByHintCount(answer);
+        //포인트 감소
+        int decreasedPoint = user.decreasePointsByHintCount(answer);
 
         answer.increaseHintCount();
+
+        // 포인트 기록
+        PointRecordEventDto.Earn pointEvent = PointRecordEventDto.Earn.toDto(userId, decreasedPoint, decreasedPoint,
+                PointRecordOption.USED, PointConstants.POINT_USE_MESSAGE);
+        eventPublisher.publishEvent(pointEvent);
     }
 
     @Transactional(readOnly = true)
@@ -144,7 +150,7 @@ public class AnswerService {
         answerWriterService.save(answer);
 
         // Ranking Count 증가
-        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(user, question.getContent(), group);
+        rankingWriterService.increaseRankingCountByUserAndQuestionAndGroups(picked, question.getContent(), group);
         user.increasePoint(AnswerConstants.ANSWER_POINT);
 
         // 웹 알림 전송

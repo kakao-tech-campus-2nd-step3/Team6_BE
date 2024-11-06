@@ -9,7 +9,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.dto.GlobalResponse;
@@ -28,12 +35,12 @@ public class GroupController {
     private final GroupService groupService;
 
     @PostMapping("")
-    public GlobalResponse createGroup(
+    public GroupResponse.Info createGroup(
         @RequestBody @Valid GroupRequest.Create request,
         @Authenticate Long userId
     ) {
-        groupService.createGroup(request.toCommand(), userId);
-        return GlobalResponse.builder().message("그룹이 성공적으로 만들어졌습니다.").build();
+        GroupModel.Info model = groupService.createGroup(request.toCommand(), userId);
+        return GroupResponse.Info.from(model);
     }
 
     @GetMapping("/{group-id}/invite")
@@ -47,13 +54,14 @@ public class GroupController {
     }
 
     @GetMapping("/my")
-    public PagingResponse<GroupResponse.Info> getGroupPaging(
+    public PagingResponse<GroupResponse.InfoWithCount> getGroupPaging(
         @Authenticate Long userId,
         @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         Page<GroupModel.InfoWithMemberCount> groupPage = groupService.getGroupPaging(userId,
             pageable);
-        Page<GroupResponse.Info> groupResponse = groupPage.map(GroupResponse.Info::from);
+        Page<GroupResponse.InfoWithCount> groupResponse = groupPage.map(
+            GroupResponse.InfoWithCount::from);
         return PagingResponse.from(groupResponse);
     }
 
@@ -68,19 +76,19 @@ public class GroupController {
 
     @PatchMapping("/modify/image/{group-id}")
     public GlobalResponse modifyGroupImage(
-            @Authenticate Long userId,
-            @PathVariable("group-id") Long groupId,
-            @RequestParam("image") @NotNull MultipartFile imageFile
+        @Authenticate Long userId,
+        @PathVariable("group-id") Long groupId,
+        @RequestParam("image") @NotNull MultipartFile imageFile
     ) {
         groupService.modifyGroupImage(userId, groupId, imageFile);
         return GlobalResponse.builder().message("그룹 이미지 업로드 성공").build();
     }
 
     @GetMapping("/info/{group-id}")
-    public GroupResponse.Info getGroupInfo(
+    public GroupResponse.InfoWithCount getGroupInfo(
         @PathVariable("group-id") @NotNull @Min(1) Long groupId
     ) {
         GroupModel.InfoWithMemberCount groupModel = groupService.getGroupInfo(groupId);
-        return GroupResponse.Info.from(groupModel);
+        return GroupResponse.InfoWithCount.from(groupModel);
     }
 }
