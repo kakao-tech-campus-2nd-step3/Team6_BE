@@ -34,12 +34,4 @@ public class EmbeddedRedisConfig {
             redisServer.stop();
         }
     }
-
-    @Bean
-    public RedissonClient redissonClient() {
-        Config config = new Config();
-        config.useSingleServer()
-            .setAddress("redis://" + REDIS_HOST + ":" + REDIS_PORT);
-        return Redisson.create(config);
-    }
 }
