@@ -8,6 +8,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -32,7 +33,7 @@ import supernova.whokie.user.infrastructure.repository.UserRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@ActiveProfiles("default")
+@Profile("default")
 @SpringBootTest
 @MockBean({S3Client.class, S3Template.class, S3Presigner.class})
 @TestPropertySource(properties = {
