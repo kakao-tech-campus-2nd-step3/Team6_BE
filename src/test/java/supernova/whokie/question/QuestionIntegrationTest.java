@@ -11,6 +11,7 @@ import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,7 +43,7 @@ import supernova.whokie.user.infrastructure.repository.UserRepository;
         "jwt.secret=abcd",
         "spring.sql.init.mode=never"
 })
-@MockBean({S3Client.class, S3Template.class, S3Presigner.class})
+@MockBean({S3Client.class, S3Template.class, S3Presigner.class, RedissonClient.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class QuestionIntegrationTest {
 

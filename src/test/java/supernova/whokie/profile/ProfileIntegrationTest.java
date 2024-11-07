@@ -9,14 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
-import supernova.config.EmbeddedRedisConfig;
 import supernova.whokie.profile.infrastructure.repository.ProfileRepository;
 import supernova.whokie.profile.infrastructure.repository.ProfileVisitCountRepository;
 import supernova.whokie.s3.service.S3Service;
@@ -31,13 +30,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("default")
 @SpringBootTest
 @AutoConfigureMockMvc
-//@Import(EmbeddedRedisConfig.class)
 @TestPropertySource(properties = {
     "jwt.secret=abcd"
 })
-@MockBean({S3Client.class, S3Template.class, S3Presigner.class})
+@MockBean({S3Client.class, S3Template.class, S3Presigner.class, RedissonClient.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ProfileIntegrationTest {
 

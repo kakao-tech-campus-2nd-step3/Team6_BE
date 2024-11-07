@@ -2,6 +2,7 @@ package supernova.whokie;
 
 import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
@@ -13,7 +14,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
     "jwt.secret=abcd"
 
 })
-@MockBean({S3Client.class, S3Template.class, S3Presigner.class})
+@MockBean({S3Client.class, S3Template.class, S3Presigner.class, RedissonClient.class})
 class WhokieApplicationTests {
 
     @Test

@@ -3,7 +3,6 @@ package supernova.whokie.redis.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -11,13 +10,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import supernova.config.EmbeddedRedisConfig;
 import supernova.whokie.profile.service.ProfileVisitReadService;
 import supernova.whokie.redis.entity.RedisVisitCount;
 import supernova.whokie.redis.entity.RedisVisitor;
-import supernova.whokie.redis.infrastructure.repository.RedisVisitorRepository;
 import supernova.whokie.redis.infrastructure.repository.RedisVisitCountRepository;
+import supernova.whokie.redis.infrastructure.repository.RedisVisitorRepository;
 import supernova.whokie.redis.service.dto.RedisCommand;
 
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 
+@ActiveProfiles("default")
 @DataRedisTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = RedisVisitService.class))
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Import(EmbeddedRedisConfig.class)
