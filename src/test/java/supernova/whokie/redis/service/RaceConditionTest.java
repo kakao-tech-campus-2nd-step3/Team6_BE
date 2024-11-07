@@ -33,7 +33,6 @@ import supernova.whokie.user.infrastructure.repository.UserRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Profile("default")
 @SpringBootTest
 @MockBean({S3Client.class, S3Template.class, S3Presigner.class})
 @TestPropertySource(properties = {
@@ -74,6 +73,7 @@ public class RaceConditionTest {
     }
 
     @Test
+    @Profile("default")
     @DisplayName("동시 방문자 수 증가 테스트")
     void visitProfileConcurrentlyTest() throws InterruptedException {
         // given
@@ -113,6 +113,7 @@ public class RaceConditionTest {
     }
 
     @Test
+    @Profile("default")
     @DisplayName("동시 질문 지목 횟수 증가 테스트")
     void AnswerCountConcurrentlyTest() throws InterruptedException {
         // given
