@@ -100,8 +100,6 @@ public class RaceConditionTest {
         latch.await();
         executorService.shutdown();
 
-        Thread.sleep(2000);
-
         // then
         RedisVisitCount actual = redisVisitCountRepository.findById(hostId).orElseThrow();
 

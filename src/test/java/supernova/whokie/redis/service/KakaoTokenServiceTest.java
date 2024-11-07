@@ -1,7 +1,9 @@
 package supernova.whokie.redis.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -13,6 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 import supernova.config.EmbeddedRedisConfig;
 import supernova.whokie.global.auth.JwtProvider;
 import supernova.whokie.global.exception.AuthenticationException;
+import supernova.whokie.profile.ProfileVisitCount;
 import supernova.whokie.redis.entity.KakaoAccessToken;
 import supernova.whokie.redis.entity.KakaoRefreshToken;
 import supernova.whokie.redis.infrastructure.repository.AccessTokenRepository;
@@ -43,6 +46,14 @@ class KakaoTokenServiceTest {
     private JwtProvider jwtProvider;
     @MockBean
     private UserApiCaller userApiCaller;
+
+    /*@Autowired
+    private RedissonClient redissonClient;*/
+
+    /*@BeforeEach
+    void setUp() {
+        redissonClient.getKeys().flushall();
+    }*/
 
     @Test
     @DisplayName("카카오 토큰 저장 테스트")
