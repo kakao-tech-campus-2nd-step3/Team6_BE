@@ -44,8 +44,6 @@ public final class S3Util {
         if(originalWidth < maxWidth && originalHeight < maxHeight) {
             return 1;
         }
-        double widthRatio = (double) maxWidth / originalWidth;
-        double heightRatio = (double) maxHeight / originalHeight;
-        return Math.min(widthRatio, heightRatio);
+        return 0.7;
     }
 }
