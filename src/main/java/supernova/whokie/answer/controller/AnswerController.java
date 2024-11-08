@@ -67,6 +67,16 @@ public class AnswerController {
         Page<AnswerResponse.Record> response = page.map(AnswerResponse.Record::from);
         return PagingResponse.from(response);
     }
+    @GetMapping("/record/days")
+    public AnswerResponse.RecordDays getAnswerRecordDays(
+            @RequestParam(name = "date", defaultValue = "#{T(java.time.LocalDate).now()}") LocalDate date,
+            @Authenticate Long userId
+    ){
+        AnswerModel.RecordDays answerRecordDays = answerService.getAnswerRecordDays(userId, date);
+
+        return AnswerResponse.RecordDays.from(answerRecordDays);
+
+    }
 
     @GetMapping("/hint/{answer-id}")
     public AnswerResponse.Hints getHints(

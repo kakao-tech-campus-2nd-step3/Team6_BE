@@ -42,6 +42,16 @@ public class AnswerResponse {
     }
 
     @Builder
+    public record RecordDays(
+            List<Integer> days
+    ){
+        public static AnswerResponse.RecordDays from(AnswerModel.RecordDays model){
+            return RecordDays.builder().days(model.days()).build();
+        }
+
+    }
+
+    @Builder
     public record Hints(
         List<AnswerResponse.Hint> hints
     ) {
