@@ -1,7 +1,7 @@
 package supernova.whokie.groupmember.service;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +9,8 @@ import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.groupmember.GroupMember;
 import supernova.whokie.groupmember.infrastructure.repository.GroupMemberRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -30,12 +32,12 @@ public class GroupMemberReaderService {
     }
 
     @Transactional(readOnly = true)
-    public List<GroupMember> getGroupMembers(Long userId, Long groupId) {
+    public Page<GroupMember> getGroupMembers(Pageable pageable, Long userId, Long groupId) {
         if (!groupMemberRepository.existsByUserIdAndGroupId(userId, groupId)) {
             throw new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE);
         }
 
-        return groupMemberRepository.findAllByGroupId(groupId);
+        return groupMemberRepository.findAllByGroupId(pageable, groupId);
     }
 
     @Transactional(readOnly = true)

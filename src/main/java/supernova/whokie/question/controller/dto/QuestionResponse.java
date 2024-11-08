@@ -2,11 +2,8 @@ package supernova.whokie.question.controller.dto;
 
 import lombok.Builder;
 import org.springframework.data.domain.Page;
-import supernova.whokie.groupmember.controller.dto.GroupMemberResponse;
-import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
 import supernova.whokie.question.service.dto.QuestionModel;
-import supernova.whokie.user.service.dto.UserModel;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,19 +29,13 @@ public class QuestionResponse {
     @Builder
     public record GroupQuestion(
             Long questionId,
-            String content,
-            List<GroupMemberResponse.Option> users
+            String content
     ) {
 
         public static GroupQuestion from(QuestionModel.GroupQuestion model) {
             return GroupQuestion.builder()
                     .questionId(model.questionId())
                     .content(model.content())
-                    .users(
-                            model.groupMembers().stream()
-                                    .map(GroupMemberResponse.Option::from)
-                                    .toList()
-                    )
                     .build();
         }
     }
@@ -53,16 +44,11 @@ public class QuestionResponse {
     public record CommonQuestions(
             List<CommonQuestion> questions
     ) {
-        public static CommonQuestions from(List<QuestionModel.CommonQuestion> commonQuestions) {
+        public static CommonQuestions from(List<QuestionModel.CommonQuestion> models) {
+            List<CommonQuestion> commonQuestions = models.stream().map(CommonQuestion::from).toList();
             return CommonQuestions.builder()
-                    .questions(
-                            commonQuestions.stream().map(
-                                    commonQuestion -> CommonQuestion.builder()
-                                            .questionId(commonQuestion.questionId())
-                                            .content(commonQuestion.content())
-                                            .users(commonQuestion.users())
-                                            .build()
-                            ).toList()).build();
+                    .questions(commonQuestions)
+                    .build();
         }
 
     }
@@ -70,14 +56,12 @@ public class QuestionResponse {
     @Builder
     public record CommonQuestion(
             Long questionId,
-            String content,
-            List<UserModel.PickedInfo> users
+            String content
     ) {
-        public static CommonQuestion from(Question question, List<UserModel.PickedInfo> friendList) {
+        public static CommonQuestion from(QuestionModel.CommonQuestion question) {
             return CommonQuestion.builder()
-                    .questionId(question.getId())
-                    .content(question.getContent())
-                    .users(friendList)
+                    .questionId(question.questionId())
+                    .content(question.content())
                     .build();
         }
 

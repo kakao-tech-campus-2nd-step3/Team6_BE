@@ -59,7 +59,7 @@ public class AnswerService {
             startDate = AnswerConstants.DEFAULT_START_DATE;
             endDate = LocalDateTime.now();
         } else {
-            startDate = date.atStartOfDay();
+            startDate = date.withDayOfMonth(1).atStartOfDay();
             endDate = date.withDayOfMonth(date.lengthOfMonth()).atTime(LocalTime.MAX);
         }
 
@@ -67,6 +67,20 @@ public class AnswerService {
         Page<Answer> answers = answerReaderService.getAnswerList(pageable, user, startDate, endDate);
         return answers.map(AnswerModel.Record::from);
     }
+
+    @Transactional(readOnly = true)
+    public AnswerModel.RecordDays getAnswerRecordDays(Long userId, LocalDate date) {
+        Users user = userReaderService.getUserById(userId);
+
+        LocalDateTime startDate = date.withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endDate = date.withDayOfMonth(date.lengthOfMonth()).atTime(LocalTime.MAX);
+
+        List<Integer> answerRecordDays = answerReaderService.getAnswerRecordDays(user, startDate, endDate);
+
+        return AnswerModel.RecordDays.from(answerRecordDays);
+    }
+
+
     @Transactional
     public void answerToCommonQuestion(Long userId, AnswerCommand.CommonAnswer command) {
         Question question = questionReaderService.getQuestionById(command.questionId());

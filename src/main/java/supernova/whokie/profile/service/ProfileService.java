@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import supernova.whokie.profile.Profile;
 import supernova.whokie.profile.constants.ProfileConstants;
+import supernova.whokie.profile.service.dto.ProfileCommand;
 import supernova.whokie.profile.service.dto.ProfileModel;
 import supernova.whokie.redis.entity.RedisVisitCount;
 import supernova.whokie.redis.service.RedisVisitService;
@@ -44,5 +45,11 @@ public class ProfileService {
 
         Profile profile = profileReaderService.getByUserId(userId);
         profile.updateBackgroundImageUrl(key);
+    }
+
+    @Transactional
+    public void modifyProfileDescription(Long userId, ProfileCommand.Modify command) {
+        Profile profile = profileReaderService.getByUserId(userId);
+        profile.updateDescription(command.description());
     }
 }

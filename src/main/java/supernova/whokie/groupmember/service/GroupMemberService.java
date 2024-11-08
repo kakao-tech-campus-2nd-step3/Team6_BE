@@ -1,18 +1,20 @@
 package supernova.whokie.groupmember.service;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.global.exception.ForbiddenException;
-import supernova.whokie.groupmember.util.CodeData;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.service.GroupReaderService;
 import supernova.whokie.groupmember.GroupMember;
 import supernova.whokie.groupmember.service.dto.GroupMemberCommand;
-import supernova.whokie.groupmember.service.dto.GroupMemberModel.Members;
+import supernova.whokie.groupmember.service.dto.GroupMemberModel;
+import supernova.whokie.groupmember.util.CodeData;
+import supernova.whokie.s3.service.S3Service;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
 
@@ -24,6 +26,7 @@ public class GroupMemberService {
     private final GroupMemberReaderService groupMemberReaderService;
     private final UserReaderService userReaderService;
     private final GroupReaderService groupReaderService;
+    private final S3Service s3Service;
 
     @Transactional
     public void delegateLeader(Long userId, GroupMemberCommand.Modify command) {
@@ -69,14 +72,23 @@ public class GroupMemberService {
 
 
     @Transactional(readOnly = true)
-    public Members getGroupMembers(Long userId, Long groupId) {
-        List<GroupMember> groupMembers = groupMemberReaderService.getGroupMembers(userId, groupId);
-        return Members.from(groupMembers);
+    public Page<GroupMemberModel.Member> getGroupMembers(Pageable pageable, Long userId,
+        Long groupId) {
+        Page<GroupMember> groupMembers = groupMemberReaderService.getGroupMembers(pageable, userId,
+            groupId);
+        return groupMembers.map(entity -> {
+            String imageUrl = entity.getUser().getImageUrl();
+            if (entity.getUser().isImageUrlStoredInS3()) {
+                imageUrl = s3Service.getSignedUrl(imageUrl);
+            }
+            return GroupMemberModel.Member.from(entity, imageUrl);
+        });
     }
 
     @Transactional
     public void expelMember(Long userId, GroupMemberCommand.Expel command) {
-        GroupMember leader = groupMemberReaderService.getByUserIdAndGroupId(userId, command.groupId());
+        GroupMember leader = groupMemberReaderService.getByUserIdAndGroupId(userId,
+            command.groupId());
         leader.validateLeaderExpelAutority();
         checkGroupMemberExist(command.userId(), command.groupId());
         groupMemberWriterService.expelMember(command.userId(), command.groupId());
@@ -84,7 +96,7 @@ public class GroupMemberService {
 
     @Transactional(readOnly = true)
     public void checkGroupMemberExist(Long userId, Long groupId) {
-        if(!groupMemberReaderService.isGroupMemberExist(userId, groupId)) {
+        if (!groupMemberReaderService.isGroupMemberExist(userId, groupId)) {
             throw new EntityNotFoundException(MessageConstants.GROUP_MEMBER_NOT_FOUND_MESSAGE);
         }
     }
@@ -94,14 +106,23 @@ public class GroupMemberService {
      */
     @Transactional
     public void exitGroup(GroupMemberCommand.Exit command, Long userId) {
-        GroupMember member = groupMemberReaderService.getByUserIdAndGroupId(userId, command.groupId());
+        GroupMember member = groupMemberReaderService.getByUserIdAndGroupId(userId,
+            command.groupId());
 
         if (member.isLeader()) {
-            Long groupMemberSize = groupMemberReaderService.groupMemberCountByGroupId(command.groupId());
+            Long groupMemberSize = groupMemberReaderService.groupMemberCountByGroupId(
+                command.groupId());
             if (groupMemberSize > 1) {
                 throw new ForbiddenException("그룹에 속한 멤버가 본인 한명일 경우에 탈퇴 가능합니다.");
             }
         }
         groupMemberWriterService.deleteByUserIdAndGroupId(command.groupId(), userId);
     }
+
+    @Transactional(readOnly = true)
+    public GroupMemberModel.Role getGroupMemberRole(Long userId, Long groupId) {
+        GroupMember member = groupMemberReaderService.getByUserIdAndGroupId(userId, groupId);
+        return GroupMemberModel.Role.from(member.getGroupRole());
+    }
+
 }

@@ -81,8 +81,7 @@ public class QuestionController {
         @Authenticate Long userId,
         @PageableDefault(page = 0, size = 5) Pageable pageable
     ) {
-        List<QuestionModel.CommonQuestion> commonQuestions = questionService.getCommonQuestion(
-            userId, pageable);
+        List<QuestionModel.CommonQuestion> commonQuestions = questionService.getCommonQuestion(pageable);
         return QuestionResponse.CommonQuestions.from(commonQuestions);
     }
 

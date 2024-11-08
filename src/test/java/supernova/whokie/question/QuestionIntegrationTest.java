@@ -1,12 +1,5 @@
 package supernova.whokie.question;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import io.awspring.cloud.s3.S3Template;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +29,11 @@ import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -108,7 +106,6 @@ class QuestionIntegrationTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.questions").isArray())
             .andExpect(jsonPath("$.questions.length()").value(5))
-            .andExpect(jsonPath("$.questions[0].users.length()").value(5))
             .andDo(result -> {
                 String responseContent = result.getResponse().getContentAsString();
                 System.out.println("questions 내용: " + responseContent);
@@ -127,7 +124,6 @@ class QuestionIntegrationTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.questions").isArray())
             .andExpect(jsonPath("$.questions.length()").value(10))
-            .andExpect(jsonPath("$.questions[0].users.length()").value(5))
             .andDo(result -> {
                 String responseContent = result.getResponse().getContentAsString();
                 System.out.println("questions 내용: " + responseContent);

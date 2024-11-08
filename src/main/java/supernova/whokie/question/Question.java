@@ -36,6 +36,7 @@ public class Question extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private QuestionStatus questionStatus;
 
+    @NotNull
     private Long groupId; // group id
 
     @NotNull

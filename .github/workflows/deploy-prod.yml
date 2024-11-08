@@ -3,7 +3,7 @@ name: deploy
 # 특정 브랜치에 코드가 push 될때 실행
 on:
   push:
-    branches: [ "Develop", "Master" ]
+    branches: [ "Prod" ]
 
 
 # 코드의 내용을 이 파일을 실행하여 action을 수행하는 주체(Github Actions에서 사용하는 VM)가 읽을 수 있도록 허용.
@@ -19,12 +19,12 @@ jobs:
       DB_URL: ${{ secrets.DB_URL }}
       DB_USERNAME: ${{ secrets.DB_USERNAME }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      REDIS_HOST: ${{ secrets.REDIS_HOST }}
+      REDIS_HOST: ${{ secrets.REDIS_PROD_HOST }}
       REDIS_PORT: ${{ secrets.REDIS_PORT }}
       AWS_YOUR_REGION: ${{ secrets.AWS_YOUR_REGION }}
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
       AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+      S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_PROD_NAME }}
       KAKAO_PAY_SECRET_KEY: ${{ secrets.KAKAO_PAY_SECRET_KEY }}
       KAKAO_PAY_APPROVE_REDIRECT_URL: ${{ secrets.KAKAO_PAY_APPROVE_REDIRECT_URL }}
       KAKAO_PAY_FAIL_REDIRECT_URL: ${{ secrets.KAKAO_PAY_FAIL_REDIRECT_URL }}
@@ -67,29 +67,29 @@ jobs:
           key: ${{ secrets.KEY }}
           port: 22
           script: |
-            # Remove all existing containers
-            sudo docker ps --filter "publish=8080" -q | xargs -r sudo docker rm -f
+            # 8081 포트를 사용하는 컨테이너만 중단하고 제거
+            sudo docker ps --filter "publish=8081" -q | xargs -r sudo docker rm -f
             sudo docker image prune -f
             # Pull the latest image
             sudo docker pull ${{ secrets.DOCKER_REPO }}
             # Run the new container with environment variables
-            sudo docker run -d -p 8080:8080 \
+            
+            sudo docker run -d -p 8081:8080 \
             -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
             -e CLIENT_ID=${{ secrets.CLIENT_ID }} \
-            -e REDIRECT_URI=${{ secrets.REDIRECT_URI }} \
-            -e DB_URL=${{ secrets.DB_URL }} \
+            -e REDIRECT_URI=${{ secrets.REDIRECT_URI_PROD }} \
+            -e DB_URL=${{ secrets.DB_URL_PROD }} \
             -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
+            -e REDIS_HOST=${{ secrets.REDIS_PROD_HOST }} \
             -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
             -e AWS_YOUR_REGION=${{ secrets.AWS_YOUR_REGION }} \
             -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
             -e AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
-            -e S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }} \
+            -e S3_BUCKET_NAME=${{ secrets.S3_BUCKET_PROD_NAME }} \
             -e KAKAO_PAY_SECRET_KEY=${{ secrets.KAKAO_PAY_SECRET_KEY }} \
             -e KAKAO_PAY_APPROVE_REDIRECT_URL=${{ secrets.KAKAO_PAY_APPROVE_REDIRECT_URL }} \
             -e KAKAO_PAY_FAIL_REDIRECT_URL=${{ secrets.KAKAO_PAY_FAIL_REDIRECT_URL }} \
             -e KAKAO_PAY_CANCEL_REDIRECT_URL=${{ secrets.KAKAO_PAY_CANCEL_REDIRECT_URL }} \
             ${{ secrets.DOCKER_REPO }}
-            
             

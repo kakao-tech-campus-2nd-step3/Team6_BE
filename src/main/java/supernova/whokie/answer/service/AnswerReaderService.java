@@ -1,6 +1,8 @@
 package supernova.whokie.answer.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +25,11 @@ public class AnswerReaderService {
         LocalDateTime endDate) {
         return answerRepository.findAllByPickedAndCreatedAtBetween(pageable, user, startDate,
             endDate);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Integer> getAnswerRecordDays(Users user, LocalDateTime startDate, LocalDateTime endDate){
+        return answerRepository.findDistinctDaysWithCreatedAtBetween(user, startDate, endDate);
     }
 
     @Transactional(readOnly = true)

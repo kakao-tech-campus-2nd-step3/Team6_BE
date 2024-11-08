@@ -81,20 +81,15 @@ class QuestionServiceTest {
         // given
         Long userId = 1L;
         Pageable pageable = PageRequest.of(0, QuestionConstants.QUESTION_LIMIT);
-        Pageable friendPageable = PageRequest.of(0, QuestionConstants.FRIEND_LIMIT);
 
         // when
-        when(userReaderService.getUserById(eq(userId))).thenReturn(user);
         when(questionReaderService.getRandomQuestions(eq(pageable))).thenReturn(questions);
-        when(friendReaderService.findRandomFriendsByHostUser(eq(userId), eq(friendPageable)))
-                .thenReturn(friends);
 
-        List<QuestionModel.CommonQuestion> commonQuestions = questionService.getCommonQuestion(userId, pageable);
+        List<QuestionModel.CommonQuestion> commonQuestions = questionService.getCommonQuestion(pageable);
 
         // then
         assertAll(
-                () -> assertEquals(10, commonQuestions.size()),
-                () -> assertEquals(5, commonQuestions.get(0).users().size())
+                () -> assertEquals(10, commonQuestions.size())
         );
     }
 
@@ -110,8 +105,6 @@ class QuestionServiceTest {
                 .thenReturn(true);
         when(questionReaderService.getRandomGroupQuestions(eq(groupId), any(Pageable.class)))
                 .thenReturn(questions);
-        when(groupMemberReaderService.getRandomGroupMembersByGroupId(eq(userId), eq(groupId), any(Pageable.class)))
-                .thenReturn(groupMembers);
 
         List<QuestionModel.GroupQuestion> groupQuestionList = questionService.getGroupQuestions(
                 userId, groupId);
@@ -120,8 +113,7 @@ class QuestionServiceTest {
 
         // then
         assertAll(
-                () -> assertEquals(10, groupQuestions.questions().size()),
-                () -> assertEquals(5, groupQuestions.questions().get(0).users().size())
+                () -> assertEquals(10, groupQuestions.questions().size())
         );
     }
 
@@ -142,7 +134,7 @@ class QuestionServiceTest {
         verify(questionWriterService, times(1)).save(any(Question.class));
     }
 
-    @Test //TODO 수정
+    @Test
     @DisplayName("그룹 질문 승인 테스트")
     void approveQuestionTest() {
         // given

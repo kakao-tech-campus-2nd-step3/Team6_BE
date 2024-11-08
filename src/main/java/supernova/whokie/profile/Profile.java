@@ -26,4 +26,8 @@ public class Profile {
     public void updateBackgroundImageUrl(String url) {
         backgroundImageUrl = url;
     }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
 }

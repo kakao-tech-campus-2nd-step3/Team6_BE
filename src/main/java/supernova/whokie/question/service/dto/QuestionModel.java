@@ -1,28 +1,23 @@
 package supernova.whokie.question.service.dto;
 
 import lombok.Builder;
-import supernova.whokie.groupmember.service.dto.GroupMemberModel;
 import supernova.whokie.question.Question;
 import supernova.whokie.question.QuestionStatus;
-import supernova.whokie.user.service.dto.UserModel;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public class QuestionModel {
 
     @Builder
     public record CommonQuestion(
         Long questionId,
-        String content,
-        List<UserModel.PickedInfo> users
+        String content
     ) {
 
-        public static QuestionModel.CommonQuestion from(Question question, List<UserModel.PickedInfo> pickers) {
+        public static QuestionModel.CommonQuestion from(Question question) {
             return CommonQuestion.builder()
                 .questionId(question.getId())
                 .content(question.getContent())
-                .users(pickers)
                 .build();
         }
 
@@ -54,16 +49,14 @@ public class QuestionModel {
     @Builder
     public record GroupQuestion(
         Long questionId,
-        String content,
-        List<GroupMemberModel.Option> groupMembers
+        String content
     ) {
 
         public static QuestionModel.GroupQuestion from(
-                Question question, List<GroupMemberModel.Option> groupMembers) {
+                Question question) {
             return GroupQuestion.builder()
                 .questionId(question.getId())
                 .content(question.getContent())
-                .groupMembers(groupMembers)
                 .build();
         }
     }

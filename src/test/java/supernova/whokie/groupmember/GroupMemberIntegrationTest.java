@@ -20,6 +20,7 @@ import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.infrastructure.repository.GroupRepository;
 import supernova.whokie.groupmember.infrastructure.repository.GroupMemberRepository;
+import supernova.whokie.s3.service.S3Service;
 import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
@@ -29,6 +30,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -56,6 +59,9 @@ public class GroupMemberIntegrationTest {
 
     @Autowired
     private GroupRepository groupRepository;
+
+    @MockBean
+    private S3Service s3Service;
 
     private Users user1;
     private Users user2;
@@ -131,22 +137,24 @@ public class GroupMemberIntegrationTest {
     @Test
     @DisplayName("그룹 멤버 조회 테스트")
     void getGroupMembers_success() throws Exception {
+        given(s3Service.getSignedUrl(any())).willReturn("signedURl");
+
         mockMvc.perform(get("/api/group/{group-id}/member", group.getId())
                 .requestAttr("userId", String.valueOf(user1.getId()))
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.members").isArray())
-            .andExpect(jsonPath("$.members[0].groupMemberId").value(leader.getId()))
-            .andExpect(jsonPath("$.members[0].userId").value(user1.getId()))
-            .andExpect(jsonPath("$.members[0].role").value(leader.getGroupRole().toString()))
-            .andExpect(jsonPath("$.members[0].userName").value(user1.getName()))
-            .andExpect(jsonPath("$.members[0].joinedAt").value(
+            .andExpect(jsonPath("$.content").isArray())
+            .andExpect(jsonPath("$.content[0].groupMemberId").value(leader.getId()))
+            .andExpect(jsonPath("$.content[0].userId").value(user1.getId()))
+            .andExpect(jsonPath("$.content[0].role").value(leader.getGroupRole().toString()))
+            .andExpect(jsonPath("$.content[0].userName").value(user1.getName()))
+            .andExpect(jsonPath("$.content[0].joinedAt").value(
                 leader.getCreatedAt().toLocalDate().toString()))
-            .andExpect(jsonPath("$.members[1].groupMemberId").value(member.getId()))
-            .andExpect(jsonPath("$.members[1].userId").value(user2.getId()))
-            .andExpect(jsonPath("$.members[1].role").value(member.getGroupRole().toString()))
-            .andExpect(jsonPath("$.members[1].userName").value(user2.getName()))
-            .andExpect(jsonPath("$.members[1].joinedAt").value(
+            .andExpect(jsonPath("$.content[1].groupMemberId").value(member.getId()))
+            .andExpect(jsonPath("$.content[1].userId").value(user2.getId()))
+            .andExpect(jsonPath("$.content[1].role").value(member.getGroupRole().toString()))
+            .andExpect(jsonPath("$.content[1].userName").value(user2.getName()))
+            .andExpect(jsonPath("$.content[1].joinedAt").value(
                 member.getCreatedAt().toLocalDate().toString()))
             .andExpect(status().isOk())
             .andDo(print());
@@ -159,6 +167,7 @@ public class GroupMemberIntegrationTest {
             .point(1500)
             .age(22)
             .kakaoId(1L)
+            .imageUrl("image")
             .gender(Gender.M)
             .role(Role.USER)
             .build();

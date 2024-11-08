@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.group.Groups;
 import supernova.whokie.groupmember.GroupMember;
@@ -114,23 +115,24 @@ public class GroupMemberServiceTest {
         createdAtField.setAccessible(true);
         createdAtField.set(leader, LocalDateTime.now());
         createdAtField.set(member, LocalDateTime.now());
-
-        given(groupMemberReaderService.getGroupMembers(userId, groupId))
-            .willReturn(List.of(leader, member));
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").ascending());
+        Page<GroupMember> page = new PageImpl<>(List.of(leader, member));
+        given(groupMemberReaderService.getGroupMembers(pageable, userId, groupId))
+            .willReturn(page);
 
         // when
-        GroupMemberModel.Members members = groupMemberService.getGroupMembers(userId,
+        Page<GroupMemberModel.Member> members = groupMemberService.getGroupMembers(pageable, userId,
             groupId);
 
         // then
         assertAll(
-            () -> assertThat(members.members()).hasSize(2),
-            () -> assertThat(members.members().get(0).userId()).isEqualTo(user1.getId()),
-            () -> assertThat(members.members().get(0).userName()).isEqualTo(user1.getName()),
-            () -> assertThat(members.members().get(0).role()).isEqualTo(GroupRole.LEADER),
-            () -> assertThat(members.members().get(1).userId()).isEqualTo(user2.getId()),
-            () -> assertThat(members.members().get(1).userName()).isEqualTo(user2.getName()),
-            () -> assertThat(members.members().get(1).role()).isEqualTo(GroupRole.MEMBER)
+            () -> assertThat(members.getContent()).hasSize(2),
+            () -> assertThat(members.getContent().get(0).userId()).isEqualTo(user1.getId()),
+            () -> assertThat(members.getContent().get(0).userName()).isEqualTo(user1.getName()),
+            () -> assertThat(members.getContent().get(0).role()).isEqualTo(GroupRole.LEADER),
+            () -> assertThat(members.getContent().get(1).userId()).isEqualTo(user2.getId()),
+            () -> assertThat(members.getContent().get(1).userName()).isEqualTo(user2.getName()),
+            () -> assertThat(members.getContent().get(1).role()).isEqualTo(GroupRole.MEMBER)
            /* () -> verify(groupMemberRepository).existsByUserIdAndGroupId(userId, groupId),     이거 왜 안됨?
             () -> verify(groupMemberRepository).findAllByGroupId(groupId)*/
         );
@@ -144,6 +146,7 @@ public class GroupMemberServiceTest {
             .point(1500)
             .age(22)
             .kakaoId(1L)
+            .imageUrl("signedUrl")
             .gender(Gender.M)
             .role(Role.USER)
             .build();

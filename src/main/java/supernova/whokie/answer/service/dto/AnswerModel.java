@@ -55,4 +55,13 @@ public class AnswerModel {
             );
         }
     }
+    @Builder
+    public record RecordDays(
+            List<Integer> days
+    ){
+        public static AnswerModel.RecordDays from(List<Integer> answerRecordDays){
+            return RecordDays.builder().days(answerRecordDays).build();
+        }
+
+    }
 }

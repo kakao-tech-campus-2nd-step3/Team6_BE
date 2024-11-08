@@ -1,6 +1,8 @@
 package supernova.whokie.groupmember.infrastructure.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,8 +17,9 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
 
     void deleteByUserIdAndGroupId(Long userId, Long groupId);
 
-    @Query("SELECT gm FROM GroupMember gm JOIN FETCH gm.user WHERE gm.group.id = :groupId")
-    List<GroupMember> findAllByGroupId(Long groupId);
+    @EntityGraph(attributePaths = {"user"})
+    @Query("SELECT g FROM GroupMember g WHERE g.group.id = :groupId")
+    Page<GroupMember> findAllByGroupId(Pageable pageable, Long groupId);
 
     @Query("SELECT g FROM GroupMember g JOIN FETCH g.user WHERE g.user.id != :userId AND g.group.id = :groupId ORDER BY function('RAND')")
     List<GroupMember> getRandomGroupMemberJoinFetch(@Param("userId") Long userId,

@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import supernova.whokie.global.annotation.Authenticate;
 import supernova.whokie.global.annotation.VisitorIp;
 import supernova.whokie.global.dto.GlobalResponse;
+import supernova.whokie.profile.controller.dto.ProfileRequest;
 import supernova.whokie.profile.controller.dto.ProfileResponse;
 import supernova.whokie.profile.service.ProfileService;
 import supernova.whokie.profile.service.dto.ProfileModel;
@@ -38,5 +39,14 @@ public class ProfileController {
     ) {
         profileService.updateImage(userId, imageFile);
         return GlobalResponse.builder().message("배경 이미지 업로드 성공").build();
+    }
+
+    @PatchMapping("modify")
+    public GlobalResponse modifyProfile(
+            @Authenticate Long userId,
+            @RequestBody @Valid ProfileRequest.Modify request
+    ) {
+        profileService.modifyProfileDescription(userId, request.toCommand());
+        return GlobalResponse.builder().message("프로필 설명 수정 완료").build();
     }
 }
