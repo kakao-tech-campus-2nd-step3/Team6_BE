@@ -240,6 +240,21 @@ class AnswerIntegrationTest {
         assertThat(finalPoint).isEqualTo(100 + AnswerConstants.ANSWER_POINT);
     }
 
+    @Test
+    @DisplayName("해당 월에 질문이 있는 날짜 반환 테스트")
+    void getAnswerRecordDaysTest() throws Exception {
+        LocalDate date = LocalDate.of(2024, 11, 1); // 해당 월 전체 조회
+
+        mockMvc.perform(get("/api/answer/record/days")
+                .param("date", date.toString())
+                .requestAttr("userId", "1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.days").isArray())
+                .andExpect(jsonPath("$.days").value(org.hamcrest.Matchers.containsInAnyOrder(8)));
+
+    }
+
     private void createAnswer(Question question, Users picker, Users picked) {
         Answer answer = Answer.builder()
                 .question(question)
