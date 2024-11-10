@@ -89,4 +89,10 @@ public class UserService {
         Page<Users> entities = userReaderService.getAllUsersPaging(pageable);
         return entities.map(UserModel.Info::from);
     }
+
+    @Transactional(readOnly = true)
+    public Page<UserModel.Info> searchUsers(String keyword, Pageable pageable) {
+        Page<Users> entities = userReaderService.findByNameContainingOrEmailContaining(keyword, keyword, pageable);
+        return entities.map(UserModel.Info::from);
+    }
 }

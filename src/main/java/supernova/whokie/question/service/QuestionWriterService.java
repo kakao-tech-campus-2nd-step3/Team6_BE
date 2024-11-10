@@ -16,4 +16,7 @@ public class QuestionWriterService {
     public void save(Question question) {
         questionRepository.save(question);
     }
+
+    @Transactional
+    public void delete(Long questionId) { questionRepository.deleteById(questionId); }
 }

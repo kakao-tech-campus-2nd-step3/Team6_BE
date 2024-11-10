@@ -84,6 +84,12 @@ public class QuestionService {
     }
 
     @Transactional
+    public void deleteCommonQuestion(Long userId, Long questionId) {
+        Users admin = userReaderService.getUserById(userId);
+        questionWriterService.delete(questionId);
+    }
+
+    @Transactional
     public void approveQuestion(Long userId, QuestionCommand.Approve command) {
         GroupMember groupMember = groupMemberReaderService.getByUserIdAndGroupId(userId,
             command.groupId());

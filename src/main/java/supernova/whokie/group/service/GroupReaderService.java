@@ -45,4 +45,9 @@ public class GroupReaderService {
     public Page<Groups> getALlGroupPaging(Pageable pageable) {
         return groupRepository.findAll(pageable);
     }
+
+    @Transactional(readOnly = true)
+    public Page<Groups> getGroupsByName(Pageable pageable, String groupName) {
+        return groupRepository.findAllByGroupNameContaining(groupName, pageable);
+    }
 }

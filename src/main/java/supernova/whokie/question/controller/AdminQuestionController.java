@@ -37,7 +37,16 @@ public class AdminQuestionController {
             @AdminAuthenticate Long userId,
             @RequestBody @Valid QuestionRequest.CommonCreate request
     ) {
-        questionService.createCommonQuestion(userId, request.toCommand());
-        return GlobalResponse.builder().message("질문이 등록되ㅐ었습니다.").build();
+        questionService.createCommonQuestion(1L, request.toCommand());
+        return GlobalResponse.builder().message("질문이 등록되었습니다.").build();
+    }
+
+    @DeleteMapping("/{question-id}")
+    public GlobalResponse deleteCommonQuestion(
+            @AdminAuthenticate Long userId,
+            @PathVariable("question-id") Long questionId
+    ) {
+        questionService.deleteCommonQuestion(1L, questionId );
+        return GlobalResponse.builder().message("질문이 삭제되었습니다.").build();
     }
 }
