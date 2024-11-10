@@ -68,6 +68,24 @@
         .card-body {
             padding: 1.5rem;
         }
+        .badge.bg-danger {
+            background-color: #dc3545 !important;  /* 관리자용 빨간색 */
+        }
+
+        .badge.bg-primary {
+            background-color: #4a6cf7 !important;  /* 일반 사용자용 파란색 */
+        }
+
+        /* 새로운 스타일 추가 */
+        .badge.bg-admin {
+            background: linear-gradient(45deg, #ff4b4b, #ff6b6b) !important;  /* 그라데이션 효과 */
+            box-shadow: 0 2px 4px rgba(255, 75, 75, 0.2);
+        }
+
+        .badge.bg-user {
+            background: linear-gradient(45deg, #4a6cf7, #6d8bff) !important;  /* 그라데이션 효과 */
+            box-shadow: 0 2px 4px rgba(74, 108, 247, 0.2);
+        }
 
         .btn-primary {
             background-color: #4a6cf7;
@@ -269,8 +287,9 @@
                         <td th:text="${user.age}"></td>
                         <td th:text="${user.point}"></td>
                         <td>
-                                    <span th:class="${user.role == 'ADMIN' ? 'badge bg-danger' : 'badge bg-primary'}"
-                                          th:text="${user.role}"></span>
+                            <span th:class="${user.role.toString() == 'ADMIN' ? 'badge bg-admin' : 'badge bg-user'}"
+                                  th:text="${user.role}">
+                            </span>
                         </td>
                         <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
                     </tr>
