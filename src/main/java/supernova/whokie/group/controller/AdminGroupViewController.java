@@ -42,6 +42,6 @@ public class AdminGroupViewController {
 
         model.addAttribute("groups", groups);
         model.addAttribute("keyword", keyword);
-        return "admin/group/list";
+        return "admin/group/admin_group";
     }
 }

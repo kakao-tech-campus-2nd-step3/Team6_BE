@@ -67,6 +67,22 @@
         .card-body {
             padding: 1.5rem;
         }
+        .btn-danger {
+            background-color: #ff6b6b;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background-color: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 82, 82, 0.2);
+        }
+
+        .table td .btn {
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+        }
 
         .btn-primary {
             background-color: #4a6cf7;
@@ -268,12 +284,14 @@
             <h5 class="card-title">질문 목록</h5>
         </div>
         <div class="card-body">
+            <!-- 테이블 부분 수정 -->
             <table class="table">
                 <thead>
                 <tr>
                     <th>ID</th>
                     <th>내용</th>
                     <th>작성일</th>
+                    <th>관리</th>  <!-- 새로운 열 추가 -->
                 </tr>
                 </thead>
                 <tbody>
@@ -281,6 +299,12 @@
                     <td th:text="${question.questionId}"></td>
                     <td th:text="${question.questionContent}"></td>
                     <td th:text="${#temporals.format(question.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td>
+                        <button class="btn btn-danger btn-sm"
+                                th:onclick="'deleteQuestion(' + ${question.questionId} + ')'">
+                            <i class="fas fa-trash me-1"></i>삭제
+                        </button>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -333,6 +357,31 @@
                 console.error('Error:', error);
             });
     });
+    // 질문 삭제
+    function deleteQuestion(questionId) {
+        if (confirm('정말로 이 질문을 삭제하시겠습니까?\n관련된 답변들도 모두 삭제됩니다.')) {
+            fetch(`/api/admin/question/${questionId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('질문이 삭제되었습니다.');
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('삭제 중 오류가 발생했습니다.');
+                });
+        }
+    }
 
 </script>
 </body>

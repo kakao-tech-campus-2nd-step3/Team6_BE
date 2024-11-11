@@ -29,6 +29,6 @@ public class AdminQuestionViewController {
         Page<QuestionResponse.Admin> questions = questionService.getAllQuestionPaging(pageable)
                 .map(QuestionResponse.Admin::from);
         model.addAttribute("questions", questions);
-        return "admin/question/list";
+        return "admin/question/admin_question";
     }
 }

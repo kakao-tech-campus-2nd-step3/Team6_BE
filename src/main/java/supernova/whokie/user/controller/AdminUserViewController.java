@@ -24,7 +24,7 @@ public class AdminUserViewController {
 
     @GetMapping("")
     public String userList(
-//            @AdminAuthenticate Long userId,
+            @AdminAuthenticate Long userId,
             @RequestParam(name = "keyword", required = false) String keyword,
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
             Model model
@@ -39,6 +39,6 @@ public class AdminUserViewController {
         }
         model.addAttribute("users", users);
         model.addAttribute("keyword", keyword);
-        return "admin/user/list";
+        return "admin/user/admin_user";
     }
 }
