@@ -16,6 +16,8 @@ import supernova.whokie.user.Gender;
 import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
@@ -78,7 +80,7 @@ public class ProfileServiceTest {
             .name("test")
             .email("test@gmail.com")
             .point(1500)
-            .age(22)
+            .birthDate(LocalDate.now())
             .kakaoId(1L)
             .gender(Gender.M)
             .role(Role.USER)

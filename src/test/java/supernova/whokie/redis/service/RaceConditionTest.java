@@ -26,6 +26,7 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -160,7 +161,7 @@ public class RaceConditionTest {
             .name("test")
             .email("test@gmail.com")
             .point(1000)
-            .age(22)
+            .birthDate(LocalDate.now())
             .kakaoId(1L)
             .gender(Gender.M)
             .role(Role.USER)

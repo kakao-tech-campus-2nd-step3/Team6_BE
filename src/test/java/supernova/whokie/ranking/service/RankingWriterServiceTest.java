@@ -18,6 +18,7 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,7 +75,7 @@ class RankingWriterServiceTest {
                 .name("host")
                 .email("host")
                 .point(1)
-                .age(1)
+                .birthDate(LocalDate.now())
                 .kakaoId(1L)
                 .gender(Gender.F)
                 .imageUrl("image")
@@ -85,7 +86,7 @@ class RankingWriterServiceTest {
                 .name("host2")
                 .email("host2")
                 .point(2)
-                .age(2)
+                .birthDate(LocalDate.now())
                 .kakaoId(2L)
                 .gender(Gender.F)
                 .imageUrl("image2")

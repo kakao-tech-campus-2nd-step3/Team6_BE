@@ -12,6 +12,8 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.dto.UserModel;
 
+import java.time.LocalDate;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
@@ -55,7 +57,7 @@ class UserServiceTest {
             .name("test")
             .email("test@gmail.com")
             .point(1000)
-            .age(22)
+            .birthDate(LocalDate.now())
             .kakaoId(1L)
             .gender(Gender.M)
             .role(Role.USER)

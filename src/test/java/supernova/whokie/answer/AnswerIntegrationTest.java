@@ -94,6 +94,7 @@ class AnswerIntegrationTest {
 
         mockMvc.perform(get("/api/answer/refresh")
                         .requestAttr("userId", "1")
+                        .requestAttr("role", "USER")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.users").isArray())
@@ -122,7 +123,8 @@ class AnswerIntegrationTest {
         mockMvc.perform(post("/api/answer/common")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
-                        .requestAttr("userId", "1"))
+                        .requestAttr("userId", "1")
+                        .requestAttr("role", "USER"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("답변 완료"));
         Users userAfterAnswer = userRepository.findById(userId).orElseThrow();
@@ -148,6 +150,7 @@ class AnswerIntegrationTest {
 
         mockMvc.perform(get("/api/answer/record")
                         .requestAttr("userId", "1")
+                        .requestAttr("role", "USER")
                         .param("page", "0")
                         .param("size", "10")
                         .param("date",currentDate)
@@ -172,6 +175,7 @@ class AnswerIntegrationTest {
 
         mockMvc.perform(get("/api/answer/hint/{answer-id}", answerId)
                         .requestAttr("userId", "1")
+                        .requestAttr("role", "USER")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.hints").isArray())
@@ -199,7 +203,8 @@ class AnswerIntegrationTest {
         mockMvc.perform(post("/api/answer/hint")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
-                        .requestAttr("userId", "1"))
+                        .requestAttr("userId", "1")
+                        .requestAttr("role", "USER"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("힌트를 성공적으로 구매하였습니다!"))
                 .andDo(result -> {
@@ -228,7 +233,8 @@ class AnswerIntegrationTest {
         mockMvc.perform(post("/api/answer/group")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
-                        .requestAttr("userId", "1"))
+                        .requestAttr("userId", "1")
+                        .requestAttr("role", "USER"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("그룹 질문 답변 완료"))
                 .andDo(result -> {
@@ -250,6 +256,7 @@ class AnswerIntegrationTest {
         mockMvc.perform(get("/api/answer/record/days")
                 .param("date", date.toString())
                 .requestAttr("userId", "1")
+                .requestAttr("role", "USER")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.days").isArray())
@@ -292,7 +299,7 @@ class AnswerIntegrationTest {
                 .name("Friend " + index)
                 .email("friend" + index + "@example.com")
                 .point(100)
-                .age(20)
+                .birthDate(LocalDate.now())
                 .kakaoId(1234567890L + index)
                 .gender(Gender.F)
                 .imageUrl("default_image_url_friend_" + index + ".jpg")
@@ -316,7 +323,7 @@ class AnswerIntegrationTest {
                 .name("Test User " + index)
                 .email("test@example.com")
                 .point(100)
-                .age(20)
+                .birthDate(LocalDate.now())
                 .kakaoId(1234567890L)
                 .gender(Gender.M)
                 .imageUrl("default_image_url.jpg")

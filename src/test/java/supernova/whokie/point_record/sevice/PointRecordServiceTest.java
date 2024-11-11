@@ -19,6 +19,8 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
 
+import java.time.LocalDate;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -91,7 +93,7 @@ class PointRecordServiceTest {
                 .name("Test User 1")
                 .email("test@example.com")
                 .point(100)
-                .age(20)
+                .birthDate(LocalDate.now())
                 .kakaoId(1234567890L)
                 .gender(Gender.M)
                 .imageUrl("default_image_url.jpg")
