@@ -24,7 +24,7 @@ public class AdminGroupViewController {
 
     @GetMapping("")
     public String groupList(
-            @AdminAuthenticate Long userId,
+//            @AdminAuthenticate Long userId,
             @RequestParam(name = "keyword", required = false) String keyword,
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
             Model model

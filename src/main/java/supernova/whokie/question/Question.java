@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 import supernova.whokie.answer.Answer;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.user.Users;
@@ -40,7 +41,8 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "writer_id")
     private Users writer;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+    @BatchSize(size = 100)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
 
 
