@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.exception.EntityNotFoundException;
 import supernova.whokie.global.exception.ForbiddenException;
+import supernova.whokie.global.exception.InvalidConditionException;
 import supernova.whokie.group.Groups;
 import supernova.whokie.group.service.GroupReaderService;
 import supernova.whokie.groupmember.GroupMember;
@@ -128,7 +129,7 @@ public class GroupMemberService {
             Long groupMemberSize = groupMemberReaderService.groupMemberCountByGroupId(
                 command.groupId());
             if (groupMemberSize > 1) {
-                throw new ForbiddenException("그룹에 속한 멤버가 본인 한명일 경우에 탈퇴 가능합니다.");
+                throw new InvalidConditionException("그룹에 속한 멤버가 본인 한명일 경우에 탈퇴 가능합니다.");
             }
         }
         groupMemberWriterService.deleteByUserIdAndGroupId(command.groupId(), userId);

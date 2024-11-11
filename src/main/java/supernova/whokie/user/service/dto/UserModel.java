@@ -72,12 +72,14 @@ public class UserModel {
     @Builder
     public record Login(
             String jwt,
-            Long userId
+            Long userId,
+            Role role
     ) {
-        public static UserModel.Login from(String jwt, Long userId) {
-            return UserModel.Login.builder()
+        public static UserModel.Login from(String jwt, Long userId, Role role) {
+            return Login.builder()
                     .jwt(jwt)
                     .userId(userId)
+                    .role(role)
                     .build();
         }
     }

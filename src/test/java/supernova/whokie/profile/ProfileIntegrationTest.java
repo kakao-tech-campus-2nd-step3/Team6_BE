@@ -25,6 +25,8 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
+import java.time.LocalDate;
+
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -90,7 +92,7 @@ public class ProfileIntegrationTest {
             .name("test")
             .email("test@gmail.com")
             .point(1500)
-            .age(22)
+            .birthDate(LocalDate.now())
             .kakaoId(1L)
             .gender(Gender.M)
             .role(Role.USER)

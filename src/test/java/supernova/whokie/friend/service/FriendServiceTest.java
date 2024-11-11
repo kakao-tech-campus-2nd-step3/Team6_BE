@@ -16,6 +16,7 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -85,13 +86,13 @@ class FriendServiceTest {
     }
 
     private List<Users> createUsers() {
-        Users user1 = Users.builder().id(1L).name("name").email("email1").point(0).age(1)
+        Users user1 = Users.builder().id(1L).name("name").email("email1").point(0).birthDate(LocalDate.now())
                 .kakaoId(profiles.get(0).id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        Users user2 = Users.builder().id(2L).name("name").email("email2").point(0).age(1)
+        Users user2 = Users.builder().id(2L).name("name").email("email2").point(0).birthDate(LocalDate.now())
                 .kakaoId(profiles.get(1).id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        Users user3 = Users.builder().id(3L).name("name").email("email3").point(0).age(1)
+        Users user3 = Users.builder().id(3L).name("name").email("email3").point(0).birthDate(LocalDate.now())
                 .kakaoId(profiles.get(2).id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
-        Users user4 = Users.builder().id(4L).name("name").email("email4").point(0).age(1)
+        Users user4 = Users.builder().id(4L).name("name").email("email4").point(0).birthDate(LocalDate.now())
                 .kakaoId(profiles.get(3).id()).gender(Gender.F).imageUrl("sfd").role(Role.USER).build();
         return List.of(user1, user2, user3, user4);
     }

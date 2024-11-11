@@ -12,6 +12,7 @@ import supernova.whokie.global.interceptor.AdminInterceptor;
 import supernova.whokie.global.interceptor.VisitorInterceptor;
 import supernova.whokie.global.interceptor.JwtInterceptor;
 import supernova.whokie.global.auth.JwtProvider;
+import supernova.whokie.global.resolver.TempUserArgumentResolver;
 import supernova.whokie.global.resolver.VisitorArgumentResolver;
 import supernova.whokie.global.resolver.LoginAdminArgumentResolver;
 import supernova.whokie.global.resolver.LoginUserArgumentResolver;
@@ -57,6 +58,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return new VisitorArgumentResolver();
     }
 
+    @Bean
+    public TempUserArgumentResolver tempUserArgumentResolver() {
+        return new TempUserArgumentResolver();
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor())
@@ -72,6 +78,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         resolvers.add(loginUserArgumentResolver());
         resolvers.add(visitorArgumentResolver());
         resolvers.add(loginAdminArgumentResolver());
+        resolvers.add(tempUserArgumentResolver());
+
     }
 
     @Override

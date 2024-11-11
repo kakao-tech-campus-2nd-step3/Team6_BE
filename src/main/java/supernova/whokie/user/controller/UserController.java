@@ -1,5 +1,6 @@
 package supernova.whokie.user.controller;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import supernova.whokie.global.annotation.Authenticate;
+import supernova.whokie.global.annotation.TempUser;
 import supernova.whokie.global.dto.GlobalResponse;
+import supernova.whokie.user.controller.dto.UserRequest;
 import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.service.UserService;
 import supernova.whokie.user.service.dto.UserModel;
@@ -51,6 +54,18 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .header("Authorization", model.jwt())
+                .body(UserResponse.Login.from(model));
+    }
+
+    @PostMapping("/information")
+    public ResponseEntity<UserResponse.Login> postPersonalInformation(
+            @RequestBody @Valid UserRequest.Info request,
+            @TempUser Long userId
+    ) {
+        UserModel.Login model = userService.addPersonalInformation(userId, request.toCommand());
+
+        return ResponseEntity.ok()
                 .header("Authorization", model.jwt())
                 .body(UserResponse.Login.from(model));
     }

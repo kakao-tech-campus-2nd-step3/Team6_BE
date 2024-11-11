@@ -19,6 +19,7 @@ import supernova.whokie.user.infrastructure.apicaller.UserApiCaller;
 import supernova.whokie.user.infrastructure.apicaller.dto.KakaoAccount;
 import supernova.whokie.user.infrastructure.apicaller.dto.TokenInfoResponse;
 import supernova.whokie.user.infrastructure.apicaller.dto.UserInfoResponse;
+import supernova.whokie.user.service.dto.UserCommand;
 import supernova.whokie.user.service.dto.UserModel;
 
 @Service
@@ -60,7 +61,14 @@ public class UserService {
         // kakao token 저장
         kakaoTokenService.saveToken(user.getId(), tokenResponse);
         String jwt = jwtProvider.createToken(user.getId(), user.getRole());
-        return UserModel.Login.from(jwt, user.getId());
+        return UserModel.Login.from(jwt, user.getId(), user.getRole());
+    }
+
+    @Transactional
+    public UserModel.Login addPersonalInformation(Long userId, UserCommand.Info command) {
+        Users user = userWriterService.updateUserPersonalInfo(userId, command);
+        String jwt = jwtProvider.createToken(userId, user.getRole());
+        return UserModel.Login.from(jwt, userId, user.getRole());
     }
 
     @Transactional(readOnly = true)

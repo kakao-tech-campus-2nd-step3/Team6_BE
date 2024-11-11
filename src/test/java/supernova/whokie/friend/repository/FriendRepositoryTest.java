@@ -20,6 +20,7 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,9 +88,9 @@ class FriendRepositoryTest {
     }
 
     private List<Users> createUsers() {
-        Users user1 = Users.builder().id(1L).name("host").email("host").point(1).age(1).kakaoId(1L).gender(Gender.F).imageUrl("image").role(Role.USER).build();
-        Users user2 = Users.builder().id(2L).name("user1").email("user1").point(1).age(1).kakaoId(2L).gender(Gender.F).imageUrl("image").role(Role.USER).build();
-        Users user3 = Users.builder().id(3L).name("user2").email("user2").point(1).age(1).kakaoId(3L).gender(Gender.F).imageUrl("image").role(Role.USER).build();
+        Users user1 = Users.builder().id(1L).name("host").email("host").point(1).birthDate(LocalDate.now()).kakaoId(1L).gender(Gender.F).imageUrl("image").role(Role.USER).build();
+        Users user2 = Users.builder().id(2L).name("user1").email("user1").point(1).birthDate(LocalDate.now()).kakaoId(2L).gender(Gender.F).imageUrl("image").role(Role.USER).build();
+        Users user3 = Users.builder().id(3L).name("user2").email("user2").point(1).birthDate(LocalDate.now()).kakaoId(3L).gender(Gender.F).imageUrl("image").role(Role.USER).build();
         return userRepository.saveAll(List.of(user1, user2, user3));
     }
 

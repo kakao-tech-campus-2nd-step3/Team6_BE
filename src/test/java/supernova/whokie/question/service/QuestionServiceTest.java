@@ -25,6 +25,7 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 import supernova.whokie.user.service.UserReaderService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,7 +137,7 @@ class QuestionServiceTest {
             .name("test")
             .email("test@gmail.com")
             .point(1500)
-            .age(22)
+            .birthDate(LocalDate.now())
             .kakaoId(1L)
             .gender(Gender.M)
             .role(Role.USER)

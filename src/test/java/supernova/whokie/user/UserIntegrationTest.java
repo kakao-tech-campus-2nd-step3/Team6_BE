@@ -17,6 +17,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import supernova.whokie.user.infrastructure.repository.UserRepository;
 
+import java.time.LocalDate;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,6 +51,7 @@ public class UserIntegrationTest {
     void getUserPoint() throws Exception {
         mockMvc.perform(get("/api/user/point")
                 .requestAttr("userId", String.valueOf(user.getId()))
+                .requestAttr("role", "USER")
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.amount").value(100))
@@ -60,7 +63,7 @@ public class UserIntegrationTest {
             .name("test")
             .email("test@gmail.com")
             .point(100)
-            .age(25)
+            .birthDate(LocalDate.now())
             .kakaoId(1L)
             .gender(Gender.M)
             .role(Role.USER)

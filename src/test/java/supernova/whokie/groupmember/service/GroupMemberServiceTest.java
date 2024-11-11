@@ -20,6 +20,7 @@ import supernova.whokie.user.Role;
 import supernova.whokie.user.Users;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -144,7 +145,7 @@ public class GroupMemberServiceTest {
             .name("test")
             .email(email)
             .point(1500)
-            .age(22)
+            .birthDate(LocalDate.now())
             .kakaoId(1L)
             .imageUrl("signedUrl")
             .gender(Gender.M)
