@@ -20,6 +20,9 @@ import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.global.exception.InvalidEntityException;
 import supernova.whokie.user.constants.UserConstants;
 
+import java.time.LocalDate;
+import java.time.Period;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Builder
@@ -31,7 +34,7 @@ public class Users extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+//    @NotNull
     private String name;
 
     @NotNull
@@ -42,14 +45,14 @@ public class Users extends BaseTimeEntity {
     @Min(0)
     private Integer point;
 
-    @NotNull
-    private Integer age;
+//    @NotNull
+    private LocalDate birthDate;
 
     @NotNull
     private Long kakaoId;
 
+//    @NotNull
     @Enumerated(EnumType.STRING)
-    @NotNull
     private Gender gender;
 
     private String imageUrl;
@@ -58,6 +61,16 @@ public class Users extends BaseTimeEntity {
     @NotNull
     private Role role;
 
+    public int getAge() {
+        return Period.between(this.birthDate, LocalDate.now()).getYears();
+    }
+
+    public void updatePersonalInfo(String name, Gender gender, LocalDate birthDate) {
+        this.name = name;
+        this.gender = gender;
+        this.birthDate = birthDate;
+        this.role = Role.USER;
+    }
 
     public void increasePoint(int point) {
         this.point += point;
