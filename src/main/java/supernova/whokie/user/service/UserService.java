@@ -61,14 +61,14 @@ public class UserService {
         // kakao token 저장
         kakaoTokenService.saveToken(user.getId(), tokenResponse);
         String jwt = jwtProvider.createToken(user.getId(), user.getRole());
-        return UserModel.Login.from(jwt, user.getId());
+        return UserModel.Login.from(jwt, user.getId(), user.getRole());
     }
 
     @Transactional
     public UserModel.Login addPersonalInformation(Long userId, UserCommand.Info command) {
-        Users users = userWriterService.updateUserPersonalInfo(userId, command);
-        String jwt = jwtProvider.createToken(userId, users.getRole());
-        return UserModel.Login.from(jwt, userId);
+        Users user = userWriterService.updateUserPersonalInfo(userId, command);
+        String jwt = jwtProvider.createToken(userId, user.getRole());
+        return UserModel.Login.from(jwt, userId, user.getRole());
     }
 
     @Transactional(readOnly = true)

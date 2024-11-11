@@ -73,12 +73,14 @@ public class UserResponse {
     @Builder
     public record Login(
             Long userId,
-            String jwt
+            String jwt,
+            Role role
     ) {
         public static Login from(UserModel.Login model) {
             return Login.builder()
                     .userId(model.userId())
                     .jwt(model.jwt())
+                    .role(model.role())
                     .build();
         }
     }
