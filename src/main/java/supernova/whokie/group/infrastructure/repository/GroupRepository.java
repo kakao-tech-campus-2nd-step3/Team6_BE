@@ -32,4 +32,6 @@ public interface GroupRepository extends JpaRepository<Groups, Long> {
     )
     Optional<GroupInfoWithMemberCount> findGroupInfoWithMemberCountByGroupId(Long groupId);
 
+    Page<Groups> findAllByGroupNameContaining(String groupName, Pageable pageable);
+
 }

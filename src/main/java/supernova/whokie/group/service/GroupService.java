@@ -117,4 +117,10 @@ public class GroupService {
         Page<Groups> entities = groupReaderService.getALlGroupPaging(pageable);
         return entities.map(GroupModel.Info::from);
     }
+
+    @Transactional(readOnly = true)
+    public Page<GroupModel.Info> searchGroups(String keyword, Pageable pageable) {
+        Page<Groups> entities = groupReaderService.getGroupsByName(pageable,keyword);
+        return entities.map(GroupModel.Info::from);
+    }
 }
