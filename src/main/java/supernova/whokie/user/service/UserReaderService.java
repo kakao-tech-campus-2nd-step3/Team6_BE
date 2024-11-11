@@ -50,4 +50,10 @@ public class UserReaderService {
     public Page<Users> getAllUsersPaging(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
+
+    @Transactional(readOnly = true)
+    public Page<Users> findByNameContainingOrEmailContaining(String name, String email, Pageable pageable) {
+        return userRepository.findByNameContainingOrEmailContaining(name, email, pageable);
+    }
+
 }

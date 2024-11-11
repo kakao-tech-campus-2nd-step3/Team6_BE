@@ -26,10 +26,9 @@ public class RankingReaderService {
         List<Ranking> rankings = rankingRepository.findAllByGroupIdFetchJoinUsers(groupId);
         Map<Long, Integer> map = new HashMap<>();
         for (Ranking ranking : rankings) {
-            if (!map.containsKey(ranking.getUsers().getId())) {
-                map.put(ranking.getUsers().getId(), 0);
-            }
-            map.compute(ranking.getUsers().getId(), (k, value) -> value + ranking.getCount());
+            Long userId = ranking.getUsers().getId();
+            map.putIfAbsent(userId, 0);
+            map.merge(userId, ranking.getCount(), Integer::sum);
         }
 
         return RankingModel.Top3RankingEntries.from(map);
