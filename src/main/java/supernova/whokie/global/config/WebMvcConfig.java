@@ -8,6 +8,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import supernova.whokie.global.interceptor.AdminInterceptor;
 import supernova.whokie.global.interceptor.VisitorInterceptor;
 import supernova.whokie.global.interceptor.JwtInterceptor;
 import supernova.whokie.global.auth.JwtProvider;
@@ -36,6 +37,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    @Order(3)
+    public AdminInterceptor adminInterceptor() {
+        return new AdminInterceptor(jwtProvider);
+    }
+
+    @Bean
     public LoginUserArgumentResolver loginUserArgumentResolver() {
         return new LoginUserArgumentResolver();
     }
@@ -56,6 +63,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/**");
         registry.addInterceptor(visitorInterceptor())
                 .addPathPatterns("/api/profile/**");
+        registry.addInterceptor(adminInterceptor())
+                .addPathPatterns("/admin/**","/api/admin/**");
     }
 
     @Override

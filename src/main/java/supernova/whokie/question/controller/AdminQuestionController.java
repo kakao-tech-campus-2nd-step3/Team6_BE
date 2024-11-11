@@ -24,7 +24,6 @@ public class AdminQuestionController {
 
     @GetMapping("")
     public PagingResponse<QuestionResponse.Admin> getAllQuestionPaging(
-            @AdminAuthenticate Long userId,
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         Page<QuestionModel.Admin> models = questionService.getAllQuestionPaging(pageable);
@@ -34,7 +33,6 @@ public class AdminQuestionController {
 
     @PostMapping("")
     public GlobalResponse postCommonQuestion(
-            @AdminAuthenticate Long userId,
             @RequestBody @Valid QuestionRequest.CommonCreate request
     ) {
         questionService.createCommonQuestion(1L, request.toCommand());
@@ -43,7 +41,6 @@ public class AdminQuestionController {
 
     @DeleteMapping("/{question-id}")
     public GlobalResponse deleteCommonQuestion(
-            @AdminAuthenticate Long userId,
             @PathVariable("question-id") Long questionId
     ) {
         questionService.deleteCommonQuestion(1L, questionId );
