@@ -23,7 +23,7 @@ public class AdminUserController {
 
     @GetMapping("")
     public PagingResponse<UserResponse.Info> getAllUsers(
-//            @AdminAuthenticate Long userId,
+            @AdminAuthenticate Long userId,
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         Page<UserModel.Info> models = userService.getAllUsersPaging(pageable);

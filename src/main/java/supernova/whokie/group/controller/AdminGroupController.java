@@ -23,7 +23,7 @@ public class AdminGroupController {
 
     @GetMapping("")
     public PagingResponse<GroupResponse.Info> getAllGroups(
-//            @AdminAuthenticate Long userId,
+            @AdminAuthenticate Long userId,
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         Page<GroupModel.Info> models = groupService.getAllGroupPaging(pageable);
