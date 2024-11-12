@@ -42,7 +42,7 @@ public class AdminInterceptor implements HandlerInterceptor {
 
         try {
             // JWT 토큰 검증 및 정보 추출
-            Claims claims = jwtProvider.validateAndGetClaims(token);
+            Claims claims = jwtProvider.getClaim(token);
             Long userId = Long.parseLong(claims.getSubject());
             Role role = Role.valueOf(claims.get("role", String.class));
 
