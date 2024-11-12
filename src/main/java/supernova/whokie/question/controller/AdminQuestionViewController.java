@@ -1,6 +1,5 @@
 package supernova.whokie.question.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,11 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import supernova.whokie.global.annotation.AdminAuthenticate;
-import supernova.whokie.global.exception.AuthenticationException;
 import supernova.whokie.question.controller.dto.QuestionResponse;
 import supernova.whokie.question.service.QuestionService;
-import supernova.whokie.user.Role;
 
 @Controller
 @RequestMapping("/admin/question")

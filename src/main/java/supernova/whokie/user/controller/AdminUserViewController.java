@@ -11,7 +11,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import supernova.whokie.global.annotation.AdminAuthenticate;
 import supernova.whokie.user.controller.dto.UserResponse;
 import supernova.whokie.user.service.UserService;
 
