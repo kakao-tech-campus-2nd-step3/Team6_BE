@@ -57,7 +57,8 @@ public class PointRecordService {
 
         PayApproveInfoResponse payApproveInfoResponse = payApiCaller.payApprove(tid, userId, pgToken);
 
-        int purchasedPoint = payApproveInfoResponse.amount().total();
+        int purchasedPoint = payApproveInfoResponse.quantity();
+        int amount = payApproveInfoResponse.amount().total();
         user.increasePoint(purchasedPoint);
         PointRecord record = PointRecord.create(userId, purchasedPoint, purchasedPoint * 10,
                 PointRecordOption.CHARGED, PointConstants.POINT_PURCHASE_MESSAGE);
