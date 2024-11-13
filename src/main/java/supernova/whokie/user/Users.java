@@ -1,20 +1,9 @@
 package supernova.whokie.user;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import supernova.whokie.answer.Answer;
+import lombok.*;
 import supernova.whokie.global.constants.MessageConstants;
 import supernova.whokie.global.entity.BaseTimeEntity;
 import supernova.whokie.global.exception.InvalidEntityException;
@@ -82,9 +71,9 @@ public class Users extends BaseTimeEntity {
         this.point -= point;
     }
 
-    public int decreasePointsByHintCount(Answer answer) {
+    public int decreasePointsByHintCount(int hintCount) {
         int decreasedPoint = 0;
-        switch (answer.getHintCount()) {
+        switch (hintCount) {
             case 0:
                 decreasedPoint = UserConstants.FIRST_HINT_PURCHASE_POINT;
                 checkUserHasNotEnoughPoint(decreasedPoint);
@@ -123,6 +112,5 @@ public class Users extends BaseTimeEntity {
             throw new InvalidEntityException(MessageConstants.NOT_ENOUGH_POINT_MESSAGE);
         }
     }
-
 
 }

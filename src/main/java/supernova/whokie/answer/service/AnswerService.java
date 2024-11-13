@@ -126,7 +126,7 @@ public class AnswerService {
         }
 
         //포인트 감소
-        int decreasedPoint = user.decreasePointsByHintCount(answer);
+        int decreasedPoint = user.decreasePointsByHintCount(answer.getHintCount());
 
         answer.increaseHintCount();
 
