@@ -67,13 +67,12 @@ Whokie 사용 설명서 링크
 - [테스트 자동화](https://velog.io/@momnpa333/github-actionsspring-test-%EC%9E%90%EB%8F%99%ED%99%94)
 - [https, 도메인 통합](https://velog.io/@momnpa333/https-nginx-spring-s3-docker-%EB%A1%9C-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0)
 - [성능 테스트 도입기](https://velog.io/@momnpa333/%EC%84%B1%EB%8A%A5%ED%85%8C%EC%8A%A4%ED%8A%B8-ngrinder-%ED%99%9C%EC%9A%A9%ED%95%98%EA%B8%B0)
-- [SSE로 웹알림 구현](https://velog.io/@hjinshin/%EC%9B%B9-%EC%95%8C%EB%A6%BC-%EA%B5%AC%ED%98%84)
-- [TestConfiguration이 SpringBootTest에서 Scan되지 않은 이유](https://velog.io/@hjinshin/TestConfiguration%EC%9D%B4-SpringBootTest%EC%97%90%EC%84%9C-Scan%EB%90%98%EC%A7%80-%EC%95%8A%EB%8A%94-%EC%9D%B4%EC%9C%A0)
-- [n+1 해결 시 @EntityGraph 사용](https://geonit.tistory.com/72)
-- [카카오페이 api (포인트 결제)](https://geonit.tistory.com/71)
--  [Redisson 분산 락을 이용한 일일 방문자 수와 총 방문자 수 증가 로직에 대한 동시성 제어](https://yso8296.tistory.com/29)
+- [실시간 웹 알림 기능을 구현하기 위해 SSE를 사용한 이유 및 Nginx를 통한 배포에서 발생한 이슈](https://velog.io/@hjinshin/%EC%9B%B9-%EC%95%8C%EB%A6%BC-%EA%B5%AC%ED%98%84)
+- [EmbeddedRedis를 TestConfiguration으로 설정했을 때 SpringBootTest에서 Scan되지 않은 이슈](https://velog.io/@hjinshin/TestConfiguration%EC%9D%B4-SpringBootTest%EC%97%90%EC%84%9C-Scan%EB%90%98%EC%A7%80-%EC%95%8A%EB%8A%94-%EC%9D%B4%EC%9C%A0)
+- [페이징에 대한 n+1 문제 해결 시 Fetch Join을 사용하면 메모리 과부하 현상이 발생할 가능성이 있기 때문에 @EntityGraph을 사용하여 효율적인 해결](https://geonit.tistory.com/72)
+- [결제 기능을 위해 카카오페이 디벨로퍼스 API를 활용하여 구현](https://geonit.tistory.com/71)
+- [Redisson 분산 락을 이용한 일일 방문자 수와 총 방문자 수 증가 로직에 대한 동시성 제어](https://yso8296.tistory.com/29)
 - [프로필 배경 이미지를 S3에 업로드하는 과정의 API 응답속도 지연을 개선하기 위한 @Async를 이용한 비동기 처리](https://yso8296.tistory.com/28)
-  
 
 # 프로젝트 구성
 
