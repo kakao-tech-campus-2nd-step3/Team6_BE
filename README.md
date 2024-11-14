@@ -71,8 +71,10 @@ Whokie 사용 설명서 링크
 - [TestConfiguration이 SpringBootTest에서 Scan되지 않은 이유](https://velog.io/@hjinshin/TestConfiguration%EC%9D%B4-SpringBootTest%EC%97%90%EC%84%9C-Scan%EB%90%98%EC%A7%80-%EC%95%8A%EB%8A%94-%EC%9D%B4%EC%9C%A0)
 - [n+1 해결 시 @EntityGraph 사용](https://geonit.tistory.com/72)
 - [카카오페이 api (포인트 결제)](https://geonit.tistory.com/71)
-- [Redisson 분산락을 통한 동시성 제어](https://yso8296.tistory.com/29)
-- [@Async를 이용한 비동기 처리](https://yso8296.tistory.com/28)
+-  [Redisson 분산 락을 이용한 일일 방문자 수와 총 방문자 수 증가 로직에 대한 동시성 제어](https://yso8296.tistory.com/29)
+- [프로필 배경 이미지를 S3에 업로드하는 과정의 API 응답속도 지연을 개선하기 위한 @Async를 이용한 비동기 처리](https://yso8296.tistory.com/28)
+  
+
 # 프로젝트 구성
 
 ### 기술 스택
